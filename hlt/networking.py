@@ -24,9 +24,12 @@ class Game:
 
         num_players, self.my_id = map(int, read_input().split())
 
+        logFormat = "%(asctime)s %(levelname)7s %(filename)s %(lineno)5s %(funcName)20s: %(message)s"
+
         logging.basicConfig(
             filename="bot-{}.log".format(self.my_id),
             filemode="w",
+            format=logFormat,
             level=logging.DEBUG,
         )
 
