@@ -15,13 +15,13 @@ def load_constants(constants):
     global INSPIRED_EXTRACT_RATIO, INSPIRED_BONUS_MULTIPLIER, INSPIRED_MOVE_COST_RATIO
 
     """The cost to build a single ship."""
-    SHIP_COST = constants['NEW_ENTITY_ENERGY_COST']
+    SHIP_COST = constants['NEW_ENTITY_ENERGY_COST'] # 1000
 
     """The cost to build a dropoff."""
-    DROPOFF_COST = constants['DROPOFF_COST']
+    DROPOFF_COST = constants['DROPOFF_COST'] # 4000
 
     """The maximum amount of halite a ship can carry."""
-    MAX_HALITE = constants['MAX_ENERGY']
+    MAX_HALITE = constants['MAX_ENERGY'] # 1000
 
     """
     The maximum number of turns a game can last. This reflects the fact
@@ -30,10 +30,10 @@ def load_constants(constants):
     MAX_TURNS = constants['MAX_TURNS']
 
     """1/EXTRACT_RATIO halite (truncated) is collected from a square per turn."""
-    EXTRACT_RATIO = constants['EXTRACT_RATIO']
+    EXTRACT_RATIO = constants['EXTRACT_RATIO'] # 25%
 
     """1/MOVE_COST_RATIO halite (truncated) is needed to move off a cell."""
-    MOVE_COST_RATIO = constants['MOVE_COST_RATIO']
+    MOVE_COST_RATIO = constants['MOVE_COST_RATIO'] # 10%
 
     """Whether inspiration is enabled."""
     INSPIRATION_ENABLED = constants['INSPIRATION_ENABLED']
@@ -42,7 +42,7 @@ def load_constants(constants):
     A ship is inspired if at least INSPIRATION_SHIP_COUNT opponent
     ships are within this Manhattan distance.
     """
-    INSPIRATION_RADIUS = constants['INSPIRATION_RADIUS']
+    INSPIRATION_RADIUS = constants['INSPIRATION_RADIUS'] # 4
 
     """
     A ship is inspired if at least this many opponent ships are within
@@ -51,7 +51,7 @@ def load_constants(constants):
     INSPIRATION_SHIP_COUNT = constants['INSPIRATION_SHIP_COUNT']
 
     """An inspired ship mines 1/X halite from a cell per turn instead."""
-    INSPIRED_EXTRACT_RATIO = constants['INSPIRED_EXTRACT_RATIO']
+    INSPIRED_EXTRACT_RATIO = constants['INSPIRED_EXTRACT_RATIO'] # +200%
 
     """An inspired ship that removes Y halite from a cell collects X*Y additional halite."""
     INSPIRED_BONUS_MULTIPLIER = constants['INSPIRED_BONUS_MULTIPLIER']
