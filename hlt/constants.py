@@ -18,7 +18,7 @@ def load_constants(constants):
     SHIP_COST = constants['NEW_ENTITY_ENERGY_COST'] # 1000
 
     """The cost to build a dropoff."""
-    DROPOFF_COST = constants['DROPOFF_COST'] # 4000
+    DROPOFF_COST = constants['DROPOFF_COST'] # 4000 - cargo halite - cell halite
 
     """The maximum amount of halite a ship can carry."""
     MAX_HALITE = constants['MAX_ENERGY'] # 1000
