@@ -17,7 +17,9 @@ import random
 ##  (print statements) are reserved for the engine-bot communication.
 import logging
 
-from src.initialization.explore import Exploration
+from src.initialization.start import Start
+from src.initialization.explore import Data
+from src.movement.move import Move
 
 """ <<<Game Begin>>> """
 
@@ -25,7 +27,7 @@ from src.initialization.explore import Exploration
 game = hlt.Game()
 ## At this point "game" variable is populated with initial map data.
 ## This is a good place to do computationally expensive start-up pre-processing (30000 ms).
-EXP = Exploration(game)
+S = Start(game)
 
 ## As soon as you call "ready" function below, the 2 second per turn timer will start.
 game.ready("En3rG")
@@ -41,22 +43,14 @@ while True:
     ##   running update_frame().
     game.update_frame()
     ## You extract player metadata and the updated map metadata here for convenience.
+
+    data = Data(game)
+
     me = game.me
     game_map = game.game_map
 
-    ## A command queue holds all the commands you will run this turn. You build this list up and submit it at the
-    ##   end of the turn.
-    command_queue = []
-
-    for ship in me.get_ships():
-        ## For each of your ships, move randomly if the ship is on a low halite location or the ship is full.
-        ##   Else, collect halite.
-        if game_map[ship.position].halite_amount < constants.MAX_HALITE / 10 or ship.is_full:
-            command_queue.append(
-                ship.move(
-                    random.choice([ Direction.North, Direction.South, Direction.East, Direction.West ])))
-        else:
-            command_queue.append(ship.stay_still())
+    M = Move(data)
+    command_queue = M.get_moves()
 
     ## If the game is in the first 200 turns and you have enough halite, spawn a ship.
     ## Don't spawn a ship if you currently have a ship at port, though - the ships will collide.
