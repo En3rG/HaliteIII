@@ -6,6 +6,10 @@ class Data(Matrices):
         super().__init__(game)
         self.update_matrix()
 
+        self.ships_moved = set()
+        self.ships_returning = set()
+        self.ships_harvesting = set()
+
     def update_matrix(self):
         """
         POPULATE ALL MATRICES

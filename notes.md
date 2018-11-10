@@ -21,6 +21,7 @@
         * Further goal
     * Inspired Harvesting
     * Returning
+        * Ships that are full should have priority?
     * Building (create dock)
     * Attacking (get enemy with high halite)
         * Attacker

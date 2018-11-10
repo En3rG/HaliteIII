@@ -227,5 +227,16 @@ class Matrices(abc.ABC):
 
 
     def mark_unsafe(self, position):
-        self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE.value
+        """
+        MARK POSITION PROVIDED WITH UNSAFE
+
+        POSITION PROVIDED CAN BE OUT OF BOUNDS, SINCE hlt.positionals.Position DOESNT KNOW MAP SIZE
+
+        :param position: NEW SHIP POSITION
+        :return:
+        """
+        x = position.x % self.map_width
+        y = position.y % self.map_height
+        verified_pos = Position(x, y)
+        self.matrix.unsafe[verified_pos.y][verified_pos.x] = Matrix_val.UNSAFE.value
 

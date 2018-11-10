@@ -38,6 +38,8 @@ logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 
 """ <<<Game Loop>>> """
 
+prev_data = None
+
 while True:
     ## This loop handles each turn of the game. The game object changes every turn, and you refresh that state by
     ##   running update_frame().
@@ -49,7 +51,7 @@ while True:
     me = game.me
     game_map = game.game_map
 
-    M = Move(data)
+    M = Move(data, prev_data)
     command_queue = M.get_moves()
 
     ## If the game is in the first 200 turns and you have enough halite, spawn a ship.
@@ -60,3 +62,5 @@ while True:
     ## Send your moves back to the game environment, ending this turn.
     game.end_turn(command_queue)
 
+    ## SAVE DATA TO PREV DATA
+    prev_data = data
