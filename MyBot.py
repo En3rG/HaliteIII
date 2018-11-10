@@ -1,39 +1,29 @@
 #!/usr/bin/env python3
 ## Python 3.6
 
-## Import the Halite SDK, which will let you interact with the game.
-import hlt
-
-## This library contains constant values.
-from hlt import constants
-
-## This library contains direction metadata to better interface with the game.
-from hlt.positionals import Direction
-
-## This library allows you to generate random numbers.
-import random
-
-## Logging allows you to save messages for yourself. This is required because the regular STDOUT
-##  (print statements) are reserved for the engine-bot communication.
-import logging
-
 from src.initialization.start import Start
 from src.initialization.explore import Data
-from src.movement.move import Move
+from src.movement.ships import MoveShips
+from src.movement.spawn import spawn_ships
+
+## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
+import hlt
+
+## REGULAR STDOUT (PRINT STATEMENTS) ARE RSERVED FOR ENGINE-BOT COMMUNICATION.
+import logging
 
 """ <<<Game Begin>>> """
 
-## This game object contains the initial game state.
+## THIS GAME OBJECT CONTAINS THE INITIAL GAME STATE.
 game = hlt.Game()
-## At this point "game" variable is populated with initial map data.
-## This is a good place to do computationally expensive start-up pre-processing (30000 ms).
-S = Start(game)
 
-## As soon as you call "ready" function below, the 2 second per turn timer will start.
+## AT THIS POINT GAME VARIABLE IS POPULATED WITH INITIAL MAP DATA
+## THIS IS A GOOD PLACE TO DO COMPUTATIONALLY EXPENSIVE START-UP PRE-PROCESING (30 secs)
+ST = Start(game)
+
+## AS SOON AS YOU CALL "ready" FUNCTION BELOW, THE 2 SECOND PER TURN TIMER WILL START.,
 game.ready("En3rG")
 
-## Now that your bot is initialized, save a message to yourself in the log file with some important information.
-##  Here, you log here your id, which you can always fetch from the game object by using my_id.
 logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 
 """ <<<Game Loop>>> """
@@ -41,25 +31,21 @@ logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 prev_data = None
 
 while True:
-    ## This loop handles each turn of the game. The game object changes every turn, and you refresh that state by
-    ##   running update_frame().
+    ## THIS LOOP HANDLES EACH TURN OF THE GAME
+    ## REFRESH STATE OF GAME
     game.update_frame()
-    ## You extract player metadata and the updated map metadata here for convenience.
 
+    ## EXTRACT GAME DATA
     data = Data(game)
 
-    me = game.me
-    game_map = game.game_map
+    ## MOVE SHIPS
+    MS = MoveShips(data, prev_data)
+    command_queue = MS.get_moves()
 
-    M = Move(data, prev_data)
-    command_queue = M.get_moves()
+    ## SPAWN SHIPS
+    command_queue = spawn_ships(data, command_queue)
 
-    ## If the game is in the first 200 turns and you have enough halite, spawn a ship.
-    ## Don't spawn a ship if you currently have a ship at port, though - the ships will collide.
-    if game.turn_number <= 200 and me.halite_amount >= constants.SHIP_COST and not game_map[me.shipyard].is_occupied:
-        command_queue.append(me.shipyard.spawn())
-
-    ## Send your moves back to the game environment, ending this turn.
+    ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(command_queue)
 
     ## SAVE DATA TO PREV DATA

@@ -1,4 +1,3 @@
-
 import random
 from hlt.positionals import Direction, Position
 from hlt.game_map import GameMap
@@ -8,7 +7,7 @@ import logging
 import numpy as np
 
 
-class Move():
+class MoveShips():
     def __init__(self, data, prev_data):
         self.data = data
         self.prev_data = prev_data
