@@ -9,8 +9,8 @@ from src.common.movement import Moves
 
 
 class MoveShips(Moves):
-    def __init__(self, data, prev_data, command_queue):
-        super().__init__(data, prev_data)
+    def __init__(self, data, prev_data, halite_stats, command_queue):
+        super().__init__(data, prev_data, halite_stats)
 
         self.command_queue = command_queue
 

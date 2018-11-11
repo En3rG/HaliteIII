@@ -9,8 +9,9 @@ def rounder(x):
     """
     SINCE np.round() DOESNT ALWAYS ROUND UP XX.5
     MAKING MY OWN FUNCTION THEN np.vectorize IT
-    :param x:
-    :return:
+
+    :param x: EACH NUMBER FROM THE ARRAY
+    :return: CEIL OR FLOOR OF THAT NUMBEER
     """
     if (x - int(x) >= 0.5):
         return np.ceil(x)
@@ -21,9 +22,16 @@ myRound = np.vectorize(rounder)
 
 
 def print_matrix(name, matrix):
-    np.set_printoptions(threshold=np.inf, linewidth=np.inf)  ## SET NUMPY PRINT THRESHOLD TO INFINITY
+    """
+    PRINTS ENTIRE MATRIX FOR TESTING PURPOSES
+
+    :param name: TEXT TO PRINT
+    :param matrix: MATRIX TO PRINT
+    :return:
+    """
+    np.set_printoptions(threshold=np.inf, linewidth=np.inf)         ## SET NUMPY PRINT THRESHOLD TO INFINITY
     logging.debug("Print matrix {}: {}".format(name, matrix))
-    np.set_printoptions(threshold=10)  ## SET NUMPY PRINT THRESHOLD TO 10
+    np.set_printoptions(threshold=10)                               ## SET NUMPY PRINT THRESHOLD TO 10
 
 
 class Section():
@@ -35,7 +43,7 @@ class Section():
 
     :param matrix: ORIGINAL MATRIX
     :param position: CENTER OF THE SECTION
-    :param size: SIZE OF THE SECTION TO BE EXTRACTED
+    :param size: SIZE OF THE SECTION TO BE EXTRACTED (FROM POSITION)
     :return: A MATRIX REPRESENTING THE SECTION EXTRACTED
     """
     def __init__(self, matrix, position, size):
@@ -57,8 +65,19 @@ class Section():
 
 def fill_circle(array, center, radius, value, cummulative=False, override_edges=None):
     """
-    MASK A CIRCLE ON THE ARRAY SPECIFIED WITH center, radius, and value PROVIDED
+    MASK A CIRCLE ON THE ARRAY
+
+    CURRENTLY NOT USED
+
+    :param array: ORIGINAL ARRAY
+    :param center: CENTER OF THE CIRCLE
+    :param radius: RADIUS OF THE CIRCLE
+    :param value: VALUE TO BE PLACED IN THE CIRCLE
+    :param cummulative: IF VALUE WILL BE ADDED TO EXISTING VALUE IN THAT INDEX
+    :param override_edges: IF A VALUE IS GIVEN, IT WILL HELP MAKE THE CIRCLE ROUNDER
+    :return: UPDATED ARRAY
     """
+
     height = array.shape[0]
     width = array.shape[1]
 
@@ -88,6 +107,9 @@ class Matrix_distances():
 
 
 class Matrix():
+    """
+    CONTAINS ALL THE MATRICES
+    """
     def __init__(self, map_height, map_width):
         self.halite = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipyard = np.zeros((map_height, map_width), dtype=np.int16)
@@ -233,3 +255,36 @@ class Matrices(abc.ABC):
         """
         self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE.value
 
+
+def get_coord_closest(seek_val, value_matrix, distance_matrix):
+    """
+    GET CLOSESTS '1' FROM SECTION PROVIDED
+
+    :param seek_val: VALUE WE ARE LOOKING FOR
+    :param value_matrix: MATRIX WITH VALUES
+    :param distance_matrix: MATRIX THAT REPRESENTS ITS DISTANCE
+    :return: VALUES/DISTANCES PASSED, MIN DISTANCE, VALUE WITH MINIMUM DISTANCE
+    """
+    ## GET ROW, COL INDICES FOR THE CONDITION
+    r, c = np.where(value_matrix == seek_val)
+
+    ## EXTRACT CORRESPONDING VALUES OF DISTANCES
+    di = distance_matrix[r, c]
+
+    if len(di) >= 1:
+        min_di = di.min()
+
+        ## GET INDICES (INDEXABLE INTO r,c) CORRESPONDING TO LOWEST DISTANCE
+        ld_indx = np.flatnonzero(di == min_di)
+
+        ## GETTING CLOSEST seek_val, MAX NOT NECESSARY??
+        ## GET MAX INDEX (BASED OFF v) OUT OF THE SELECTED INDICES
+        max_idx = value_matrix[r[ld_indx], c[ld_indx]].argmax()
+
+        ## INDEX INTO r,c WITH THE LOWEST DIST INDICES AND
+        ## FROM THOSE SELECT MAXED ONE BASED OF VALUE
+        return (r[ld_indx][max_idx], c[ld_indx][max_idx]), min_di, value_matrix[r[ld_indx][max_idx], c[ld_indx][max_idx]]
+
+    else:
+        ## NO seek_val FOUND
+        return None, None, None

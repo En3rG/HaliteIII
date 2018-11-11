@@ -4,8 +4,8 @@ from hlt import constants
 from src.common.movement import Moves
 
 class Retreat(Moves):
-    def __init__(self, data, prev_data):
-        super().__init__(data, prev_data)
+    def __init__(self, data, prev_data, halite_stats):
+        super().__init__(data, prev_data, halite_stats)
 
         self.command_queue = []
         self.turn_number = data.game.turn_number
@@ -15,12 +15,16 @@ class Retreat(Moves):
 
 
     def check_retreat(self):
+        """
+        POPULATE HEAP BASED ON DISTANCE FROM SHIPYARD
+        CHECK IF WE NEED TO START RETREATING BACK TO SHIPYARD
+
+        :return: COMMAND_QUEUE
+        """
         self.populate_heap()
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turn_left))
 
         if self.farthest_ship[0] + 1 > self.turn_left:
-
-            self.isRetreating = True
             self.retreat_ships()
 
         return self.command_queue
@@ -41,6 +45,9 @@ class Retreat(Moves):
 
 
     def retreat_ships(self):
+        """
+        MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD
+        """
         while self.heap_dist:
             distance, ship_id = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug("Ship id: {} is retreating, with distance {}".format(ship_id, distance))

@@ -6,6 +6,7 @@ from src.initialization.explore import Data
 from src.movement.ships import MoveShips
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
+from src.common.halite_statistics import Halite_stats
 
 ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
 import hlt
@@ -30,6 +31,7 @@ logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 """ <<<Game Loop>>> """
 
 prev_data = None
+halite_stats = Halite_stats()
 
 while True:
     ## THIS LOOP HANDLES EACH TURN OF THE GAME
@@ -40,11 +42,11 @@ while True:
     data = Data(game)
 
     ## RETREAT SHIPS
-    RS = Retreat(data, prev_data)
+    RS = Retreat(data, prev_data, halite_stats)
     command_queue = RS.check_retreat()
 
     ## MOVE SHIPS
-    MS = MoveShips(data, prev_data, command_queue)
+    MS = MoveShips(data, prev_data, halite_stats, command_queue)
     command_queue = MS.get_moves()
 
     ## SPAWN SHIPS
@@ -55,3 +57,6 @@ while True:
 
     ## SAVE DATA TO PREV DATA
     prev_data = data
+
+    ## PRINT HALITE STATS
+    logging.debug("Halite Stats: {}".format(halite_stats))

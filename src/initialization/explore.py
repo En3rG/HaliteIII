@@ -11,7 +11,6 @@ class Data(Matrices):
         self.ships_harvesting = set()   ## SHIPS HARVESTING/STILL
         self.ships_retreating = set()   ## SHIPS RETREATING BEFORE GAME ENDS
 
-        self.isRetreating = False
 
     def update_matrix(self):
         """
