@@ -5,6 +5,7 @@ from src.initialization.start import Start
 from src.initialization.explore import Data
 from src.movement.ships import MoveShips
 from src.movement.spawn import spawn_ships
+from src.movement.retreat import Retreat
 
 ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
 import hlt
@@ -38,8 +39,12 @@ while True:
     ## EXTRACT GAME DATA
     data = Data(game)
 
+    ## RETREAT SHIPS
+    RS = Retreat(data, prev_data)
+    command_queue = RS.check_retreat()
+
     ## MOVE SHIPS
-    MS = MoveShips(data, prev_data)
+    MS = MoveShips(data, prev_data, command_queue)
     command_queue = MS.get_moves()
 
     ## SPAWN SHIPS

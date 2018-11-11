@@ -6,9 +6,12 @@ class Data(Matrices):
         super().__init__(game)
         self.update_matrix()
 
-        self.ships_moved = set()
-        self.ships_returning = set()
-        self.ships_harvesting = set()
+        self.ships_moved = set()        ## SHIPS ALREADY MOVED
+        self.ships_returning = set()    ## SHIPS RETURNING HALITE
+        self.ships_harvesting = set()   ## SHIPS HARVESTING/STILL
+        self.ships_retreating = set()   ## SHIPS RETREATING BEFORE GAME ENDS
+
+        self.isRetreating = False
 
     def update_matrix(self):
         """

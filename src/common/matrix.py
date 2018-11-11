@@ -1,7 +1,8 @@
 import numpy as np
 import logging
 from hlt.positionals import Position
-from src.common.values import Constants, Matrix_val
+from src.common.values import MyConstants, Matrix_val
+from hlt import constants
 import abc
 
 def rounder(x):
@@ -165,7 +166,7 @@ class Matrices(abc.ABC):
             :param loc: ENEMY SHIP LOCATION
             :return:
             """
-            dist = Constants.INFLUENCE_AREA
+            dist = constants.INSPIRATION_RADIUS
             size, size = matrix.shape
             for y in range(-dist, dist + 1):
                 for x in range(-dist + abs(y), dist - abs(y) + 1):
@@ -181,7 +182,7 @@ class Matrices(abc.ABC):
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.matrix.influenced = fill_circle(self.matrix.influenced,
                     #                                     center=ship.position,
-                    #                                     radius=Constants.INFLUENCE_AREA,
+                    #                                     radius=constants.INSPIRATION_RADIUS,
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
@@ -229,14 +230,6 @@ class Matrices(abc.ABC):
     def mark_unsafe(self, position):
         """
         MARK POSITION PROVIDED WITH UNSAFE
-
-        POSITION PROVIDED CAN BE OUT OF BOUNDS, SINCE hlt.positionals.Position DOESNT KNOW MAP SIZE
-
-        :param position: NEW SHIP POSITION
-        :return:
         """
-        x = position.x % self.map_width
-        y = position.y % self.map_height
-        verified_pos = Position(x, y)
-        self.matrix.unsafe[verified_pos.y][verified_pos.x] = Matrix_val.UNSAFE.value
+        self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE.value
 
