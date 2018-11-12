@@ -1,10 +1,16 @@
 from hlt import constants
 from src.common.values import Matrix_val, MyConstants
+from src.common.halite_statistics import Build
 import logging
 
-def spawn_ships(data, command_queue):
+def spawn_ships(data, command_queue, halite_stats):
     """
     CHECK IF ITS SAFE TO SPAWN SHIPS
+
+    -BELOW STOP SPAWNING PERCENTAGE
+    -HAVE ENOUGH HALITE TO BUILD
+    -SHIPYARD NOT OCCUPIED
+    -NO SHIP GOING TO SHIPYARD
 
     :param data:
     :param command_queue:
@@ -15,7 +21,8 @@ def spawn_ships(data, command_queue):
             and not data.game_map[data.me.shipyard].is_occupied\
             and data.matrix.unsafe[data.game_map[data.me.shipyard].position.y][data.game_map[data.me.shipyard].position.x] != Matrix_val.UNSAFE.value:
 
-        logging.debug("Spawning ship...")
+        logging.debug("Safe to spawn ship...")
+        halite_stats.record_spent(Build.SHIP)
         command_queue.append(data.me.shipyard.spawn())
 
     return command_queue

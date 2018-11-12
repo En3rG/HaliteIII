@@ -16,43 +16,43 @@ class MoveShips(Moves):
 
 
     def get_moves(self):
+        ## SHIPS THAT CANNOT MOVE YET
+        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+            ship = self.data.me._ships.get(ship_id)
 
-        for ship in self.me.get_ships():
-            if ship.id in self.data.ships_moved:
-                continue  ## GO TO THE NEXT FOR LOOP
-
-            if self.matrix.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
+            if self.data.matrix.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
                 direction = Direction.Still
 
                 self.isHarvesting(direction, ship.id)
                 self.move_mark_unsafe(ship, direction)
 
+
+        ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
         if self.prev_data:
-            for id in self.prev_data.ships_returning:
-                if id in self.data.ships_moved:
-                    continue  ## GO TO THE NEXT FOR LOOP
+            for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
+                ship = self.data.me._ships.get(ship_id)
 
-                ship = self.me._ships.get(id)
-
-                if ship and ship.position != self.me.shipyard.position:
+                if ship and ship.position != self.data.me.shipyard.position:
                     self.returning(ship)
 
-        for ship in self.me.get_ships():
-            if ship.id in self.data.ships_moved:
-                continue  ## GO TO THE NEXT FOR LOOP
 
-            elif ship.is_full:
+        ## SHIPS JUST HIT MAX
+        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+            ship = self.data.me._ships.get(ship_id)
+
+            if ship.is_full:
                 self.returning(ship)
 
-        for ship in self.me.get_ships():
-            if ship.id in self.data.ships_moved:
-                continue ## GO TO THE NEXT FOR LOOP
-            else:
-                direction = self.get_highest_harvest_move(ship)
 
+        ## REST OF THE SHIPS
+        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+            ship = self.data.me._ships.get(ship_id)
+
+            direction = self.get_highest_harvest_move(ship)
             self.isHarvesting(direction, ship.id)
             self.move_mark_unsafe(ship, direction)
+
 
         return self.command_queue
 
@@ -65,7 +65,7 @@ class MoveShips(Moves):
 
     def returning(self, ship):
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction = self.get_direction_home(ship.position, self.me.shipyard.position)
+        direction = self.get_direction_home(ship.position, self.data.me.shipyard.position)
         direction = self.stay_or_go(ship, direction)
 
         self.move_mark_unsafe(ship, direction)
@@ -74,7 +74,7 @@ class MoveShips(Moves):
 
     def stay_or_go(self, ship, direction):
         destination = self.get_destination(ship, direction)
-        if self.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE.value:
+        if self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE.value:
             return Direction.Still
         else:
             return direction
@@ -90,12 +90,12 @@ class MoveShips(Moves):
         :return:
         """
         logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-        harvest = Section(self.matrix.harvest, ship.position, size=1)           ## SECTION OF HARVEST MATRIX
-        leave_cost = self.matrix.cost[ship.position.y][ship.position.x]         ## COST TO LEAVE CURRENT CELL
+        harvest = Section(self.data.matrix.harvest, ship.position, size=1)           ## SECTION OF HARVEST MATRIX
+        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]         ## COST TO LEAVE CURRENT CELL
         cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                   ## APPLY COST TO DIRECT NEIGHBORS
         harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF
         actual_harvest = harvest_matrix - cost_matrix
-        unsafe = Section(self.matrix.unsafe, ship.position, size=1)
+        unsafe = Section(self.data.matrix.unsafe, ship.position, size=1)
         safe_harvest = actual_harvest * unsafe.matrix
 
         max_index = np.unravel_index(np.argmax(safe_harvest, axis=None), safe_harvest.shape)

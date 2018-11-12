@@ -50,7 +50,7 @@ while True:
     command_queue = MS.get_moves()
 
     ## SPAWN SHIPS
-    command_queue = spawn_ships(data, command_queue)
+    command_queue = spawn_ships(data, command_queue, halite_stats)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(command_queue)

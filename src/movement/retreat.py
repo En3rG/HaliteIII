@@ -3,6 +3,7 @@ import heapq
 from hlt import constants
 from src.common.movement import Moves
 
+
 class Retreat(Moves):
     def __init__(self, data, prev_data, halite_stats):
         super().__init__(data, prev_data, halite_stats)
@@ -11,7 +12,7 @@ class Retreat(Moves):
         self.turn_number = data.game.turn_number
         self.turn_left = constants.MAX_TURNS - self.turn_number
         self.heap_dist = []
-        self.farthest_ship = (0, 0)
+        self.farthest_ship = (0, 0) ## FIRST NUMBER IS DISTANCE, SECOND IS SHIP ID
 
 
     def check_retreat(self):
@@ -38,8 +39,8 @@ class Retreat(Moves):
 
         :return:
         """
-        for ship in self.me.get_ships():
-            distance = self.game_map.calculate_distance(ship.position, self.me.shipyard.position)
+        for ship in self.data.me.get_ships():
+            distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
             self.farthest_ship = max((distance, ship.id), self.farthest_ship)
             heapq.heappush(self.heap_dist, (distance, ship.id))
 
@@ -51,8 +52,8 @@ class Retreat(Moves):
         while self.heap_dist:
             distance, ship_id = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug("Ship id: {} is retreating, with distance {}".format(ship_id, distance))
-            ship = self.me.get_ship(ship_id)
-            direction = self.get_direction_home(ship.position, self.me.shipyard.position)
+            ship = self.data.me.get_ship(ship_id)
+            direction = self.get_direction_home(ship.position, self.data.me.shipyard.position)
 
             self.move_mark_unsafe(ship, direction)
 

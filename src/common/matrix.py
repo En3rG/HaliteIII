@@ -137,6 +137,12 @@ class Matrices(abc.ABC):
 
         self.matrix = Matrix(self.map_height, self.map_width)
 
+
+    @abc.abstractmethod                 ## MUST BE DEFINED BY CHILD CLASS
+    def update_matrix(self):
+        pass
+
+
     def populate_halite(self):
         """
         POPULATE MATRIX WITH HALITE VALUES

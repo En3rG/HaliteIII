@@ -16,11 +16,12 @@ class Matrix_val(Enum):
 
 
 class MyConstants():
-    STOP_SPAWNING = 0.75    ## PERCENTAGE OF MAX TURNS TO STOP SPAWNING SHIPS
+    STOP_SPAWNING = 0.70    ## PERCENTAGE OF MAX TURNS TO STOP SPAWNING SHIPS
 
     DIRECT_NEIGHBORS_SELF = np.array([[0, 1, 0],
                                       [1, 1, 1],
                                       [0, 1, 0]])
+
     DIRECT_NEIGHBORS = np.array([[0,1,0],
                                  [1,0,1],
                                  [0,1,0]])

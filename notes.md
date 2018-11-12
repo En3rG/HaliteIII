@@ -46,6 +46,13 @@
 * COST TO LEAVE = 10% (IF SHIP DOESNT HAVE ENOUGH, IT CANNOT MOVE!!!)
 * COST TO LEAVE IS HARVESTING = 75% of previous cost
 
+###### ------------------------------------- DATA STRUCTURE
+
+MoveShips
+    - Moves
+        - Data
+            -Matrices
+
 
 ###### ------------------------------------- SCENARIOS
 

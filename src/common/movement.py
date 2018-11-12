@@ -13,9 +13,6 @@ class Moves(abc.ABC):
     def __init__(self, data, prev_data, halite_stats):
         self.data = data
         self.prev_data = prev_data
-        self.me = data.me
-        self.game_map = data.game_map
-        self.matrix = data.matrix
         self.halite_stats = halite_stats
 
 
@@ -26,7 +23,7 @@ class Moves(abc.ABC):
 
         APPEND MOVE TO COMMAND QUEUE
 
-        ADD SHIP ID TO SHIPS MOVED
+        REMOVE SHIP ID TO SHIP TO MOVE
 
         :param ship: SHIP OBJECT
         :param direction: MOVE DIRECTION
@@ -37,10 +34,10 @@ class Moves(abc.ABC):
 
         self.halite_stats.record_data(ship, destination, self.data)
 
-        logging.debug("Ship id: {} moving from {} to {}".format(ship.id, ship.position, destination))
+        logging.debug("Ship id: {} moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
         self.command_queue.append(ship.move(direction))
 
-        self.data.ships_moved.add(ship.id)
+        self.data.ships_to_move.remove(ship.id)
 
 
     def get_direction_home(self, ship_position, home_position):
