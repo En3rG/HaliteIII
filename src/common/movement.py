@@ -5,6 +5,7 @@ from hlt.positionals import Position
 from hlt.positionals import Direction
 import abc
 import itertools
+from src.common.values import DirectionHomeMode
 
 class Moves(abc.ABC):
     """
@@ -40,11 +41,9 @@ class Moves(abc.ABC):
         self.data.ships_to_move.remove(ship.id)
 
 
-    def get_direction_home(self, ship_position, home_position):
+    def get_direction_home(self, ship, home_position, mode=""):
         """
         GET DIRECTION TOWARDS SHIPYARD
-
-        CURRENTLY NOT TAKING WRAPPING INTO ACCOUNT!!!!!!!!!!!!!!!111
 
         :param ship_position:
         :param home_position:
@@ -52,17 +51,42 @@ class Moves(abc.ABC):
         """
 
         #choices = GameMap._get_target_direction(ship_position, home_position)   ## WILL GIVE LONGER PATH, IF WRAPPING
-        choices = self.get_target_direction(ship_position, home_position, self.data.map_width)  ## NOT WORKING RIGHT YET
+        choices = self.get_target_direction(ship.position, home_position, self.data.map_width)  ## NOT WORKING RIGHT YET
 
         clean_choices = [x for x in choices if x != None]                       ## CAN HAVE A NONE
-        logging.debug("ship position: {} shipyard position: {} clean_choices: {}".format(ship_position,
+        logging.debug("ship position: {} shipyard position: {} clean_choices: {}".format(ship.position,
                                                                                          home_position,
                                                                                          clean_choices))
-        try: direction = random.choice(clean_choices)
-        except: direction = Direction.Still
+        # try: direction = random.choice(clean_choices)
+        # except: direction = Direction.Still
+        if mode == DirectionHomeMode.RETREAT: direction = self.pick_direction(ship, clean_choices, self.data.matrix.potential_ally_collisions)
+        elif mode == DirectionHomeMode.DEPOSIT: direction = self.pick_direction(ship, clean_choices, self.data.matrix.cost)
         logging.debug("chosen direction: {}".format(direction))
 
         return direction
+
+
+    def pick_direction(self, ship, directions, matrix):
+        """
+        SELECT BEST DIRECTION
+
+        :param ship:
+        :param directions:
+        :param matrix: MATRIX WHERE VALUE WILL BE BASED ON
+        :return: BEST DIRECTION
+        """
+        lowest = 99999
+        best_direction = Direction.Still
+
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+            val = matrix[destination.y][destination.x]
+
+            if val < lowest:
+                lowest = val
+                best_direction = direction
+
+        return best_direction
 
 
     def get_target_direction(self, start, destination, size):

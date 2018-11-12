@@ -1,8 +1,8 @@
 import random
 from hlt.positionals import Direction, Position
 from hlt.game_map import GameMap
-from src.common.values import MyConstants, Matrix_val
-from src.common.matrix import Section, print_matrix
+from src.common.values import MyConstants, Matrix_val, DirectionHomeMode
+from src.common.matrix import Section, print_matrix, get_index_highest_val
 import logging
 import numpy as np
 from src.common.movement import Moves
@@ -24,7 +24,7 @@ class MoveShips(Moves):
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
                 direction = Direction.Still
 
-                self.isHarvesting(direction, ship.id)
+                harvesting = self.isHarvesting(direction, ship.id)
                 self.move_mark_unsafe(ship, direction)
 
 
@@ -45,14 +45,22 @@ class MoveShips(Moves):
                 self.returning(ship)
 
 
+        ## REST OF THE SHIPS (THAT WILL HARVEST)
+        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+            ship = self.data.me._ships.get(ship_id)
+
+            direction = self.get_highest_harvest_move(ship)
+            harvesting = self.isHarvesting(direction, ship.id)
+            if harvesting:
+                self.move_mark_unsafe(ship, direction)
+
+
         ## REST OF THE SHIPS
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
 
             direction = self.get_highest_harvest_move(ship)
-            self.isHarvesting(direction, ship.id)
             self.move_mark_unsafe(ship, direction)
-
 
         return self.command_queue
 
@@ -61,11 +69,14 @@ class MoveShips(Moves):
         if direction == Direction.Still:
             self.data.ships_harvesting.add(ship_id)
             logging.debug("Ship id: {} is harvesting".format(ship_id))
+            return True
+
+        return False
 
 
     def returning(self, ship):
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction = self.get_direction_home(ship.position, self.data.me.shipyard.position)
+        direction = self.get_direction_home(ship, self.data.me.shipyard.position, mode=DirectionHomeMode.DEPOSIT)
         direction = self.stay_or_go(ship, direction)
 
         self.move_mark_unsafe(ship, direction)
@@ -75,6 +86,7 @@ class MoveShips(Moves):
     def stay_or_go(self, ship, direction):
         destination = self.get_destination(ship, direction)
         if self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE.value:
+            logging.debug("Stay still instead")
             return Direction.Still
         else:
             return direction
@@ -90,15 +102,15 @@ class MoveShips(Moves):
         :return:
         """
         logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-        harvest = Section(self.data.matrix.harvest, ship.position, size=1)           ## SECTION OF HARVEST MATRIX
-        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]         ## COST TO LEAVE CURRENT CELL
-        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                   ## APPLY COST TO DIRECT NEIGHBORS
+        harvest = Section(self.data.matrix.harvest, ship.position, size=1)          ## SECTION OF HARVEST MATRIX
+        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]        ## COST TO LEAVE CURRENT CELL
+        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                     ## APPLY COST TO DIRECT NEIGHBORS
         harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF
         actual_harvest = harvest_matrix - cost_matrix
         unsafe = Section(self.data.matrix.unsafe, ship.position, size=1)
         safe_harvest = actual_harvest * unsafe.matrix
 
-        max_index = np.unravel_index(np.argmax(safe_harvest, axis=None), safe_harvest.shape)
+        max_index = get_index_highest_val(safe_harvest)
 
         if max_index == (0,1):
             return Direction.North
@@ -113,4 +125,6 @@ class MoveShips(Moves):
             return Direction.West
         else:
             return Direction.Still
+
+
 

@@ -36,8 +36,10 @@ class Data(Matrices):
         # print_matrix("", self.matrix.cost)
         # print_matrix("", self.matrix.harvest)
         # print_matrix("", self.matrix.distances)
-        # print_matrix("", self.matrix.influenced)
+        # print_matrix("Influenced", self.matrix.influenced)
         # print_matrix("unsafe", self.matrix.unsafe)
+        # print_matrix("Potential Enemy Collisions", self.matrix.potential_enemy_collisions)
+        print_matrix("Potential Ally Collisions", self.matrix.potential_ally_collisions)
 
 
 

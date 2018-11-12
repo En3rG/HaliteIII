@@ -123,6 +123,8 @@ class Matrix():
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
         self.unsafe = np.zeros((map_height, map_width), dtype=np.int16)
         self.unsafe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
+        self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
+        self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
 
 class Matrices(abc.ABC):
@@ -176,32 +178,16 @@ class Matrices(abc.ABC):
         for ship in self.me.get_ships():
             self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED.value
             self.matrix.myShipsID[ship.position.y][ship.position.x] = ship.id
+            populate_area(self.matrix.potential_ally_collisions, ship.position,
+                          MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
     def populate_enemyShips_influenced(self):
         """
         POPULATE MATRIX WITH ENEMY_SHIP.value WHERE ENEMY SHIPS ARE LOCATED
         POPULATE MATRIX WITH ENEMY INFLUENCE
+        POPULATE MATRIX WITH POTENTIAL ENEMY COLLISIONS
         """
-        def populate_influence(matrix, loc):
-            """
-            POPULATE MATRIX INFLUENCE
-
-            LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
-            NO EXTRA LOCATION IS PART OF THE LOOP
-
-            :param matrix: self.matrix.influenced
-            :param loc: ENEMY SHIP LOCATION
-            :return:
-            """
-            dist = constants.INSPIRATION_RADIUS
-            size, size = matrix.shape
-            for y in range(-dist, dist + 1):
-                for x in range(-dist + abs(y), dist - abs(y) + 1):
-                    y_ = (y + loc.y) % size
-                    x_ = (x + loc.x) % size
-                    matrix[y_, x_] = 1
-
         for id, player in self.players.items():
             if id != self.my_id:
                 for ship in player.get_ships():
@@ -214,7 +200,10 @@ class Matrices(abc.ABC):
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_influence(self.matrix.influenced, ship.position)
+                    populate_area(self.matrix.influenced, ship.position,
+                                  constants.INSPIRATION_RADIUS, cummulative=False)
+                    populate_area(self.matrix.potential_enemy_collisions, ship.position,
+                                  MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
     def populate_distances(self):
@@ -294,3 +283,36 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
     else:
         ## NO seek_val FOUND
         return None, None, None
+
+
+def populate_area(matrix, loc, dist, cummulative=False):
+    """
+    POPULATE MATRIX PROVIDED
+
+    LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
+    NO EXTRA LOCATION IS PART OF THE LOOP
+
+    :param matrix: MATRIX TO BE POPULATED
+    :param loc: ENEMY SHIP LOCATION
+    :return:
+    """
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + loc.y) % size
+            x_ = (x + loc.x) % size
+
+            if cummulative:
+                matrix[y_, x_] += 1
+            else:
+                matrix[y_, x_] = 1
+
+
+def get_index_highest_val(matrix):
+    """
+    GET INDEX OF HIGHEST VALUE IN MATRIX
+
+    :param matrix:
+    :return: INDEX OF HIGHEST VALUE
+    """
+    return np.unravel_index(np.argmax(matrix, axis=None), matrix.shape)

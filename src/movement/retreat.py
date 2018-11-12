@@ -2,6 +2,7 @@ import logging
 import heapq
 from hlt import constants
 from src.common.movement import Moves
+from src.common.values import DirectionHomeMode
 
 
 class Retreat(Moves):
@@ -49,13 +50,17 @@ class Retreat(Moves):
         """
         MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD
         """
+
         while self.heap_dist:
             distance, ship_id = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug("Ship id: {} is retreating, with distance {}".format(ship_id, distance))
+
             ship = self.data.me.get_ship(ship_id)
-            direction = self.get_direction_home(ship.position, self.data.me.shipyard.position)
+            direction = self.get_direction_home(ship, self.data.me.shipyard.position, mode=DirectionHomeMode.RETREAT)
 
             self.move_mark_unsafe(ship, direction)
+
+
 
 
 
