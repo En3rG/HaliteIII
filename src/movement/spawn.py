@@ -1,6 +1,6 @@
 from hlt import constants
 from src.common.values import Matrix_val, MyConstants
-from src.common.halite_statistics import Build
+from src.common.halite_statistics import BuildType
 import logging
 
 def spawn_ships(data, command_queue, halite_stats):
@@ -22,7 +22,7 @@ def spawn_ships(data, command_queue, halite_stats):
             and data.matrix.unsafe[data.game_map[data.me.shipyard].position.y][data.game_map[data.me.shipyard].position.x] != Matrix_val.UNSAFE.value:
 
         logging.debug("Safe to spawn ship...")
-        halite_stats.record_spent(Build.SHIP)
+        halite_stats.record_spent(BuildType.SHIP)
         command_queue.append(data.me.shipyard.spawn())
 
     return command_queue

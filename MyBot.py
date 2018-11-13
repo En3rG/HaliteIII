@@ -7,6 +7,7 @@ from src.movement.ships import MoveShips
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.common.halite_statistics import Halite_stats
+import copy
 
 ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
 import hlt
@@ -39,7 +40,7 @@ while True:
     game.update_frame()
 
     ## EXTRACT GAME DATA
-    data = Data(game)
+    data = Data(game, prev_data, halite_stats)
 
     ## RETREAT SHIPS
     RS = Retreat(data, prev_data, halite_stats)
@@ -56,7 +57,7 @@ while True:
     game.end_turn(command_queue)
 
     ## SAVE DATA TO PREV DATA
-    prev_data = data
+    prev_data = copy.deepcopy(data)
 
     ## PRINT HALITE STATS
     logging.debug("Halite Stats: {}".format(halite_stats))

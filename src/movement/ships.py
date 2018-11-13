@@ -16,7 +16,7 @@ class MoveShips(Moves):
 
 
     def get_moves(self):
-        ## SHIPS THAT CANNOT MOVE YET
+        ## MOVE SHIPS THAT CANNOT MOVE YET
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
 
@@ -28,7 +28,15 @@ class MoveShips(Moves):
                 self.move_mark_unsafe(ship, direction)
 
 
-        ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
+        ## MOVE SHIPS JUST HIT MAX
+        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+            ship = self.data.me._ships.get(ship_id)
+
+            if ship.is_full:
+                self.returning(ship)
+
+
+        ## MOVE SHIPS RETURNING PREVIOUSLY (HIT MAX)
         if self.prev_data:
             for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
                 ship = self.data.me._ships.get(ship_id)
@@ -37,15 +45,7 @@ class MoveShips(Moves):
                     self.returning(ship)
 
 
-        ## SHIPS JUST HIT MAX
-        for ship_id in (self.data.all_ships & self.data.ships_to_move):
-            ship = self.data.me._ships.get(ship_id)
-
-            if ship.is_full:
-                self.returning(ship)
-
-
-        ## REST OF THE SHIPS (THAT WILL HARVEST)
+        ## MOVE REST OF THE SHIPS (THAT WILL HARVEST)
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
 
@@ -55,7 +55,7 @@ class MoveShips(Moves):
                 self.move_mark_unsafe(ship, direction)
 
 
-        ## REST OF THE SHIPS
+        ## MOVE REST OF THE SHIPS
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
 

@@ -50,10 +50,10 @@ class Moves(abc.ABC):
         :return: DIRECTION TO SHIPYARD POSITION
         """
 
-        #choices = GameMap._get_target_direction(ship_position, home_position)   ## WILL GIVE LONGER PATH, IF WRAPPING
-        choices = self.get_target_direction(ship.position, home_position, self.data.map_width)  ## NOT WORKING RIGHT YET
+        #directions = GameMap._get_target_direction(ship_position, home_position)   ## WILL GIVE LONGER PATH, IF WRAPPING
+        directions = self.get_directions_target(ship.position, home_position, self.data.map_width)  ## NOT WORKING RIGHT YET
 
-        clean_choices = [x for x in choices if x != None]                       ## CAN HAVE A NONE
+        clean_choices = [x for x in directions if x != None]                       ## CAN HAVE A NONE
         logging.debug("ship position: {} shipyard position: {} clean_choices: {}".format(ship.position,
                                                                                          home_position,
                                                                                          clean_choices))
@@ -89,7 +89,7 @@ class Moves(abc.ABC):
         return best_direction
 
 
-    def get_target_direction(self, start, destination, size):
+    def get_directions_target(self, start, destination, size):
         """
         GET DIRECTION TOWARDS TARGET, TAKE WRAPPING INTO ACCOUNT
 

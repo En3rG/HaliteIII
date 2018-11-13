@@ -1,7 +1,10 @@
+from src.common.values import Matrix_val
+import logging
 
-class Build():
+class BuildType():
     SHIP = 1
     DOCK = 2
+
 
 class Ship_stat():
     def __init__(self, id):
@@ -9,10 +12,11 @@ class Ship_stat():
         self.halite_gained = 0
         self.halite_burned = 0
         self.halite_bonus = 0
+        self.halite_dropped = 0
 
     def __repr__(self):
-        return "\nShipID: {} gained: {} burned: {} bonus: {}".format(
-             self.id, self.halite_gained, self.halite_burned, self.halite_bonus)
+        return "\nShipID: {} gained: {} bonus: {} burned: {} dropped: {}".format(
+             self.id, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
 
 class Halite_stats():
     def __init__(self):
@@ -28,8 +32,8 @@ class Halite_stats():
         for id, record in self.ships_stat.items():
             output += str(record)
 
-        output += "\n\nTotal gained: {} || spent: {} || burned: {} ||  bonus: {} dropped: {}".format(
-                    self.total_gained, self.total_spent, self.total_burned, self.total_bonus, self.total_dropped)
+        output += "\n\nTotal gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}".format(
+                    self.total_gained, self.total_bonus, self.total_spent, self.total_burned, self.total_dropped)
 
         return output
 
@@ -42,17 +46,29 @@ class Halite_stats():
         :param destination:
         :return:
         """
+
         self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))  ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID
 
-        if ship.position == destination:  ## HARVESTING
+        ## HARVESTING
+        if ship.position == destination:
             harvest_val = data.matrix.harvest[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_gained += harvest_val
             self.total_gained += harvest_val
 
-        else: ## MOVING, THUS BURNING HALITE
+            ## CALCULATE BONUS
+            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.OCCUPIED.value:
+                bonus_val = harvest_val * 2
+
+                self.ships_stat[ship.id].halite_bonus += bonus_val
+                self.total_bonus += bonus_val
+
+
+        ## MOVING, THUS BURNING HALITE
+        else:
             burned_val = data.matrix.cost[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_burned += burned_val
             self.total_burned += burned_val
+
 
     def record_spent(self, item):
         """
@@ -64,7 +80,21 @@ class Halite_stats():
         """
 
         """
-        if item == Build.SHIP:
+        if item == BuildType.SHIP:
             self.total_spent += 1000
-        elif item == Build.DOCK:
+        elif item == BuildType.DOCK:
             self.total_spent += 4000
+
+
+    def record_drop(self, ships_died, prev_data):
+        """
+        RECORD DROPPED HALITE
+
+        :return:
+        """
+        for ship_id in ships_died:
+            ship = prev_data.me._ships.get(ship_id)
+            logging.debug("Ship died id: {} Ship: {}".format(ship_id, ship))
+            self.ships_stat[ship.id].halite_dropped = ship.halite_amount ## NOT ACCURATE BECAUSE IF SHIP MOVED, WILL BE LESS
+
+            self.total_dropped += ship.halite_amount

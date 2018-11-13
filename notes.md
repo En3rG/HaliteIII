@@ -30,8 +30,20 @@
 * Prevent collisions
 
 
+## Gather Statistics
+* Halite gained
+* Halite burned
+* Halite dropped
+* Halite spent
+
+
 ## End game
-* All ships must return to docks to maximize halite
+* All ships must return to shipyard/docks to maximize halite
+    * Avoid collisions
+    * Move ships closest to shipyard/docks
+        * Select cheapest cell to move to
+        * If no other ships taking its spot, can still mine instead of going home right away
+
 
 
 # COSTS
@@ -42,7 +54,7 @@
 * HARVEST = 25%
 * MULTIPLE HARVEST = 75% of previous harvest
 * BONUS HARVEST = 200% (HALITE CELL STILL ONLY GET DEDUCTED 25% OF ITS ORIGINAL AMOUNT, EVEN THOUGH SHIP GETS 75%)
-* INSPIRATION RADIUS = 4
+* INSPIRATION RADIUS = 4 (MUST BE 2 OR MORE ENEMY CLOSE BY)
 * COST TO LEAVE = 10% (IF SHIP DOESNT HAVE ENOUGH, IT CANNOT MOVE!!!)
 * COST TO LEAVE IS HARVESTING = 75% of previous cost
 

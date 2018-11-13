@@ -67,7 +67,7 @@ def fill_circle(array, center, radius, value, cummulative=False, override_edges=
     """
     MASK A CIRCLE ON THE ARRAY
 
-    CURRENTLY NOT USED
+    CURRENTLY NOT USED (DELETE LATER)
 
     :param array: ORIGINAL ARRAY
     :param center: CENTER OF THE CIRCLE
@@ -201,7 +201,7 @@ class Matrices(abc.ABC):
                     #                                     cummulative=False, override_edges=0)
 
                     populate_area(self.matrix.influenced, ship.position,
-                                  constants.INSPIRATION_RADIUS, cummulative=False)
+                                  constants.INSPIRATION_RADIUS, cummulative=True)
                     populate_area(self.matrix.potential_enemy_collisions, ship.position,
                                   MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
@@ -253,7 +253,7 @@ class Matrices(abc.ABC):
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):
     """
-    GET CLOSESTS '1' FROM SECTION PROVIDED
+    GET CLOSESTS seek_val FROM SECTION PROVIDED
 
     :param seek_val: VALUE WE ARE LOOKING FOR
     :param value_matrix: MATRIX WITH VALUES
@@ -287,7 +287,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
 
 def populate_area(matrix, loc, dist, cummulative=False):
     """
-    POPULATE MATRIX PROVIDED
+    POPULATE AREA IN MATRIX PROVIDED
 
     LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
     NO EXTRA LOCATION IS PART OF THE LOOP
