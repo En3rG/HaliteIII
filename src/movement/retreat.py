@@ -13,7 +13,7 @@ class Retreat(Moves):
         self.turn_number = data.game.turn_number
         self.turn_left = constants.MAX_TURNS - self.turn_number
         self.heap_dist = []
-        self.farthest_ship = (0, 0) ## FIRST NUMBER IS DISTANCE, SECOND IS SHIP ID
+        self.farthest_ship = (0, 0, 0) ## DISTANCE, NUMBER OF POSSIBLE DIRECTIONS HOME,  SHIP ID
 
 
     def check_retreat(self):
@@ -42,8 +42,9 @@ class Retreat(Moves):
         """
         for ship in self.data.me.get_ships():
             distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
-            self.farthest_ship = max((distance, ship.id), self.farthest_ship)
-            heapq.heappush(self.heap_dist, (distance, ship.id))
+            num_directions = len(self.directions_home(ship, self.data.me.shipyard.position))
+            self.farthest_ship = max((distance, num_directions, ship.id), self.farthest_ship)
+            heapq.heappush(self.heap_dist, (distance, num_directions, ship.id))
 
 
     def retreat_ships(self):
@@ -52,7 +53,7 @@ class Retreat(Moves):
         """
 
         while self.heap_dist:
-            distance, ship_id = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            distance, num_directions, ship_id = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug("Ship id: {} is retreating, with distance {}".format(ship_id, distance))
 
             ship = self.data.me.get_ship(ship_id)

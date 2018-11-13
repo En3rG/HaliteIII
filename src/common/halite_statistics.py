@@ -90,6 +90,8 @@ class Halite_stats():
         """
         RECORD DROPPED HALITE
 
+        :param ships_died: SET OF SHIP IDs THAT DIED
+        :param prev_data:
         :return:
         """
         for ship_id in ships_died:

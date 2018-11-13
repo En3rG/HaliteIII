@@ -293,7 +293,7 @@ def populate_area(matrix, loc, dist, cummulative=False):
     NO EXTRA LOCATION IS PART OF THE LOOP
 
     :param matrix: MATRIX TO BE POPULATED
-    :param loc: ENEMY SHIP LOCATION
+    :param loc: SHIP LOCATION
     :return:
     """
     size, size = matrix.shape
@@ -306,6 +306,40 @@ def populate_area(matrix, loc, dist, cummulative=False):
                 matrix[y_, x_] += 1
             else:
                 matrix[y_, x_] = 1
+
+
+def move_populate_area(matrix, old_loc, new_loc, dist):
+    """
+    MOVE POPULATE AREA IN MATRIX PROVIDED FROM OLD LOC TO NEW LOC
+
+    LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
+    NO EXTRA LOCATION IS PART OF THE LOOP
+
+    :param matrix: MATRIX TO BE POPULATED
+    :param old_loc: OLD LOCATION TO BE DEPOPULATED
+    :param new_loc: NEW LOCATION TO BE POPULATED
+    :param dist:
+    :param cummulative:
+    :return:
+    """
+    ## REMOVE FROM OLD LOCATION
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + old_loc.y) % size
+            x_ = (x + old_loc.x) % size
+
+            matrix[y_, x_] -= 1
+
+    ## ADD TO NEW LOCATION
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + new_loc.y) % size
+            x_ = (x + new_loc.x) % size
+
+            matrix[y_, x_] += 1
+
 
 
 def get_index_highest_val(matrix):

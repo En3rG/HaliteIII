@@ -18,16 +18,18 @@
 * Types of movements:
     * Harvesting
         * Immediate Movement (next neighbor)
-        * Further goal
+        * Further goal when immediate movement is relatively low
     * Inspired Harvesting
     * Returning
         * Ships that are full should have priority?
+        * Currently still colliding when 3 returning to home, 1 going to shipyard, but 3 move first to 2s position, then 2 cannot move thus stays and collide with 3
     * Building (create dock)
     * Attacking (get enemy with high halite)
         * Attacker
         * Stealer
         * Backup
-* Prevent collisions
+* Prevent collisions with ally
+* Prevent collisions with enemy
 
 
 ## Gather Statistics
@@ -38,11 +40,12 @@
 
 
 ## End game
-* All ships must return to shipyard/docks to maximize halite
+* All ships must return to shipyard/docks to maximize halite harvested
     * Avoid collisions
-    * Move ships closest to shipyard/docks
+    * Move ships closest to shipyard/docks first
         * Select cheapest cell to move to
         * If no other ships taking its spot, can still mine instead of going home right away
+        * If no other ships around or close by, and still very close to shipyard/dock, go harvest
 
 
 
