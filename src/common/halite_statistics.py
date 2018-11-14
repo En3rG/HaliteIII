@@ -20,7 +20,7 @@ class Ship_stat():
 
 class Halite_stats():
     def __init__(self):
-        self.ships_stat = {}
+        self.ships_stat = {}   ## EACH SHIP ID WILL HAVE Ship_stat AS ITS VALUE
         self.total_gained = 0
         self.total_burned = 0
         self.total_bonus = 0
@@ -44,9 +44,9 @@ class Halite_stats():
 
         :param ship:
         :param destination:
+        :param data:
         :return:
         """
-
         self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))  ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID
 
         ## HARVESTING
@@ -55,13 +55,12 @@ class Halite_stats():
             self.ships_stat[ship.id].halite_gained += harvest_val
             self.total_gained += harvest_val
 
-            ## CALCULATE BONUS
-            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.OCCUPIED.value:
+            ## CALCULATE BONUS HALITE
+            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.OCCUPIED:
                 bonus_val = harvest_val * 2
 
                 self.ships_stat[ship.id].halite_bonus += bonus_val
                 self.total_bonus += bonus_val
-
 
         ## MOVING, THUS BURNING HALITE
         else:
@@ -74,7 +73,7 @@ class Halite_stats():
         """
         RECORD BUILT SHIPS OR DOCKS
 
-        :param item: BUILD OBJECT (SHIP OR DOCK)
+        :param item: BUILDTYPE OBJECT (SHIP OR DOCK)
         :return:
         """
         """
@@ -89,6 +88,7 @@ class Halite_stats():
     def record_drop(self, ships_died, prev_data):
         """
         RECORD DROPPED HALITE
+        GRAB PREVIOUS HALITE AMOUNT IT HAD (NOT CONSIDERING HALITE IT COULD HAVE HARVESTED BEFORE DYING)
 
         :param ships_died: SET OF SHIP IDs THAT DIED
         :param prev_data:

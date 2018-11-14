@@ -85,7 +85,7 @@ class MoveShips(Moves):
 
     def stay_or_go(self, ship, direction):
         destination = self.get_destination(ship, direction)
-        if self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE.value:
+        if self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE:
             logging.debug("Stay still instead")
             return Direction.Still
         else:

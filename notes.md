@@ -43,7 +43,7 @@
 * All ships must return to shipyard/docks to maximize halite harvested
     * Avoid collisions
     * Move ships closest to shipyard/docks first
-        * Select cheapest cell to move to
+        * Select cheapest cell to move to (not imlemented!!!!!!!!!!)
         * If no other ships taking its spot, can still mine instead of going home right away
         * If no other ships around or close by, and still very close to shipyard/dock, go harvest
 

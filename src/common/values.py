@@ -6,18 +6,10 @@ class DirectionHomeMode():
     DEPOSIT = "deposit"
 
 
-class Matrix_val(Enum):
+class Matrix_val():
     OCCUPIED = 1
     UNSAFE = -1
-
-    # ALLY_SHIP = -2
-    # ALLY_DOCK = -3
-    # ALLY_SHIPYARD = -4
-    # ENEMY_SHIP = -5
-    # ENEMY_DOCK = -6
-    # ENEMY_SHIPYARD = -7
-    # INFLUENCED = -8
-
+    POTENTIAL_COLLISION = -1
 
 class MyConstants():
     DIRECT_NEIGHBOR_RADIUS = 1  ## DISTANCE OF DIRECT NEIGHBOR

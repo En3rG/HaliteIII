@@ -158,7 +158,7 @@ class Matrices(abc.ABC):
         POPULATE MATRIX WITH ALLY_SHIPYARD.value WHERE MY SHIPYARD IS LOCATED
         """
         myShipyard_position = self.me.shipyard.position
-        self.matrix.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.OCCUPIED.value
+        self.matrix.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.OCCUPIED
 
 
     def populate_enemyShipyard(self):
@@ -168,7 +168,7 @@ class Matrices(abc.ABC):
         for id, player in self.players.items():
             if id != self.my_id:
                 enemyShipyard_position = player.shipyard.position
-                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.OCCUPIED.value
+                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.OCCUPIED
 
 
     def populate_myShips(self):
@@ -176,9 +176,9 @@ class Matrices(abc.ABC):
         POPULATE MATRIX WITH ALLY_SHIP.value WHERE MY SHIPS ARE LOCATED
         """
         for ship in self.me.get_ships():
-            self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED.value
+            self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
             self.matrix.myShipsID[ship.position.y][ship.position.x] = ship.id
-            populate_area(self.matrix.potential_ally_collisions, ship.position,
+            populate_area(self.matrix.potential_ally_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                           MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
@@ -191,7 +191,7 @@ class Matrices(abc.ABC):
         for id, player in self.players.items():
             if id != self.my_id:
                 for ship in player.get_ships():
-                    self.matrix.enemyShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED.value
+                    self.matrix.enemyShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.matrix.influenced = fill_circle(self.matrix.influenced,
@@ -200,9 +200,9 @@ class Matrices(abc.ABC):
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_area(self.matrix.influenced, ship.position,
+                    populate_area(self.matrix.influenced, Matrix_val.OCCUPIED, ship.position,
                                   constants.INSPIRATION_RADIUS, cummulative=True)
-                    populate_area(self.matrix.potential_enemy_collisions, ship.position,
+                    populate_area(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                                   MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
@@ -248,7 +248,7 @@ class Matrices(abc.ABC):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
-        self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE.value
+        self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE
 
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):
@@ -285,7 +285,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
         return None, None, None
 
 
-def populate_area(matrix, loc, dist, cummulative=False):
+def populate_area(matrix, val, loc, dist, cummulative=False):
     """
     POPULATE AREA IN MATRIX PROVIDED
 
@@ -293,6 +293,7 @@ def populate_area(matrix, loc, dist, cummulative=False):
     NO EXTRA LOCATION IS PART OF THE LOOP
 
     :param matrix: MATRIX TO BE POPULATED
+    :param val: VALUE TO ADD IN MATRIX
     :param loc: SHIP LOCATION
     :return:
     """
@@ -303,9 +304,9 @@ def populate_area(matrix, loc, dist, cummulative=False):
             x_ = (x + loc.x) % size
 
             if cummulative:
-                matrix[y_, x_] += 1
+                matrix[y_, x_] += val
             else:
-                matrix[y_, x_] = 1
+                matrix[y_, x_] = val
 
 
 def move_populate_area(matrix, old_loc, new_loc, dist):
@@ -329,7 +330,7 @@ def move_populate_area(matrix, old_loc, new_loc, dist):
             y_ = (y + old_loc.y) % size
             x_ = (x + old_loc.x) % size
 
-            matrix[y_, x_] -= 1
+            matrix[y_, x_] -= 1 ## REMOVE VALUE
 
     ## ADD TO NEW LOCATION
     size, size = matrix.shape
@@ -338,7 +339,7 @@ def move_populate_area(matrix, old_loc, new_loc, dist):
             y_ = (y + new_loc.y) % size
             x_ = (x + new_loc.x) % size
 
-            matrix[y_, x_] += 1
+            matrix[y_, x_] += 1 ## ADD VALUE
 
 
 

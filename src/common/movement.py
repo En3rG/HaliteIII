@@ -7,6 +7,7 @@ import abc
 import itertools
 from src.common.values import DirectionHomeMode, MyConstants, Matrix_val
 from src.common.matrix import move_populate_area, print_matrix
+from src.common.points import RetreatPoints
 
 class Moves(abc.ABC):
     """
@@ -20,8 +21,10 @@ class Moves(abc.ABC):
 
     def move_mark_unsafe(self, ship, direction):
         """
-        GIVEN THE SHIP AND DIRECTION, POPULATE UNSAFE MATRIX
-        TAKING WRAPPING INTO ACCOUNT
+        GIVEN THE SHIP AND DIRECTION,
+        POPULATE UNSAFE MATRIX, TAKING WRAPPING INTO ACCOUNT
+
+        UPDATE POTENTIAL ALLY COLLISION MATRIX (MOVE AREA TO DIRECTION)
 
         APPEND MOVE TO COMMAND QUEUE
 
@@ -34,14 +37,15 @@ class Moves(abc.ABC):
         destination = self.get_destination(ship, direction)
         self.data.mark_unsafe(destination)
 
-        move_populate_area(self.data.matrix.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
+        move_populate_area(self.data.matrix.potential_ally_collisions,
+                           ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
 
         self.halite_stats.record_data(ship, destination, self.data)
 
+        self.data.ships_to_move.remove(ship.id)
+
         logging.debug("Ship id: {} moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
         self.command_queue.append(ship.move(direction))
-
-        self.data.ships_to_move.remove(ship.id)
 
 
     def get_direction_home(self, ship, home_position, mode=""):
@@ -54,7 +58,7 @@ class Moves(abc.ABC):
         """
 
         clean_choices = self.directions_home(ship, home_position)
-        direction = self.get_best_direction(ship, clean_choices, mode)
+        direction = self.best_direction_home(ship, clean_choices, mode)
 
         return direction
 
@@ -68,8 +72,7 @@ class Moves(abc.ABC):
         :return:
         """
         # directions = GameMap._get_target_direction(ship_position, home_position)   ## WILL GIVE LONGER PATH, IF WRAPPING
-        directions = self.get_directions_target(ship.position, home_position,
-                                                self.data.map_width)  ## NOT WORKING RIGHT YET
+        directions = self.get_directions_target(ship.position, home_position, self.data.map_width)
 
         clean_choices = [x for x in directions if x != None]  ## CAN HAVE A NONE
         logging.debug("ship position: {} shipyard position: {} clean_choices: {}".format(ship.position,
@@ -79,23 +82,65 @@ class Moves(abc.ABC):
         return clean_choices
 
 
-    def get_best_direction(self, ship, clean_choices, mode):
+    def best_direction(self, ship, directions, mode=""):
         """
-        GET BEST DIRECTION
+        USE POINT SYSTEM
 
         :param ship:
-        :param clean_choices:
+        :param directions:
+        :param mode:
+        :return:
+        """
+        logging.debug("Ship id: {} finding best_direction".format(ship.id))
+
+        if mode == DirectionHomeMode.RETREAT:
+            choices = self.get_choices_retreat(ship, directions)
+
+        if len(choices) == 0:
+            return Direction.Still
+
+        best = max(choices)
+
+        logging.debug("best direction: {}".format(best.direction))
+
+        return best.direction
+
+
+    def get_choices_retreat(self, ship, directions):
+        choices = []
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+
+            shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
+            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
+            potential_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
+
+            logging.debug("shipyard: {} unsafe: {} potential_collision: {} direction: {}".format(shipyard,
+                                                                                                 unsafe,
+                                                                                                 potential_collision,
+                                                                                                 direction))
+            c = RetreatPoints(shipyard, unsafe, potential_collision, direction)
+            choices.append(c)
+
+        return choices
+
+
+    def best_direction_home(self, ship, clean_directions, mode):
+        """
+        GET BEST DIRECTION, GIVEN THE CHOICES
+
+        :param ship:
+        :param clean_choices: CHOICES OF DIRECTIONS
         :param mode:
         :return:
         """
         # try: direction = random.choice(clean_choices)
         # except: direction = Direction.Still
-        print_matrix("Potential Ally Collisions", self.data.matrix.potential_ally_collisions)
 
         if mode == DirectionHomeMode.RETREAT:
-            direction = self.pick_direction_home(ship, clean_choices, self.data.matrix.potential_ally_collisions, mode)
+            direction = self.pick_direction_home(ship, clean_directions, self.data.matrix.potential_ally_collisions, mode)
         elif mode == DirectionHomeMode.DEPOSIT:
-            direction = self.pick_direction_home(ship, clean_choices, self.data.matrix.cost, mode)
+            direction = self.pick_direction_home(ship, clean_directions, self.data.matrix.cost, mode)
 
         logging.debug("chosen direction: {}".format(direction))
 
@@ -124,7 +169,7 @@ class Moves(abc.ABC):
                 break
 
             val = matrix[destination.y][destination.x]
-            occupied = self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE.value
+            occupied = self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE
             logging.debug("val {} destination {}".format(val, destination))
 
             if not occupied and val < lowest:

@@ -11,6 +11,7 @@ class Data(Matrices):
         self.ships_harvesting = set()  ## SHIPS HARVESTING/STILL
         self.ships_retreating = set()  ## SHIPS RETREATING BEFORE GAME ENDS
 
+        ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
         if prev_data:
             self.ships_died = prev_data.all_ships - self.all_ships
             halite_stats.record_drop(self.ships_died, prev_data)
