@@ -1,11 +1,10 @@
-import random
 from hlt.positionals import Direction, Position
-from hlt.game_map import GameMap
+from src.common.points import FarthestShip
 from src.common.values import MyConstants, Matrix_val, DirectionHomeMode
 from src.common.matrix import Section, print_matrix, get_index_highest_val
 import logging
-import numpy as np
 from src.common.movement import Moves
+import heapq
 
 
 class MoveShips(Moves):
@@ -13,6 +12,8 @@ class MoveShips(Moves):
         super().__init__(data, prev_data, halite_stats)
 
         self.command_queue = command_queue
+        self.heap_dist = []
+
         self.get_moves()
 
     def get_moves(self):
@@ -28,21 +29,28 @@ class MoveShips(Moves):
                 self.move_mark_unsafe(ship, direction)
 
 
-        ## MOVE SHIPS JUST HIT MAX
+        ## SHIPS JUST HIT MAX
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
 
             if ship.is_full:
-                self.returning(ship)
+                self.populate_heap(ship)
 
 
-        ## MOVE SHIPS RETURNING PREVIOUSLY (HIT MAX)
+        ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
         if self.prev_data:
             for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
                 ship = self.data.me._ships.get(ship_id)
 
                 if ship and ship.position != self.data.me.shipyard.position:
-                    self.returning(ship)
+                    self.populate_heap(ship)
+
+
+        ## MOVE SHIPS RETURNING (JUST HIT MAX AND PREVIOUSLY RETURNING)
+        while self.heap_dist:
+            s = heapq.heappop(self.heap_dist)
+            ship = self.data.me._ships.get(s.ship_id)
+            self.returning(ship, s.directions)
 
 
         ## MOVE REST OF THE SHIPS (THAT WILL HARVEST)
@@ -50,8 +58,7 @@ class MoveShips(Moves):
             ship = self.data.me._ships.get(ship_id)
 
             direction = self.get_highest_harvest_move(ship)
-            harvesting = self.isHarvesting(direction, ship.id)
-            if harvesting:
+            if self.isHarvesting(direction, ship.id):
                 self.move_mark_unsafe(ship, direction)
 
 
@@ -63,6 +70,21 @@ class MoveShips(Moves):
             self.move_mark_unsafe(ship, direction)
 
 
+    def populate_heap(self, ship):
+        """
+        GET DISTANCE FROM SHIPYARD
+
+        NEED TO ADD GETTING CLOSEST DOCK LATER!!!!!!!!!!!11
+
+        :return:
+        """
+        distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
+        directions = self.directions_home(ship, self.data.me.shipyard.position)
+        num_directions = len(directions)
+        s = FarthestShip(distance, num_directions, ship.id, directions)
+        heapq.heappush(self.heap_dist, s)
+
+
     def isHarvesting(self, direction, ship_id):
         if direction == Direction.Still:
             self.data.ships_harvesting.add(ship_id)
@@ -72,22 +94,11 @@ class MoveShips(Moves):
         return False
 
 
-    def returning(self, ship):
+    def returning(self, ship, directions):
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction = self.get_direction_home(ship, self.data.me.shipyard.position, mode=DirectionHomeMode.DEPOSIT)
-        direction = self.stay_or_go(ship, direction)
-
+        direction = self.best_direction_home(ship, directions, mode=DirectionHomeMode.DEPOSIT)
         self.move_mark_unsafe(ship, direction)
         self.data.ships_returning.add(ship.id)
-
-
-    def stay_or_go(self, ship, direction):
-        destination = self.get_destination(ship, direction)
-        if self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE:
-            logging.debug("Stay still instead")
-            return Direction.Still
-        else:
-            return direction
 
 
     def get_highest_harvest_move(self, ship):

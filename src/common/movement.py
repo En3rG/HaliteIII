@@ -7,7 +7,7 @@ import abc
 import itertools
 from src.common.values import DirectionHomeMode, MyConstants, Matrix_val
 from src.common.matrix import move_populate_area, print_matrix
-from src.common.points import RetreatPoints
+from src.common.points import RetreatPoints, DepositPoints
 
 class Moves(abc.ABC):
     """
@@ -48,21 +48,6 @@ class Moves(abc.ABC):
         self.command_queue.append(ship.move(direction))
 
 
-    def get_direction_home(self, ship, home_position, mode=""):
-        """
-        GET DIRECTION TOWARDS SHIPYARD
-
-        :param ship_position:
-        :param home_position:
-        :return: DIRECTION TO SHIPYARD POSITION
-        """
-
-        clean_choices = self.directions_home(ship, home_position)
-        direction = self.best_direction_home(ship, clean_choices, mode)
-
-        return direction
-
-
     def directions_home(self, ship, home_position):
         """
         GET DIRECTIONS TOWARDS HOME
@@ -82,33 +67,43 @@ class Moves(abc.ABC):
         return clean_choices
 
 
-    def best_direction(self, ship, directions, mode=""):
+    def best_direction_home(self, ship, directions, mode=""):
         """
-        USE POINT SYSTEM
+        USING POINT SYSTEM
+        GET BEST DIRECTION GIVEN CLEAN POSSIBLE DIRECTIONS TOWARD HOME/TARGET
 
         :param ship:
-        :param directions:
+        :param directions: CHOICES OF DIRECTIONS
         :param mode:
-        :return:
+        :return: BEST DIRECTION
         """
         logging.debug("Ship id: {} finding best_direction".format(ship.id))
 
         if mode == DirectionHomeMode.RETREAT:
-            choices = self.get_choices_retreat(ship, directions)
+            points = self.get_points_retreat(ship, directions)
+        elif mode == DirectionHomeMode.DEPOSIT:
+            points = self.get_points_returning(ship, directions)
 
-        if len(choices) == 0:
+        if len(points) == 0:
             return Direction.Still
 
-        best = max(choices)
+        best = max(points)
 
         logging.debug("best direction: {}".format(best.direction))
 
         return best.direction
 
 
-    def get_choices_retreat(self, ship, directions):
+    def get_points_retreat(self, ship, directions):
+        """
+        GET POINTS FOR RETREATING
+
+        :param ship:
+        :param directions: CLEAN POSSIBLE DIRECTIONS
+        :return:
+        """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        choices = [ RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still) ]
+        points = [ RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still) ]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
@@ -122,63 +117,32 @@ class Moves(abc.ABC):
                                                                                                  potential_collision,
                                                                                                  direction))
             c = RetreatPoints(shipyard, unsafe, potential_collision, direction)
-            choices.append(c)
+            points.append(c)
 
-        return choices
+        return points
 
-
-    def best_direction_home(self, ship, clean_directions, mode):
+    def get_points_returning(self, ship, directions):
         """
-        GET BEST DIRECTION, GIVEN THE CHOICES
+        GET POINTS FOR RETURNING
 
         :param ship:
-        :param clean_choices: CHOICES OF DIRECTIONS
-        :param mode:
+        :param directions: CLEAN POSSIBLE DIRECTIONS
         :return:
         """
-        # try: direction = random.choice(clean_choices)
-        # except: direction = Direction.Still
-
-        if mode == DirectionHomeMode.RETREAT:
-            direction = self.pick_direction_home(ship, clean_directions, self.data.matrix.potential_ally_collisions, mode)
-        elif mode == DirectionHomeMode.DEPOSIT:
-            direction = self.pick_direction_home(ship, clean_directions, self.data.matrix.cost, mode)
-
-        logging.debug("chosen direction: {}".format(direction))
-
-        return direction
-
-
-    def pick_direction_home(self, ship, directions, matrix, mode):
-        """
-        SELECT BEST DIRECTION
-
-        IF RETREATING AND GOING TOWARDS SHIPYARD, BREAK OUT LOOP
-
-        :param ship:
-        :param directions:
-        :param matrix: MATRIX WHERE VALUE WILL BE BASED ON
-        :return: BEST DIRECTION
-        """
-        lowest = 99999
-        best_direction = Direction.Still
+        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
+        points = [ DepositPoints(unsafe=1, cost=-999, direction=Direction.Still) ]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            if mode == DirectionHomeMode.RETREAT and destination == self.data.me.shipyard.position:
-                best_direction = direction
-                break
+            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
+            cost = self.data.matrix.cost[destination.y][destination.x]
 
-            val = matrix[destination.y][destination.x]
-            occupied = self.data.matrix.unsafe[destination.y][destination.x] == Matrix_val.UNSAFE
-            logging.debug("val {} destination {}".format(val, destination))
+            logging.debug("unsafe: {} cost: {} direction: {}".format(unsafe, cost, direction))
+            c = DepositPoints(unsafe, cost, direction)
+            points.append(c)
 
-            if not occupied and val < lowest:
-                lowest = val
-                best_direction = direction
-
-        return best_direction
+        return points
 
 
     def get_directions_target(self, start, destination, size):

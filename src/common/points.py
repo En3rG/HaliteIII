@@ -1,8 +1,8 @@
 
 class FarthestShip:
     """
-    USED TO DETERMINE FARTHEST SHIP FOR RETREAT
-    ALSO USED FOR HEAPQ PURPOSES IN RETREAT
+    USED TO DETERMINE FARTHEST SHIP FOR RETREAT/RETURNING
+    ALSO USED FOR HEAPQ PURPOSES
 
     distance > num_directions > ship_id
     """
@@ -100,4 +100,45 @@ class RetreatPoints():
 
         return NotImplemented
 
+
+class DepositPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR RETURNING/DEPOSITING
+
+    not occupied > cost
+    """
+    def __init__(self, unsafe, cost, direction):
+        self.unsafe = unsafe
+        self.cost = cost
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, DepositPoints):
+            if self.unsafe > other.unsafe:
+                return True
+            elif self.unsafe < other.unsafe:
+                return False
+            elif self.cost > other.cost:
+                return True
+            elif self.cost < other.cost:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, DepositPoints):
+            if self.unsafe < other.unsafe:
+                return True
+            elif self.unsafe > other.unsafe:
+                return False
+            elif self.cost < other.cost:
+                return True
+            elif self.cost > other.cost:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
 

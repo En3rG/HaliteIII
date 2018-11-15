@@ -59,8 +59,7 @@ class Retreat(Moves):
             logging.debug("Ship id: {} is retreating, with distance {}".format(s.ship_id, s.distance))
 
             ship = self.data.me.get_ship(s.ship_id)
-            #direction = self.best_direction_home(ship, s.directions, mode=DirectionHomeMode.RETREAT)
-            direction = self.best_direction(ship, s.directions, mode=DirectionHomeMode.RETREAT)
+            direction = self.best_direction_home(ship, s.directions, mode=DirectionHomeMode.RETREAT)
 
             self.move_mark_unsafe(ship, direction)
 
