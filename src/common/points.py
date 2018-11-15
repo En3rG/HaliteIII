@@ -27,6 +27,8 @@ class FarthestShip:
             elif self.ship_id < other.ship_id:
                 return False
 
+        return NotImplemented
+
     def __lt__(self, other):
         if isinstance(other, FarthestShip):
             if self.distance < other.distance:
@@ -41,6 +43,8 @@ class FarthestShip:
                 return True
             elif self.ship_id > other.ship_id:
                 return False
+
+        return NotImplemented
 
     def __repr__(self):
         return "Ship id: {} distance: {}".format(self.ship_id, self.distance)
@@ -72,6 +76,10 @@ class RetreatPoints():
                 return True
             elif self.potential_collision < other.potential_collision:
                 return False
+            else:
+                return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
 
     def __lt__(self, other):
         if isinstance(other, RetreatPoints):
@@ -87,5 +95,9 @@ class RetreatPoints():
                 return True
             elif self.potential_collision > other.potential_collision:
                 return False
+            else:
+                return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
 
 

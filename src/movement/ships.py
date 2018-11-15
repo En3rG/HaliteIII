@@ -13,7 +13,7 @@ class MoveShips(Moves):
         super().__init__(data, prev_data, halite_stats)
 
         self.command_queue = command_queue
-
+        self.get_moves()
 
     def get_moves(self):
         ## MOVE SHIPS THAT CANNOT MOVE YET
@@ -61,8 +61,6 @@ class MoveShips(Moves):
 
             direction = self.get_highest_harvest_move(ship)
             self.move_mark_unsafe(ship, direction)
-
-        return self.command_queue
 
 
     def isHarvesting(self, direction, ship_id):

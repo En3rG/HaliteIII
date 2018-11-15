@@ -7,15 +7,16 @@ from src.common.points import FarthestShip
 
 
 class Retreat(Moves):
-    def __init__(self, data, prev_data, halite_stats):
+    def __init__(self, data, prev_data, command_queue, halite_stats):
         super().__init__(data, prev_data, halite_stats)
 
-        self.command_queue = []
+        self.command_queue = command_queue
         self.turn_number = data.game.turn_number
         self.turn_left = constants.MAX_TURNS - self.turn_number
         self.heap_dist = []
         self.farthest_ship = FarthestShip(0, 0, 0, None)
 
+        self.check_retreat()
 
     def check_retreat(self):
         """
@@ -29,8 +30,6 @@ class Retreat(Moves):
 
         if self.farthest_ship.distance + 1 > self.turn_left:
             self.retreat_ships()
-
-        return self.command_queue
 
 
     def populate_heap(self):

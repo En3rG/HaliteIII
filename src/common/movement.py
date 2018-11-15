@@ -107,7 +107,9 @@ class Moves(abc.ABC):
 
 
     def get_choices_retreat(self, ship, directions):
-        choices = []
+        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
+        choices = [ RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still) ]
+
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
@@ -193,15 +195,19 @@ class Moves(abc.ABC):
             """
             GET MIRROR LOCATIONS, SHOULD BE 4 ALWAYS WITH WRAPPING
 
-            :return: TUPLE OF LOCATIONS
+            :return: TUPLE OF LOCATIONS (PRODUCTS OF YS, XS)
             """
             if start.y > destination.y:
                 ys = [destination.y, destination.y + size]
+            elif start.y == destination.y:
+                ys = [destination.y]
             else:
                 ys = [destination.y, destination.y - size]
 
             if start.x > destination.x:
                 xs = [destination.x, destination.x + size]
+            elif start.x == destination.x:
+                xs = [destination.x]
             else:
                 xs = [destination.x, destination.x - size]
 
@@ -212,18 +218,15 @@ class Moves(abc.ABC):
             GET CLOSEST LOCATION
             BASED ON ALL MIRROR LOCATIONS
 
-            :return: TUPLE OF BEST LOCATION
+            :return: A TUPLE OF BEST LOCATION
             """
-            closest = 9999999
-            closest_location = None
+            closest = (9999, start)
 
             for dest in locations:
                 dist = abs(dest[0] - start.y) + abs(dest[1] - start.x)
-                if dist < closest:
-                    closest = dist
-                    closest_location = dest
+                closest = min((dist, dest), closest)
 
-            return closest_location
+            return closest[1] ## THE BEST LOCATION
 
 
         all_locations = get_mirror_locations(start, destination, size)

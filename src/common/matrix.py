@@ -287,7 +287,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
 
 def populate_area(matrix, val, loc, dist, cummulative=False):
     """
-    POPULATE AREA IN MATRIX PROVIDED
+    POPULATE AREA IN MATRIX PROVIDED (BASED ON DISTANCE FROM ORIGIN OR LOC)
 
     LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
     NO EXTRA LOCATION IS PART OF THE LOOP

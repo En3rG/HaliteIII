@@ -12,7 +12,7 @@ import copy
 ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
 import hlt
 
-## REGULAR STDOUT (PRINT STATEMENTS) ARE RSERVED FOR ENGINE-BOT COMMUNICATION.
+## REGULAR STDOUT (PRINT STATEMENTS) ARE RESERVED FOR ENGINE-BOT COMMUNICATION.
 import logging
 
 """ <<<Game Begin>>> """
@@ -39,19 +39,19 @@ while True:
     ## REFRESH STATE OF GAME
     game.update_frame()
 
+    command_queue = []
+
     ## EXTRACT GAME DATA
     data = Data(game, prev_data, halite_stats)
 
     ## RETREAT SHIPS
-    RS = Retreat(data, prev_data, halite_stats)
-    command_queue = RS.check_retreat()
+    RS = Retreat(data, prev_data, command_queue, halite_stats)
 
     ## MOVE SHIPS
     MS = MoveShips(data, prev_data, halite_stats, command_queue)
-    command_queue = MS.get_moves()
 
     ## SPAWN SHIPS
-    command_queue = spawn_ships(data, command_queue, halite_stats)
+    SS = spawn_ships(data, command_queue, halite_stats)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(command_queue)

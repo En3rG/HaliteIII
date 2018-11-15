@@ -24,5 +24,3 @@ def spawn_ships(data, command_queue, halite_stats):
         logging.debug("Safe to spawn ship...")
         halite_stats.record_spent(BuildType.SHIP)
         command_queue.append(data.me.shipyard.spawn())
-
-    return command_queue
