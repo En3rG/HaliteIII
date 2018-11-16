@@ -342,7 +342,6 @@ def move_populate_area(matrix, old_loc, new_loc, dist):
             matrix[y_, x_] += 1 ## ADD VALUE
 
 
-
 def get_index_highest_val(matrix):
     """
     GET INDEX OF HIGHEST VALUE IN MATRIX

@@ -2,8 +2,11 @@
 ## Python 3.6
 
 from src.initialization.start import Start
-from src.initialization.explore import Data
-from src.movement.ships import MoveShips
+from src.initialization.gather import Data
+from src.movement.stuck import Stuck
+from src.movement.deposit import Deposit
+from src.movement.explore import Explore
+from src.movement.harvest import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.common.halite_statistics import Halite_stats
@@ -45,13 +48,22 @@ while True:
     data = Data(game, prev_data, halite_stats)
 
     ## RETREAT SHIPS
-    RS = Retreat(data, prev_data, command_queue, halite_stats)
+    A = Retreat(data, prev_data, command_queue, halite_stats)
 
-    ## MOVE SHIPS
-    MS = MoveShips(data, prev_data, halite_stats, command_queue)
+    ## STUCK SHIPS
+    B = Stuck(data, prev_data, command_queue, halite_stats)
+
+    ## DEPOSIT SHIPS
+    C = Deposit(data, prev_data, command_queue, halite_stats)
+
+    ## HARVEST SHIPS
+    D = Harvest(data, prev_data, command_queue, halite_stats)
+
+    ## EXPLORE SHIPS
+    E = Explore(data, prev_data, command_queue, halite_stats)
 
     ## SPAWN SHIPS
-    SS = spawn_ships(data, command_queue, halite_stats)
+    F = spawn_ships(data, command_queue, halite_stats)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(command_queue)

@@ -1,13 +1,12 @@
 import logging
-import random
 from hlt.game_map import GameMap
 from hlt.positionals import Position
 from hlt.positionals import Direction
 import abc
 import itertools
 from src.common.values import DirectionHomeMode, MyConstants, Matrix_val
-from src.common.matrix import move_populate_area, print_matrix
-from src.common.points import RetreatPoints, DepositPoints
+from src.common.matrix import move_populate_area, Section, print_matrix, get_index_highest_val
+
 
 class Moves(abc.ABC):
     """
@@ -60,9 +59,10 @@ class Moves(abc.ABC):
         directions = self.get_directions_target(ship.position, home_position, self.data.map_width)
 
         clean_choices = [x for x in directions if x != None]  ## CAN HAVE A NONE
-        logging.debug("ship position: {} shipyard position: {} clean_choices: {}".format(ship.position,
-                                                                                         home_position,
-                                                                                         clean_choices))
+        logging.debug("ship id: {} ship position: {} shipyard position: {} clean_choices: {}".format(ship.id,
+                                                                                                     ship.position,
+                                                                                                     home_position,
+                                                                                                     clean_choices))
 
         return clean_choices
 
@@ -92,57 +92,6 @@ class Moves(abc.ABC):
         logging.debug("best direction: {}".format(best.direction))
 
         return best.direction
-
-
-    def get_points_retreat(self, ship, directions):
-        """
-        GET POINTS FOR RETREATING
-
-        :param ship:
-        :param directions: CLEAN POSSIBLE DIRECTIONS
-        :return:
-        """
-        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [ RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still) ]
-
-        for direction in directions:
-            destination = self.get_destination(ship, direction)
-
-            shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
-            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
-            potential_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
-
-            logging.debug("shipyard: {} unsafe: {} potential_collision: {} direction: {}".format(shipyard,
-                                                                                                 unsafe,
-                                                                                                 potential_collision,
-                                                                                                 direction))
-            c = RetreatPoints(shipyard, unsafe, potential_collision, direction)
-            points.append(c)
-
-        return points
-
-    def get_points_returning(self, ship, directions):
-        """
-        GET POINTS FOR RETURNING
-
-        :param ship:
-        :param directions: CLEAN POSSIBLE DIRECTIONS
-        :return:
-        """
-        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [ DepositPoints(unsafe=1, cost=-999, direction=Direction.Still) ]
-
-        for direction in directions:
-            destination = self.get_destination(ship, direction)
-
-            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
-            cost = self.data.matrix.cost[destination.y][destination.x]
-
-            logging.debug("unsafe: {} cost: {} direction: {}".format(unsafe, cost, direction))
-            c = DepositPoints(unsafe, cost, direction)
-            points.append(c)
-
-        return points
 
 
     def get_directions_target(self, start, destination, size):
@@ -212,3 +161,43 @@ class Moves(abc.ABC):
         x = new_pos.x % self.data.map_width
         y = new_pos.y % self.data.map_height
         return Position(x, y)
+
+
+    def get_highest_harvest_move(self, ship):
+        """
+        ACTUAL HARVEST MATRIX IS THE NEIGHBORING HARVEST VALUE MINUS LEAVING CURRENT CELL
+
+        :param ship:
+        :param harvest:
+        :param cost:
+        :return:
+        """
+        logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
+        harvest = Section(self.data.matrix.harvest, ship.position, size=1)  ## SECTION OF HARVEST MATRIX
+        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]  ## COST TO LEAVE CURRENT CELL
+        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost  ## APPLY COST TO DIRECT NEIGHBORS
+        harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF  ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
+        actual_harvest = harvest_matrix - cost_matrix  ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
+        unsafe = Section(self.data.matrix.unsafe, ship.position, size=1)  ## SECTION UNSAFE
+        safe_harvest = actual_harvest * unsafe.matrix  ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+
+        max_index = get_index_highest_val(safe_harvest)
+
+        if max_index == (0, 1):
+            return Direction.North
+
+        elif max_index == (1, 2):
+            return Direction.East
+
+        elif max_index == (2, 1):
+            return Direction.South
+
+        elif max_index == (1, 0):
+            return Direction.West
+        else:
+            return Direction.Still
+
+
+
+
+

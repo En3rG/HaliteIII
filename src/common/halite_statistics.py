@@ -1,6 +1,7 @@
 from src.common.values import Matrix_val
 import logging
 
+
 class BuildType():
     SHIP = 1
     DOCK = 2
@@ -14,9 +15,11 @@ class Ship_stat():
         self.halite_bonus = 0
         self.halite_dropped = 0
 
+
     def __repr__(self):
         return "\nShipID: {} gained: {} bonus: {} burned: {} dropped: {}".format(
              self.id, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
+
 
 class Halite_stats():
     def __init__(self):
@@ -26,6 +29,7 @@ class Halite_stats():
         self.total_bonus = 0
         self.total_spent = 0
         self.total_dropped = 0
+
 
     def __repr__(self):
         output = "\nHalite stats......"

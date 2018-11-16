@@ -3,7 +3,8 @@ import heapq
 from hlt import constants
 from src.common.movement import Moves
 from src.common.values import DirectionHomeMode
-from src.common.points import FarthestShip
+from src.common.points import FarthestShip, RetreatPoints
+from hlt.positionals import Direction
 
 
 class Retreat(Moves):
@@ -64,7 +65,32 @@ class Retreat(Moves):
             self.move_mark_unsafe(ship, direction)
 
 
+    def get_points_retreat(self, ship, directions):
+        """
+        GET POINTS FOR RETREATING
 
+        :param ship:
+        :param directions: CLEAN POSSIBLE DIRECTIONS
+        :return:
+        """
+        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
+        points = [RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still)]
+
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+
+            shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
+            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
+            potential_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
+
+            logging.debug("shipyard: {} unsafe: {} potential_collision: {} direction: {}".format(shipyard,
+                                                                                                 unsafe,
+                                                                                                 potential_collision,
+                                                                                                 direction))
+            c = RetreatPoints(shipyard, unsafe, potential_collision, direction)
+            points.append(c)
+
+        return points
 
 
 

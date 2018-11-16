@@ -3,6 +3,7 @@ from src.common.values import Matrix_val, MyConstants
 from src.common.halite_statistics import BuildType
 import logging
 
+
 def spawn_ships(data, command_queue, halite_stats):
     """
     CHECK IF ITS SAFE TO SPAWN SHIPS

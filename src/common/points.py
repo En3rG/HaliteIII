@@ -142,3 +142,56 @@ class DepositPoints():
 
         return NotImplemented
 
+
+class HarvestPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR HARVESTING
+
+    not occupied > least potential ally collisions > harvest
+    HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
+
+    """
+    def __init__(self, unsafe, potential_collision, harvest, direction):
+        self.unsafe = unsafe
+        self.potential_collision = potential_collision
+        self.harvest = harvest
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, HarvestPoints):
+            if self.unsafe > other.unsafe:
+                return True
+            elif self.unsafe < other.unsafe:
+                return False
+            elif self.potential_collision > other.potential_collision:
+                return True
+            elif self.potential_collision < other.potential_collision:
+                return False
+            elif self.harvest > other.harvest:
+                return True
+            elif self.harvest < other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, HarvestPoints):
+            if self.unsafe < other.unsafe:
+                return True
+            elif self.unsafe > other.unsafe:
+                return False
+            elif self.potential_collision < other.potential_collision:
+                return True
+            elif self.potential_collision > other.potential_collision:
+                return False
+            elif self.harvest < other.harvest:
+                return True
+            elif self.harvest > other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
