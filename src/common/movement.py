@@ -4,8 +4,9 @@ from hlt.positionals import Position
 from hlt.positionals import Direction
 import abc
 import itertools
-from src.common.values import DirectionHomeMode, MyConstants, Matrix_val
-from src.common.matrix import move_populate_area, Section, print_matrix, get_index_highest_val
+from src.common.values import MoveMode, MyConstants, Matrix_val
+from src.common.matrix import move_populate_area, Section, get_index_highest_val
+from src.common.points import HarvestPoints
 
 
 class Moves(abc.ABC):
@@ -21,7 +22,7 @@ class Moves(abc.ABC):
     def move_mark_unsafe(self, ship, direction):
         """
         GIVEN THE SHIP AND DIRECTION,
-        POPULATE UNSAFE MATRIX, TAKING WRAPPING INTO ACCOUNT
+        POPULATE SAFE MATRIX, TAKING WRAPPING INTO ACCOUNT
 
         UPDATE POTENTIAL ALLY COLLISION MATRIX (MOVE AREA TO DIRECTION)
 
@@ -47,27 +48,7 @@ class Moves(abc.ABC):
         self.command_queue.append(ship.move(direction))
 
 
-    def directions_home(self, ship, home_position):
-        """
-        GET DIRECTIONS TOWARDS HOME
-
-        :param ship:
-        :param home_position:
-        :return:
-        """
-        # directions = GameMap._get_target_direction(ship_position, home_position)   ## WILL GIVE LONGER PATH, IF WRAPPING
-        directions = self.get_directions_target(ship.position, home_position, self.data.map_width)
-
-        clean_choices = [x for x in directions if x != None]  ## CAN HAVE A NONE
-        logging.debug("ship id: {} ship position: {} shipyard position: {} clean_choices: {}".format(ship.id,
-                                                                                                     ship.position,
-                                                                                                     home_position,
-                                                                                                     clean_choices))
-
-        return clean_choices
-
-
-    def best_direction_home(self, ship, directions, mode=""):
+    def best_direction(self, ship, directions=None, mode=""):
         """
         USING POINT SYSTEM
         GET BEST DIRECTION GIVEN CLEAN POSSIBLE DIRECTIONS TOWARD HOME/TARGET
@@ -79,10 +60,16 @@ class Moves(abc.ABC):
         """
         logging.debug("Ship id: {} finding best_direction".format(ship.id))
 
-        if mode == DirectionHomeMode.RETREAT:
+        if mode == MoveMode.RETREAT:
             points = self.get_points_retreat(ship, directions)
-        elif mode == DirectionHomeMode.DEPOSIT:
+        elif mode == MoveMode.DEPOSIT:
             points = self.get_points_returning(ship, directions)
+        elif mode == MoveMode.HARVEST:
+            points = self.get_points_harvest(ship)
+        elif mode == MoveMode.EXPLORE:
+            points = self.get_points_explore(ship)
+        else:
+            raise NotImplemented
 
         if len(points) == 0:
             return Direction.Still
@@ -94,16 +81,14 @@ class Moves(abc.ABC):
         return best.direction
 
 
-    def get_directions_target(self, start, destination, size):
+    def get_directions_target(self, ship, destination):
         """
         GET DIRECTION TOWARDS TARGET, TAKE WRAPPING INTO ACCOUNT
 
-        :param start: START POSITION
-        :param destination: DESTINATION POSITION
-        :param size: MATRIX SIZE
+        :param ship:
+        :param destination:
         :return: LIST OF POSSIBLE DIRECTIONS TOWARD TARGET
         """
-
         def get_mirror_locations(start, destination, size):
             """
             GET MIRROR LOCATIONS, SHOULD BE 4 ALWAYS WITH WRAPPING
@@ -141,12 +126,22 @@ class Moves(abc.ABC):
 
             return closest[1] ## THE BEST LOCATION
 
+        start = ship.position
+        size = self.data.map_width
 
         all_locations = get_mirror_locations(start, destination, size)
-        best_location = get_closest_location(start, all_locations)
+        closest_location = get_closest_location(start, all_locations)
 
-        x, y = best_location[1], best_location[0]
-        return GameMap._get_target_direction(start, Position(x, y))
+        x, y = closest_location[1], closest_location[0]
+        directions = GameMap._get_target_direction(start, Position(x, y))
+
+        clean_directions = [x for x in directions if x != None]  ## CAN HAVE A NONE
+        logging.debug("ship id: {} ship position: {} shipyard position: {} clean_directions: {}".format(ship.id,
+                                                                                                        ship.position,
+                                                                                                        destination,
+                                                                                                        clean_directions))
+
+        return clean_directions
 
 
     def get_destination(self, ship, direction):
@@ -178,8 +173,8 @@ class Moves(abc.ABC):
         cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost  ## APPLY COST TO DIRECT NEIGHBORS
         harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF  ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
         actual_harvest = harvest_matrix - cost_matrix  ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-        unsafe = Section(self.data.matrix.unsafe, ship.position, size=1)  ## SECTION UNSAFE
-        safe_harvest = actual_harvest * unsafe.matrix  ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+        safe = Section(self.data.matrix.safe, ship.position, size=1)  ## SECTION SAFE
+        safe_harvest = actual_harvest * safe.matrix  ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
 
         max_index = get_index_highest_val(safe_harvest)
 
@@ -196,6 +191,45 @@ class Moves(abc.ABC):
             return Direction.West
         else:
             return Direction.Still
+
+
+    def get_points(self, ship, direction, harvest, points):
+        """
+        GATHER POINTS WITH DIRECTION PROVIDED
+
+        :param direction:
+        :param harvest:
+        :return:
+        """
+        destination = self.get_destination(ship, direction)
+        safe = self.data.matrix.safe[destination.y][destination.x]
+        potential_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
+
+        c = HarvestPoints(safe, potential_collision, harvest, direction)
+        points.append(c)
+
+    def get_harvest(self, ship, direction, leave_cost=None, harvest_stay=None):
+        """
+        HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
+
+        :return:
+        """
+        destination = self.get_destination(ship, direction)
+        harvest = self.data.matrix.harvest[destination.y][destination.x]
+        cost = self.data.matrix.cost[destination.y][destination.x]
+        influenced = True if self.data.matrix.influenced[destination.y][
+                                 destination.x] >= MyConstants.INFLUENCED else False
+        bonus = 0 if influenced else (harvest * 2)
+
+        if direction == Direction.Still:
+            harvest = harvest + bonus
+        else:
+            twoTurn_harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
+            harvest = harvest + bonus - leave_cost - twoTurn_harvest
+
+        return cost, harvest
+
+
 
 
 

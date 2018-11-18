@@ -21,19 +21,6 @@ def rounder(x):
 myRound = np.vectorize(rounder)
 
 
-def print_matrix(name, matrix):
-    """
-    PRINTS ENTIRE MATRIX FOR TESTING PURPOSES
-
-    :param name: TEXT TO PRINT
-    :param matrix: MATRIX TO PRINT
-    :return:
-    """
-    np.set_printoptions(threshold=np.inf, linewidth=np.inf)         ## SET NUMPY PRINT THRESHOLD TO INFINITY
-    logging.debug("Print matrix {}: {}".format(name, matrix))
-    np.set_printoptions(threshold=10)                               ## SET NUMPY PRINT THRESHOLD TO 10
-
-
 class Section():
     """
     GET A SECTION OF THE MATRIX PROVIDED
@@ -63,41 +50,41 @@ class Section():
         return self.a[rows, :][:, cols]
 
 
-def fill_circle(array, center, radius, value, cummulative=False, override_edges=None):
-    """
-    MASK A CIRCLE ON THE ARRAY
-
-    CURRENTLY NOT USED (DELETE LATER)
-
-    :param array: ORIGINAL ARRAY
-    :param center: CENTER OF THE CIRCLE
-    :param radius: RADIUS OF THE CIRCLE
-    :param value: VALUE TO BE PLACED IN THE CIRCLE
-    :param cummulative: IF VALUE WILL BE ADDED TO EXISTING VALUE IN THAT INDEX
-    :param override_edges: IF A VALUE IS GIVEN, IT WILL HELP MAKE THE CIRCLE ROUNDER
-    :return: UPDATED ARRAY
-    """
-
-    height = array.shape[0]
-    width = array.shape[1]
-
-    ## y IS JUST AN ARRAY OF 1xY (ROWS)
-    ## x IS JUST AN ARRAY OF 1xX (COLS)
-    y, x = np.ogrid[-center.y:height - center.y, -center.x:width - center.x]
-    ## MASKS IS A HEIGHTxWIDTH ARRAY WITH TRUE INSIDE THE CIRCLE SPECIFIED
-
-    if override_edges:
-        mask = x * x + y * y <= radius * radius + radius * override_edges
-    else:
-        ## WHEN WANT TO BE MORE CIRCLE (DUE TO ROUNDING)
-        mask = x * x + y * y <= radius * radius
-
-    if cummulative:  ## VALUE KEEPS GETTING ADDED
-        array[mask] += value
-    else:
-        array[mask] = value
-
-    return array
+# def fill_circle(array, center, radius, value, cummulative=False, override_edges=None):
+#     """
+#     MASK A CIRCLE ON THE ARRAY
+#
+#     CURRENTLY NOT USED (DELETE LATER)
+#
+#     :param array: ORIGINAL ARRAY
+#     :param center: CENTER OF THE CIRCLE
+#     :param radius: RADIUS OF THE CIRCLE
+#     :param value: VALUE TO BE PLACED IN THE CIRCLE
+#     :param cummulative: IF VALUE WILL BE ADDED TO EXISTING VALUE IN THAT INDEX
+#     :param override_edges: IF A VALUE IS GIVEN, IT WILL HELP MAKE THE CIRCLE ROUNDER
+#     :return: UPDATED ARRAY
+#     """
+#
+#     height = array.shape[0]
+#     width = array.shape[1]
+#
+#     ## y IS JUST AN ARRAY OF 1xY (ROWS)
+#     ## x IS JUST AN ARRAY OF 1xX (COLS)
+#     y, x = np.ogrid[-center.y:height - center.y, -center.x:width - center.x]
+#     ## MASKS IS A HEIGHTxWIDTH ARRAY WITH TRUE INSIDE THE CIRCLE SPECIFIED
+#
+#     if override_edges:
+#         mask = x * x + y * y <= radius * radius + radius * override_edges
+#     else:
+#         ## WHEN WANT TO BE MORE CIRCLE (DUE TO ROUNDING)
+#         mask = x * x + y * y <= radius * radius
+#
+#     if cummulative:  ## VALUE KEEPS GETTING ADDED
+#         array[mask] += value
+#     else:
+#         array[mask] = value
+#
+#     return array
 
 
 class Matrix_distances():
@@ -121,8 +108,8 @@ class Matrix():
         self.harvest = None
         self.distances = Matrix_distances(map_height, map_width)
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
-        self.unsafe = np.zeros((map_height, map_width), dtype=np.int16)
-        self.unsafe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
+        self.safe = np.zeros((map_height, map_width), dtype=np.int16)
+        self.safe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
         self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
@@ -248,7 +235,7 @@ class Matrices(abc.ABC):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
-        self.matrix.unsafe[position.y][position.x] = Matrix_val.UNSAFE
+        self.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):

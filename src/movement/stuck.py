@@ -1,6 +1,7 @@
 import logging
 from hlt.positionals import Direction
 from src.common.movement import Moves
+from src.common.print import print_heading
 
 
 class Stuck(Moves):
@@ -8,9 +9,11 @@ class Stuck(Moves):
         super().__init__(data, prev_data, halite_stats)
         self.command_queue = command_queue
 
-        self.get_moves()
+        self.move_ships()
 
-    def get_moves(self):
+    def move_ships(self):
+        print_heading("Moving stuck ships......")
+
         ## MOVE SHIPS THAT CANNOT MOVE YET
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)

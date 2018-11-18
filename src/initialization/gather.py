@@ -1,5 +1,5 @@
 from src.common.matrix import Matrices
-
+import logging
 
 class Data(Matrices):
     def __init__(self, game, prev_data, halite_stats):
@@ -15,6 +15,8 @@ class Data(Matrices):
         if prev_data:
             self.ships_died = prev_data.all_ships - self.all_ships
             halite_stats.record_drop(self.ships_died, prev_data)
+
+        logging.debug("All ships: {}".format(self.all_ships))
 
         self.update_matrix()
 
@@ -42,7 +44,7 @@ class Data(Matrices):
         # print_matrix("", self.matrix.harvest)
         # print_matrix("", self.matrix.distances)
         # print_matrix("Influenced", self.matrix.influenced)
-        # print_matrix("unsafe", self.matrix.unsafe)
+        # print_matrix("safe", self.matrix.safe)
         # print_matrix("Potential Enemy Collisions", self.matrix.potential_enemy_collisions)
         # print_matrix("Potential Ally Collisions", self.matrix.potential_ally_collisions)
 

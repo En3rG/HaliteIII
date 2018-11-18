@@ -56,9 +56,9 @@ class RetreatPoints():
 
     shipyard > not occupied > least potential ally collisions
     """
-    def __init__(self, shipyard, unsafe, potential_collision, direction):
+    def __init__(self, shipyard, safe, potential_collision, direction):
         self.shipyard = shipyard
-        self.unsafe = unsafe
+        self.safe = safe
         self.potential_collision = potential_collision
         self.direction = direction
 
@@ -68,9 +68,9 @@ class RetreatPoints():
                 return True
             elif self.shipyard < other.shipyard:
                 return False
-            elif self.unsafe > other.unsafe:
+            elif self.safe > other.safe:
                 return True
-            elif self.unsafe < other.unsafe:
+            elif self.safe < other.safe:
                 return False
             elif self.potential_collision > other.potential_collision:
                 return True
@@ -87,9 +87,9 @@ class RetreatPoints():
                 return True
             elif self.shipyard > other.shipyard:
                 return False
-            elif self.unsafe < other.unsafe:
+            elif self.safe < other.safe:
                 return True
-            elif self.unsafe > other.unsafe:
+            elif self.safe > other.safe:
                 return False
             elif self.potential_collision < other.potential_collision:
                 return True
@@ -107,16 +107,16 @@ class DepositPoints():
 
     not occupied > cost
     """
-    def __init__(self, unsafe, cost, direction):
-        self.unsafe = unsafe
+    def __init__(self, safe, cost, direction):
+        self.safe = safe
         self.cost = cost
         self.direction = direction
 
     def __gt__(self, other):
         if isinstance(other, DepositPoints):
-            if self.unsafe > other.unsafe:
+            if self.safe > other.safe:
                 return True
-            elif self.unsafe < other.unsafe:
+            elif self.safe < other.safe:
                 return False
             elif self.cost > other.cost:
                 return True
@@ -129,9 +129,9 @@ class DepositPoints():
 
     def __lt__(self, other):
         if isinstance(other, DepositPoints):
-            if self.unsafe < other.unsafe:
+            if self.safe < other.safe:
                 return True
-            elif self.unsafe > other.unsafe:
+            elif self.safe > other.safe:
                 return False
             elif self.cost < other.cost:
                 return True
@@ -147,21 +147,21 @@ class HarvestPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR HARVESTING
 
-    not occupied > least potential ally collisions > harvest
+    not occupied > least potential enemy collisions > harvest
     HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
 
     """
-    def __init__(self, unsafe, potential_collision, harvest, direction):
-        self.unsafe = unsafe
+    def __init__(self, safe, potential_collision, harvest, direction):
+        self.safe = safe
         self.potential_collision = potential_collision
         self.harvest = harvest
         self.direction = direction
 
     def __gt__(self, other):
         if isinstance(other, HarvestPoints):
-            if self.unsafe > other.unsafe:
+            if self.safe > other.safe:
                 return True
-            elif self.unsafe < other.unsafe:
+            elif self.safe < other.safe:
                 return False
             elif self.potential_collision > other.potential_collision:
                 return True
@@ -178,9 +178,9 @@ class HarvestPoints():
 
     def __lt__(self, other):
         if isinstance(other, HarvestPoints):
-            if self.unsafe < other.unsafe:
+            if self.safe < other.safe:
                 return True
-            elif self.unsafe > other.unsafe:
+            elif self.safe > other.safe:
                 return False
             elif self.potential_collision < other.potential_collision:
                 return True
@@ -195,3 +195,9 @@ class HarvestPoints():
 
         return NotImplemented
 
+    def __repr__(self):
+        return "{} safe: {} potential_collision: {} harvest: {} direction: {}".format(self.__class__.__name__,
+                                                                                     self.safe,
+                                                                                     self.potential_collision,
+                                                                                     self.harvest,
+                                                                                     self.direction)

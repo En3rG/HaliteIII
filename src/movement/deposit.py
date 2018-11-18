@@ -2,8 +2,9 @@ import logging
 import heapq
 from src.common.movement import Moves
 from src.common.points import FarthestShip, DepositPoints
-from src.common.values import DirectionHomeMode
+from src.common.values import MoveMode
 from hlt.positionals import Direction
+from src.common.print import print_heading
 
 
 class Deposit(Moves):
@@ -11,10 +12,13 @@ class Deposit(Moves):
         super().__init__(data, prev_data, halite_stats)
         self.command_queue = command_queue
         self.heap_dist = []
+        self.heap_set = set()
 
-        self.get_moves()
+        self.move_ships()
 
-    def get_moves(self):
+    def move_ships(self):
+        print_heading("Moving depositing ships......")
+
         ## SHIPS JUST HIT MAX
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
@@ -45,16 +49,19 @@ class Deposit(Moves):
 
         :return:
         """
-        distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
-        directions = self.directions_home(ship, self.data.me.shipyard.position)
-        num_directions = len(directions)
-        s = FarthestShip(distance, num_directions, ship.id, directions)
-        heapq.heappush(self.heap_dist, s)
+        if ship.id not in self.heap_set:
+            self.heap_set.add(ship.id)
+
+            distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
+            directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+            num_directions = len(directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions)
+            heapq.heappush(self.heap_dist, s)
 
 
     def returning(self, ship, directions):
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction = self.best_direction_home(ship, directions, mode=DirectionHomeMode.DEPOSIT)
+        direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
         self.move_mark_unsafe(ship, direction)
         self.data.ships_returning.add(ship.id)
 
@@ -68,16 +75,16 @@ class Deposit(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [DepositPoints(unsafe=1, cost=-999, direction=Direction.Still)]
+        points = [ DepositPoints(safe=1, cost=-999, direction=Direction.Still) ]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
+            safe = self.data.matrix.safe[destination.y][destination.x]
             cost = self.data.matrix.cost[destination.y][destination.x]
 
-            logging.debug("unsafe: {} cost: {} direction: {}".format(unsafe, cost, direction))
-            c = DepositPoints(unsafe, cost, direction)
+            logging.debug("safe: {} cost: {} direction: {}".format(safe, cost, direction))
+            c = DepositPoints(safe, cost, direction)
             points.append(c)
 
         return points

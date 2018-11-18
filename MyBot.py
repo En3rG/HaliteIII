@@ -6,10 +6,11 @@ from src.initialization.gather import Data
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
 from src.movement.explore import Explore
-from src.movement.harvest import Harvest
+from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.common.halite_statistics import Halite_stats
+from src.common.print import print_heading
 import copy
 
 ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
@@ -71,5 +72,8 @@ while True:
     ## SAVE DATA TO PREV DATA
     prev_data = copy.deepcopy(data)
 
+    ## UPDATE HALITE AMOUNT/CARRIED
+    halite_stats.set_halite(game.me.halite_amount)
+
     ## PRINT HALITE STATS
-    logging.debug("Halite Stats: {}".format(halite_stats))
+    print_heading("Halite Stats: {}".format(halite_stats))

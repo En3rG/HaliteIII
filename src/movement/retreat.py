@@ -2,10 +2,10 @@ import logging
 import heapq
 from hlt import constants
 from src.common.movement import Moves
-from src.common.values import DirectionHomeMode
+from src.common.values import MoveMode
 from src.common.points import FarthestShip, RetreatPoints
 from hlt.positionals import Direction
-
+from src.common.print import print_heading
 
 class Retreat(Moves):
     def __init__(self, data, prev_data, command_queue, halite_stats):
@@ -27,6 +27,7 @@ class Retreat(Moves):
         :return: COMMAND_QUEUE
         """
         self.populate_heap()
+        print_heading("Check retreat......")
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turn_left))
 
         if self.farthest_ship.distance + 1 > self.turn_left:
@@ -43,7 +44,7 @@ class Retreat(Moves):
         """
         for ship in self.data.me.get_ships():
             distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
-            directions = self.directions_home(ship, self.data.me.shipyard.position)
+            directions = self.get_directions_target(ship, self.data.me.shipyard.position)
             num_directions = len(directions)
             s = FarthestShip(distance, num_directions, ship.id, directions)
             self.farthest_ship = max(s , self.farthest_ship)
@@ -60,7 +61,7 @@ class Retreat(Moves):
             logging.debug("Ship id: {} is retreating, with distance {}".format(s.ship_id, s.distance))
 
             ship = self.data.me.get_ship(s.ship_id)
-            direction = self.best_direction_home(ship, s.directions, mode=DirectionHomeMode.RETREAT)
+            direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
 
             self.move_mark_unsafe(ship, direction)
 
@@ -74,20 +75,20 @@ class Retreat(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [RetreatPoints(shipyard=0, unsafe=1, potential_collision=-999, direction=Direction.Still)]
+        points = [RetreatPoints(shipyard=0, safe=1, potential_collision=-999, direction=Direction.Still)]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
             shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
-            unsafe = self.data.matrix.unsafe[destination.y][destination.x]
+            safe = self.data.matrix.safe[destination.y][destination.x]
             potential_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
 
-            logging.debug("shipyard: {} unsafe: {} potential_collision: {} direction: {}".format(shipyard,
-                                                                                                 unsafe,
+            logging.debug("shipyard: {} safe: {} potential_collision: {} direction: {}".format(shipyard,
+                                                                                                 safe,
                                                                                                  potential_collision,
                                                                                                  direction))
-            c = RetreatPoints(shipyard, unsafe, potential_collision, direction)
+            c = RetreatPoints(shipyard, safe, potential_collision, direction)
             points.append(c)
 
         return points

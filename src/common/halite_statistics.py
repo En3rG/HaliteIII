@@ -10,20 +10,25 @@ class BuildType():
 class Ship_stat():
     def __init__(self, id):
         self.id = id
+        self.halite_amount = 0
         self.halite_gained = 0
         self.halite_burned = 0
         self.halite_bonus = 0
         self.halite_dropped = 0
 
+    def set_halite(self, halite_amount):
+        self.halite_amount = halite_amount
 
     def __repr__(self):
-        return "\nShipID: {} gained: {} bonus: {} burned: {} dropped: {}".format(
-             self.id, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
+        return "\nShipID: {} halite_amount: {} gained: {} bonus: {} burned: {} dropped: {}".format(
+             self.id, self.halite_amount, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
 
 
 class Halite_stats():
     def __init__(self):
         self.ships_stat = {}   ## EACH SHIP ID WILL HAVE Ship_stat AS ITS VALUE
+        self.halite_amount = 0
+        self.halite_carried = 0
         self.total_gained = 0
         self.total_burned = 0
         self.total_bonus = 0
@@ -31,13 +36,28 @@ class Halite_stats():
         self.total_dropped = 0
 
 
+    def set_halite(self, halite_amount):
+        self.halite_amount = halite_amount
+
+        total_carry = 0
+        for k, ship_stat in self.ships_stat.items():
+            total_carry += ship_stat.halite_amount
+            self.halite_carried = total_carry
+
+
     def __repr__(self):
-        output = "\nHalite stats......"
+        output = "\n\nHalite stats......"
         for id, record in self.ships_stat.items():
             output += str(record)
 
-        output += "\n\nTotal gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}".format(
-                    self.total_gained, self.total_bonus, self.total_spent, self.total_burned, self.total_dropped)
+        output += "\n\nHalite: {} || Carrying: {} || Total gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}\n"\
+                    .format(self.halite_amount,
+                            self.halite_carried,
+                            self.total_gained,
+                            self.total_bonus,
+                            self.total_spent,
+                            self.total_burned,
+                            self.total_dropped)
 
         return output
 
@@ -52,6 +72,7 @@ class Halite_stats():
         :return:
         """
         self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))  ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID
+        self.ships_stat[ship.id].set_halite(ship.halite_amount)
 
         ## HARVESTING
         if ship.position == destination:
@@ -102,5 +123,6 @@ class Halite_stats():
             ship = prev_data.me._ships.get(ship_id)
             logging.debug("Ship died id: {} Ship: {}".format(ship_id, ship))
             self.ships_stat[ship.id].halite_dropped = ship.halite_amount ## NOT ACCURATE BECAUSE IF SHIP MOVED, WILL BE LESS
+            self.ships_stat[ship.id].set_halite(0)
 
             self.total_dropped += ship.halite_amount
