@@ -9,6 +9,8 @@ from src.movement.explore import Explore
 from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
+from src.movement.attack import Attack
+from src.movement.build import Build
 from src.common.halite_statistics import Halite_stats
 from src.common.print import print_heading
 import copy
@@ -42,7 +44,6 @@ while True:
     ## THIS LOOP HANDLES EACH TURN OF THE GAME
     ## REFRESH STATE OF GAME
     game.update_frame()
-
     command_queue = []
 
     ## EXTRACT GAME DATA
@@ -54,17 +55,23 @@ while True:
     ## STUCK SHIPS
     B = Stuck(data, prev_data, command_queue, halite_stats)
 
+    ## BUILD DOCK
+    C = Build(data, prev_data, command_queue, halite_stats)
+
     ## DEPOSIT SHIPS
-    C = Deposit(data, prev_data, command_queue, halite_stats)
+    D = Deposit(data, prev_data, command_queue, halite_stats)
+
+    ## ATTACK SHIPS
+    E = Attack(data, prev_data, command_queue, halite_stats)
 
     ## HARVEST SHIPS
-    D = Harvest(data, prev_data, command_queue, halite_stats)
+    F = Harvest(data, prev_data, command_queue, halite_stats)
 
     ## EXPLORE SHIPS
-    E = Explore(data, prev_data, command_queue, halite_stats)
+    G = Explore(data, prev_data, command_queue, halite_stats)
 
     ## SPAWN SHIPS
-    F = spawn_ships(data, command_queue, halite_stats)
+    H = spawn_ships(data, command_queue, halite_stats)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(command_queue)

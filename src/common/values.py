@@ -19,6 +19,7 @@ class MyConstants():
     STOP_SPAWNING = 0.70        ## PERCENTAGE OF MAX TURNS TO STOP SPAWNING SHIPS
     INFLUENCED = 2              ## INFLUENCE NUMBER (ENEMY) TO GET BONUS
     DONT_HARVEST_BELOW = 5     ## DONT HARVEST BELOW THIS NUMBER
+    SECTION_SIZE = 4
 
     DIRECT_NEIGHBORS_SELF = np.array([[0, 1, 0],
                                       [1, 1, 1],

@@ -28,6 +28,8 @@
         * Attacker
         * Stealer
         * Backup
+    * Spawn
+        * Not use .occupied this checks if its occupied at current turn, but ship will spawn next turn
 * Prevent collisions with ally
 * Prevent collisions with enemy
 

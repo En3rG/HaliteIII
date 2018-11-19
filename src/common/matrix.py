@@ -3,6 +3,7 @@ import logging
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val
 from hlt import constants
+from src.common.print import print_matrix
 import abc
 
 def rounder(x):
@@ -87,10 +88,10 @@ class Section():
 #     return array
 
 
-class Matrix_distances():
+class Sectioned():
     def __init__(self, map_height, map_width):
-        self.matrix = np.zeros((map_height, map_width), dtype=np.int16)
-        self.center = None      ## set at update_matrix
+        self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
+        self.distances = {}
 
 
 class Matrix():
@@ -106,12 +107,13 @@ class Matrix():
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.cost = None
         self.harvest = None
-        self.distances = Matrix_distances(map_height, map_width)
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
         self.safe = np.zeros((map_height, map_width), dtype=np.int16)
         self.safe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
         self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
+
+        self.sectioned = Sectioned(map_height, map_width)
 
 
 class Matrices(abc.ABC):
@@ -138,6 +140,83 @@ class Matrices(abc.ABC):
         """
         halites = [ [ cell.halite_amount for cell in row ] for row in self.game_map._cells]
         self.matrix.halite = np.array(halites, dtype=np.int16)
+
+
+    def populate_sectioned_halite(self):
+        """
+        POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
+
+        RECORD AVERAGE OF EACH SECTION
+        """
+        for y, row in enumerate(self.matrix.sectioned.halite):
+            for x, col in enumerate(row):
+                section = self.matrix.halite[y*MyConstants.SECTION_SIZE:y*MyConstants.SECTION_SIZE+MyConstants.SECTION_SIZE,
+                                             x*MyConstants.SECTION_SIZE:x*MyConstants.SECTION_SIZE+MyConstants.SECTION_SIZE]
+                sum = section.sum()
+                average_halite = sum // (MyConstants.SECTION_SIZE*2)
+
+                self.matrix.sectioned.halite[y][x] = average_halite
+
+
+        print_matrix("sectioned halite", self.matrix.sectioned.halite)
+
+
+    def populate_sectioned_distances(self):
+        """
+        POPULATE DISTANCES OF OF EACH SECTIONS TO ONE ANOTHER
+
+        table[curr_section][target_section] = distance
+
+        :return:
+        """
+        def calculate_distance_sections(curr_section, height, width):
+            """
+            GENERATES A TABLE WITH ACTUAL DISTANCES BETWEEN SECTIONS
+            """
+            ## USING NUMPY (VECTORIZED), MUCH FASTER
+
+            ## CANT USE THIS, CALCULATES DISTANCE FROM POINT TO POINT (ALLOWS DIAGONAL MOVEMENT)
+            # matrix = np.zeros((height, width), dtype=np.float16)
+            # indexes = [(y, x) for y, row in enumerate(matrix) for x, val in enumerate(row)]
+            # to_points = np.array(indexes)
+            # start_point = np.array([curr_section[0], curr_section[1]])
+            # distances = np.linalg.norm(to_points - start_point, ord=2, axis=1.)
+            #
+            # return distances.reshape((height, width))
+
+            start = Position(curr_section[1], curr_section[0])  ## REMEMBER Position(x, y)
+            distance_matrix = np.zeros((height, width), dtype=np.int16)
+
+            for y in range(height):
+                for x in range(width):
+                    destination = Position(x, y)
+                    distance_matrix[y][x] = calculate_distance(start, destination, height, width)
+
+            return distance_matrix
+
+
+        def calculate_distance(start, destination, height, width):
+            """
+            UPDATED FROM hlt.game_map.calculate distance
+
+            Compute the Manhattan distance between two locations.
+            Accounts for wrap-around.
+            :param source: The source from where to calculate
+            :param target: The target to where calculate
+            :return: The distance between these items
+            """
+            resulting_position = abs(start - destination)
+            return min(resulting_position.x, width - resulting_position.x) + \
+                   min(resulting_position.y, height - resulting_position.y)
+
+
+        height = (self.map_height // MyConstants.SECTION_SIZE) + 1 ## + 1 TO COUNT LAST ITEM FOR RANGE
+        width = (self.map_width // MyConstants.SECTION_SIZE) + 1
+
+        for r in range(height):
+            for c in range(width):
+                curr_section = (r, c)
+                self.matrix.sectioned.distances[curr_section] = calculate_distance_sections(curr_section, height, width)
 
 
     def populate_myShipyard(self):
@@ -191,26 +270,6 @@ class Matrices(abc.ABC):
                                   constants.INSPIRATION_RADIUS, cummulative=True)
                     populate_area(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                                   MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
-
-
-    def populate_distances(self):
-        """
-        POPULATE MATRIX DISTANCES FROM THE CENTER
-        IF THE MAP IS AN EVEN LENGTH, SUBTRACT 1 SO THAT THE CENTER IS EXACT
-        """
-        if self.map_width % 2 == 0: ## EVEN
-            width = self.map_width - 1
-        else: ## ODD
-            width = self.map_width
-
-        center = width // 2
-        self.matrix.distances.center = center
-        start = Position(center, center)
-
-        for y in range(width):
-            for x in range(width):
-                destination = Position(x, y)
-                self.matrix.distances.matrix[y][x] = self.game_map.calculate_distance(start, destination)
 
 
     def populate_cost(self):
