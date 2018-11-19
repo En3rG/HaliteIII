@@ -44,37 +44,36 @@ while True:
     ## THIS LOOP HANDLES EACH TURN OF THE GAME
     ## REFRESH STATE OF GAME
     game.update_frame()
-    command_queue = []
 
     ## EXTRACT GAME DATA
     data = Data(game, prev_data, halite_stats)
 
     ## RETREAT SHIPS
-    A = Retreat(data, prev_data, command_queue, halite_stats)
+    A = Retreat(data, prev_data)
 
     ## STUCK SHIPS
-    B = Stuck(data, prev_data, command_queue, halite_stats)
+    B = Stuck(data, prev_data)
 
     ## BUILD DOCK
-    C = Build(data, prev_data, command_queue, halite_stats)
+    C = Build(data, prev_data)
 
     ## DEPOSIT SHIPS
-    D = Deposit(data, prev_data, command_queue, halite_stats)
+    D = Deposit(data, prev_data)
 
     ## ATTACK SHIPS
-    E = Attack(data, prev_data, command_queue, halite_stats)
+    E = Attack(data, prev_data)
 
     ## HARVEST SHIPS
-    F = Harvest(data, prev_data, command_queue, halite_stats)
+    F = Harvest(data, prev_data)
 
     ## EXPLORE SHIPS
-    G = Explore(data, prev_data, command_queue, halite_stats)
+    G = Explore(data, prev_data)
 
     ## SPAWN SHIPS
-    H = spawn_ships(data, command_queue, halite_stats)
+    H = spawn_ships(data)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
-    game.end_turn(command_queue)
+    game.end_turn(data.command_queue)
 
     ## SAVE DATA TO PREV DATA
     prev_data = copy.deepcopy(data)

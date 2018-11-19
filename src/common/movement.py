@@ -13,10 +13,9 @@ class Moves(abc.ABC):
     """
     BASE CLASS USED FOR MOVEMENT LIKE RETREAT AND SHIPS
     """
-    def __init__(self, data, prev_data, halite_stats):
+    def __init__(self, data, prev_data):
         self.data = data
         self.prev_data = prev_data
-        self.halite_stats = halite_stats
 
 
     def move_mark_unsafe(self, ship, direction):
@@ -40,12 +39,12 @@ class Moves(abc.ABC):
         move_populate_area(self.data.matrix.potential_ally_collisions,
                            ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
 
-        self.halite_stats.record_data(ship, destination, self.data)
+        self.data.halite_stats.record_data(ship, destination, self.data)
 
         self.data.ships_to_move.remove(ship.id)
 
         logging.debug("Ship id: {} moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
-        self.command_queue.append(ship.move(direction))
+        self.data.command_queue.append(ship.move(direction))
 
 
     def best_direction(self, ship, directions=None, mode=""):

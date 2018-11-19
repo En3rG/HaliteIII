@@ -1,5 +1,4 @@
 from src.common.matrix import Matrices
-from src.common.print import print_matrix
 
 class Start(Matrices):
     def __init__(self, game):
@@ -19,7 +18,7 @@ class Start(Matrices):
         self.populate_sectioned_halite()
         self.populate_sectioned_distances()
 
-        print_matrix("distances (0,0)", self.matrix.sectioned.distances[(0,0)])
+
 
 
 

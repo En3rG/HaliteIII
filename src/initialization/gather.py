@@ -4,6 +4,8 @@ from src.common.print import print_heading, print_matrix
 class Data(Matrices):
     def __init__(self, game, prev_data, halite_stats):
         super().__init__(game)
+        self.halite_stats = halite_stats
+        self.command_queue = []
 
         self.all_ships = set(self.me._ships.keys())         ## ALL SHIPS
         self.ships_to_move = set(self.me._ships.keys())     ## SHIPS TO MOVE
@@ -11,7 +13,7 @@ class Data(Matrices):
         self.ships_harvesting = set()                       ## SHIPS HARVESTING/STILL
         self.ships_retreating = set()                       ## SHIPS RETREATING BEFORE GAME ENDS
 
-        self.count_ships_died(prev_data, halite_stats)      ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
+        self.count_ships_died(prev_data)                    ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
         print_heading("All ships [{} total]: {}".format(len(self.all_ships), self.all_ships))
 
@@ -48,10 +50,10 @@ class Data(Matrices):
         # print_matrix("Potential Ally Collisions", self.matrix.potential_ally_collisions)
 
 
-    def count_ships_died(self, prev_data, halite_stats):
+    def count_ships_died(self, prev_data):
         if prev_data:
             self.ships_died = prev_data.all_ships - self.all_ships
-            halite_stats.record_drop(self.ships_died, prev_data)
+            self.halite_stats.record_drop(self.ships_died, prev_data)
 
 
 

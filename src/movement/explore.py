@@ -5,9 +5,8 @@ from src.common.print import print_heading
 from hlt.positionals import Direction
 
 class Explore(Moves):
-    def __init__(self, data, prev_data, command_queue, halite_stats):
-        super().__init__(data, prev_data, halite_stats)
-        self.command_queue = command_queue
+    def __init__(self, data, prev_data):
+        super().__init__(data, prev_data)
 
         self.move_ships()
 

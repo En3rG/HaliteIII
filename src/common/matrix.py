@@ -218,6 +218,8 @@ class Matrices(abc.ABC):
                 curr_section = (r, c)
                 self.matrix.sectioned.distances[curr_section] = calculate_distance_sections(curr_section, height, width)
 
+                print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
+
 
     def populate_myShipyard(self):
         """

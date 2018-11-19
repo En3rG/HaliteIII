@@ -5,7 +5,7 @@ import logging
 from src.common.print import print_heading
 
 
-def spawn_ships(data, command_queue, halite_stats):
+def spawn_ships(data):
     """
     CHECK IF ITS SAFE TO SPAWN SHIPS
 
@@ -24,5 +24,5 @@ def spawn_ships(data, command_queue, halite_stats):
             # and not data.game_map[data.me.shipyard].is_occupied\ ## NOT ACCURATE? LOOKS AT CURRENT TURN BUT SPAWN HAPPENS NEXT TURN
 
         print_heading("Safe to spawn ship......")
-        halite_stats.record_spent(BuildType.SHIP)
-        command_queue.append(data.me.shipyard.spawn())
+        data.halite_stats.record_spent(BuildType.SHIP)
+        data.command_queue.append(data.me.shipyard.spawn())
