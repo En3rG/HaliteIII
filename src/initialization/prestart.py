@@ -1,6 +1,7 @@
 from src.common.matrix import Matrices
+from src.common.print import print_matrix
 
-class Start(Matrices):
+class Init(Matrices):
     def __init__(self, game):
         super().__init__(game)
         self.update_matrix()
@@ -17,7 +18,11 @@ class Start(Matrices):
 
         self.populate_sectioned_halite()
         self.populate_sectioned_distances()
+        self.populate_average_manhattan()
 
+        print_matrix("halite", self.matrix.halite)
+
+        
 
 
 

@@ -8,6 +8,9 @@ class BuildType():
 
 
 class Ship_stat():
+    """
+    TRACKS HALITE STATS PER SHIP
+    """
     def __init__(self, id):
         self.id = id
         self.halite_amount = 0
@@ -25,8 +28,11 @@ class Ship_stat():
 
 
 class Halite_stats():
+    """
+    TRACKS HALITE STATS OF THE ENTIRE GAME
+    """
     def __init__(self):
-        self.ships_stat = {}   ## EACH SHIP ID WILL HAVE Ship_stat AS ITS VALUE
+        self.ships_stat = {}        ## EACH SHIP ID WILL HAVE Ship_stat AS ITS VALUE
         self.halite_amount = 0
         self.halite_carried = 0
         self.total_gained = 0
@@ -68,7 +74,7 @@ class Halite_stats():
 
         :param ship:
         :param destination:
-        :param data:
+        :param data: DATA THAT IS UPDATED
         :return:
         """
         self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))  ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID

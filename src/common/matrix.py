@@ -27,7 +27,7 @@ class Section():
     GET A SECTION OF THE MATRIX PROVIDED
     GIVEN THE CENTER (POSITION) AND SIZE OF SECTION
     SECTION IS A SQUARE MATRIX
-    ACTUAL SIZE OF SECTION IS ACTUALLY SIZE * 2 + 1
+    ACTUAL SIZE OF SECTION IS ACTUALLY (SIZE * 2 + 1) by (SIZE * 2 + 1)
 
     :param matrix: ORIGINAL MATRIX
     :param position: CENTER OF THE SECTION
@@ -114,6 +114,7 @@ class Matrix():
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.sectioned = Sectioned(map_height, map_width)
+        self.average_manhattan = np.zeros((map_height, map_width), dtype=np.float16)
 
 
 class Matrices(abc.ABC):
@@ -129,8 +130,11 @@ class Matrices(abc.ABC):
         self.matrix = Matrix(self.map_height, self.map_width)
 
 
-    @abc.abstractmethod                 ## MUST BE DEFINED BY CHILD CLASS
+    @abc.abstractmethod  ## MUST BE DEFINED BY CHILD CLASS
     def update_matrix(self):
+        """
+        WILL CONTAIN WHICH MATRICES NEED TO BE UPDATED
+        """
         pass
 
 
@@ -161,66 +165,6 @@ class Matrices(abc.ABC):
         print_matrix("sectioned halite", self.matrix.sectioned.halite)
 
 
-    def populate_sectioned_distances(self):
-        """
-        POPULATE DISTANCES OF OF EACH SECTIONS TO ONE ANOTHER
-
-        table[curr_section][target_section] = distance
-
-        :return:
-        """
-        def calculate_distance_sections(curr_section, height, width):
-            """
-            GENERATES A TABLE WITH ACTUAL DISTANCES BETWEEN SECTIONS
-            """
-            ## USING NUMPY (VECTORIZED), MUCH FASTER
-
-            ## CANT USE THIS, CALCULATES DISTANCE FROM POINT TO POINT (ALLOWS DIAGONAL MOVEMENT)
-            # matrix = np.zeros((height, width), dtype=np.float16)
-            # indexes = [(y, x) for y, row in enumerate(matrix) for x, val in enumerate(row)]
-            # to_points = np.array(indexes)
-            # start_point = np.array([curr_section[0], curr_section[1]])
-            # distances = np.linalg.norm(to_points - start_point, ord=2, axis=1.)
-            #
-            # return distances.reshape((height, width))
-
-            start = Position(curr_section[1], curr_section[0])  ## REMEMBER Position(x, y)
-            distance_matrix = np.zeros((height, width), dtype=np.int16)
-
-            for y in range(height):
-                for x in range(width):
-                    destination = Position(x, y)
-                    distance_matrix[y][x] = calculate_distance(start, destination, height, width)
-
-            return distance_matrix
-
-
-        def calculate_distance(start, destination, height, width):
-            """
-            UPDATED FROM hlt.game_map.calculate distance
-
-            Compute the Manhattan distance between two locations.
-            Accounts for wrap-around.
-            :param source: The source from where to calculate
-            :param target: The target to where calculate
-            :return: The distance between these items
-            """
-            resulting_position = abs(start - destination)
-            return min(resulting_position.x, width - resulting_position.x) + \
-                   min(resulting_position.y, height - resulting_position.y)
-
-
-        height = (self.map_height // MyConstants.SECTION_SIZE) + 1 ## + 1 TO COUNT LAST ITEM FOR RANGE
-        width = (self.map_width // MyConstants.SECTION_SIZE) + 1
-
-        for r in range(height):
-            for c in range(width):
-                curr_section = (r, c)
-                self.matrix.sectioned.distances[curr_section] = calculate_distance_sections(curr_section, height, width)
-
-                print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
-
-
     def populate_myShipyard(self):
         """
         POPULATE MATRIX WITH ALLY_SHIPYARD.value WHERE MY SHIPYARD IS LOCATED
@@ -246,7 +190,7 @@ class Matrices(abc.ABC):
         for ship in self.me.get_ships():
             self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
             self.matrix.myShipsID[ship.position.y][ship.position.x] = ship.id
-            populate_area(self.matrix.potential_ally_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
+            populate_manhattan(self.matrix.potential_ally_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                           MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
@@ -268,9 +212,9 @@ class Matrices(abc.ABC):
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_area(self.matrix.influenced, Matrix_val.OCCUPIED, ship.position,
+                    populate_manhattan(self.matrix.influenced, Matrix_val.OCCUPIED, ship.position,
                                   constants.INSPIRATION_RADIUS, cummulative=True)
-                    populate_area(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
+                    populate_manhattan(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                                   MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
 
@@ -297,6 +241,77 @@ class Matrices(abc.ABC):
         MARK POSITION PROVIDED WITH UNSAFE
         """
         self.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
+
+
+    def populate_sectioned_distances(self):
+        """
+        POPULATE DISTANCES OF EACH SECTIONS TO ONE ANOTHER
+
+        self.matrix.sectioned.distances[curr_section][y][x] = distance
+
+        :return:
+        """
+
+        def calculate_distance_sections(curr_section, height, width):
+            """
+            GENERATES A TABLE WITH ACTUAL DISTANCES BETWEEN SECTIONS
+            """
+            ## USING NUMPY (VECTORIZED), MUCH FASTER
+
+            ## CANT USE THIS, CALCULATES DISTANCE FROM POINT TO POINT (ALLOWS DIAGONAL MOVEMENT)
+            # matrix = np.zeros((height, width), dtype=np.float16)
+            # indexes = [(y, x) for y, row in enumerate(matrix) for x, val in enumerate(row)]
+            # to_points = np.array(indexes)
+            # start_point = np.array([curr_section[0], curr_section[1]])
+            # distances = np.linalg.norm(to_points - start_point, ord=2, axis=1.)
+            #
+            # return distances.reshape((height, width))
+
+            start = Position(curr_section[1], curr_section[0])  ## REMEMBER Position(x, y)
+            distance_matrix = np.zeros((height, width), dtype=np.int16)
+
+            for y in range(height):
+                for x in range(width):
+                    destination = Position(x, y)
+                    distance_matrix[y][x] = calculate_distance(start, destination, height, width)
+
+            return distance_matrix
+
+        def calculate_distance(start, destination, height, width):
+            """
+            UPDATED FROM hlt.game_map.calculate distance
+
+            Compute the Manhattan distance between two locations.
+            Accounts for wrap-around.
+            :param source: The source from where to calculate
+            :param target: The target to where calculate
+            :return: The distance between these items
+            """
+            resulting_position = abs(start - destination)
+            return min(resulting_position.x, width - resulting_position.x) + \
+                   min(resulting_position.y, height - resulting_position.y)
+
+        height = (self.map_height // MyConstants.SECTION_SIZE) + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
+        width = (self.map_width // MyConstants.SECTION_SIZE) + 1
+
+        for r in range(height):
+            for c in range(width):
+                curr_section = (r, c)
+                self.matrix.sectioned.distances[curr_section] = calculate_distance_sections(curr_section, height, width)
+
+                #print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
+
+
+    def populate_average_manhattan(self):
+        """
+        POPULATE THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
+        """
+        for r in range(self.map_height):
+            for c in range(self.map_width):
+                loc = Position(c, r) ## Position(x, y)
+                self.matrix.average_manhattan[r][c] = get_average_manhattan(self.matrix.halite, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+
+        print_matrix("Average manhattan", self.matrix.average_manhattan)
 
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):
@@ -333,7 +348,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
         return None, None, None
 
 
-def populate_area(matrix, val, loc, dist, cummulative=False):
+def populate_manhattan(matrix, val, loc, dist, cummulative=False):
     """
     POPULATE AREA IN MATRIX PROVIDED (BASED ON DISTANCE FROM ORIGIN OR LOC)
 
@@ -357,12 +372,14 @@ def populate_area(matrix, val, loc, dist, cummulative=False):
                 matrix[y_, x_] = val
 
 
-def move_populate_area(matrix, old_loc, new_loc, dist):
+def move_populate_manhattan(matrix, old_loc, new_loc, dist):
     """
     MOVE POPULATE AREA IN MATRIX PROVIDED FROM OLD LOC TO NEW LOC
 
     LOOPS THROUGH EACH OF THE LOCATION ONE BY ONE (BASED ON DISTANCE)
     NO EXTRA LOCATION IS PART OF THE LOOP
+
+    ONLY MOVES VALUE '1', UNLIKE populate_manhattan, CAN TAKE ANY VAL
 
     :param matrix: MATRIX TO BE POPULATED
     :param old_loc: OLD LOCATION TO BE DEPOPULATED
@@ -388,6 +405,30 @@ def move_populate_area(matrix, old_loc, new_loc, dist):
             x_ = (x + new_loc.x) % size
 
             matrix[y_, x_] += 1 ## ADD VALUE
+
+
+def get_average_manhattan(matrix, loc, dist):
+    """
+    GET AVERAGE OF AREA IN THE MATRIX WITH CENTER LOCATION AND DISTANCE GIVEN
+
+    :param matrix:
+    :param loc: CENTER
+    :param dist: DISTANCE AWAY FROM THE CENTER
+    :return:
+    """
+    sum = 0
+    num = 0
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + loc.y) % size
+            x_ = (x + loc.x) % size
+
+            sum += matrix[y_, x_]
+            num += 1
+
+    return sum/num
+
 
 
 def get_index_highest_val(matrix):

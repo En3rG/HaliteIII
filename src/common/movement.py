@@ -5,7 +5,7 @@ from hlt.positionals import Direction
 import abc
 import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
-from src.common.matrix import move_populate_area, Section, get_index_highest_val
+from src.common.matrix import move_populate_manhattan, Section, get_index_highest_val
 from src.common.points import HarvestPoints
 
 
@@ -36,7 +36,7 @@ class Moves(abc.ABC):
         destination = self.get_destination(ship, direction)
         self.data.mark_unsafe(destination)
 
-        move_populate_area(self.data.matrix.potential_ally_collisions,
+        move_populate_manhattan(self.data.matrix.potential_ally_collisions,
                            ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
 
         self.data.halite_stats.record_data(ship, destination, self.data)
@@ -206,6 +206,7 @@ class Moves(abc.ABC):
 
         c = HarvestPoints(safe, potential_collision, harvest, direction)
         points.append(c)
+
 
     def get_harvest(self, ship, direction, leave_cost=None, harvest_stay=None):
         """

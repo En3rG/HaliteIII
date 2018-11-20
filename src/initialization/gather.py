@@ -35,21 +35,6 @@ class Data(Matrices):
         self.populate_sectioned_halite()
 
 
-        # print_matrix("", self.matrix.halite)
-        # print_matrix("", self.matrix.myShipyard)
-        # print_matrix("", self.matrix.enemyShipyard)
-        # print_matrix("", self.matrix.myShips)
-        # print_matrix("", self.matrix.myShipsID)
-        # print_matrix("", self.matrix.enemyShips)
-        # print_matrix("", self.matrix.cost)
-        # print_matrix("", self.matrix.harvest)
-        # print_matrix("", self.matrix.distances)
-        # print_matrix("Influenced", self.matrix.influenced)
-        # print_matrix("safe", self.matrix.safe)
-        # print_matrix("Potential Enemy Collisions", self.matrix.potential_enemy_collisions)
-        # print_matrix("Potential Ally Collisions", self.matrix.potential_ally_collisions)
-
-
     def count_ships_died(self, prev_data):
         if prev_data:
             self.ships_died = prev_data.all_ships - self.all_ships

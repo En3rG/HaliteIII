@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 ## Python 3.6
 
-from src.initialization.start import Start
+from src.initialization.prestart import Init
 from src.initialization.gather import Data
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
@@ -28,7 +28,7 @@ game = hlt.Game()
 
 ## AT THIS POINT GAME VARIABLE IS POPULATED WITH INITIAL MAP DATA
 ## THIS IS A GOOD PLACE TO DO COMPUTATIONALLY EXPENSIVE START-UP PRE-PROCESING (30 secs)
-ST = Start(game)
+INIT_DATA = Init(game)
 
 ## AS SOON AS YOU CALL "ready" FUNCTION BELOW, THE 2 SECOND PER TURN TIMER WILL START.,
 game.ready("En3rG")
