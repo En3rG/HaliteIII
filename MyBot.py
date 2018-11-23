@@ -38,6 +38,14 @@ logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 
 """ <<<Game Loop>>> """
 
+
+class PrevData():
+    def __init__(self, data):
+        self.me = data.me
+        self.all_ships = data.all_ships
+        self.ships_returning = data.ships_returning
+
+
 prev_data = None
 halite_stats = Halite_stats()
 
@@ -80,7 +88,8 @@ while True:
     game.end_turn(data.command_queue)
 
     ## SAVE DATA TO PREV DATA
-    prev_data = copy.deepcopy(data)
+    #prev_data = copy.deepcopy(data)  ## TAKES 300ms, AND COPYING A LOT OF UNNECESSARY STUFF
+    prev_data = copy.deepcopy(PrevData(data))
 
     ## UPDATE HALITE AMOUNT/CARRIED
     halite_stats.set_halite(game.me.halite_amount)
