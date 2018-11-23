@@ -45,6 +45,7 @@ class Halite_stats():
     def set_halite(self, halite_amount):
         self.halite_amount = halite_amount
 
+        ## GET TOTAL CARRIED HALITE BY ALL SHIPS
         total_carry = 0
         for k, ship_stat in self.ships_stat.items():
             total_carry += ship_stat.halite_amount
@@ -87,7 +88,7 @@ class Halite_stats():
             self.total_gained += harvest_val
 
             ## CALCULATE BONUS HALITE
-            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.OCCUPIED:
+            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.ONE:
                 bonus_val = harvest_val * 2
 
                 self.ships_stat[ship.id].halite_bonus += bonus_val

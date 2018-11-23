@@ -1,7 +1,7 @@
 import numpy as np
 import logging
 from hlt.positionals import Position
-from src.common.values import MyConstants, Matrix_val
+from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.print import print_matrix
 import abc
@@ -108,8 +108,10 @@ class Matrix():
         self.cost = None
         self.harvest = None
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
+        self.stuck = np.zeros((map_height, map_width), dtype=np.int16)
         self.safe = np.zeros((map_height, map_width), dtype=np.int16)
         self.safe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
+        self.occupied = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
@@ -117,7 +119,7 @@ class Matrix():
         self.average_manhattan = np.zeros((map_height, map_width), dtype=np.float16)
 
 
-class Matrices(abc.ABC):
+class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
         self.me = game.me               ## MY PLAYER OBJECT
@@ -146,31 +148,12 @@ class Matrices(abc.ABC):
         self.matrix.halite = np.array(halites, dtype=np.int16)
 
 
-    def populate_sectioned_halite(self):
-        """
-        POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
-
-        RECORD AVERAGE OF EACH SECTION
-        """
-        for y, row in enumerate(self.matrix.sectioned.halite):
-            for x, col in enumerate(row):
-                section = self.matrix.halite[y*MyConstants.SECTION_SIZE:y*MyConstants.SECTION_SIZE+MyConstants.SECTION_SIZE,
-                                             x*MyConstants.SECTION_SIZE:x*MyConstants.SECTION_SIZE+MyConstants.SECTION_SIZE]
-                sum = section.sum()
-                average_halite = sum // (MyConstants.SECTION_SIZE*2)
-
-                self.matrix.sectioned.halite[y][x] = average_halite
-
-
-        print_matrix("sectioned halite", self.matrix.sectioned.halite)
-
-
     def populate_myShipyard(self):
         """
         POPULATE MATRIX WITH ALLY_SHIPYARD.value WHERE MY SHIPYARD IS LOCATED
         """
         myShipyard_position = self.me.shipyard.position
-        self.matrix.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.OCCUPIED
+        self.matrix.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
 
     def populate_enemyShipyard(self):
@@ -180,7 +163,7 @@ class Matrices(abc.ABC):
         for id, player in self.players.items():
             if id != self.my_id:
                 enemyShipyard_position = player.shipyard.position
-                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.OCCUPIED
+                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
 
 
     def populate_myShips(self):
@@ -188,11 +171,17 @@ class Matrices(abc.ABC):
         POPULATE MATRIX WITH ALLY_SHIP.value WHERE MY SHIPS ARE LOCATED
         """
         for ship in self.me.get_ships():
-            self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
+            self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
             self.matrix.myShipsID[ship.position.y][ship.position.x] = ship.id
+            self.matrix.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
             populate_manhattan(self.matrix.potential_ally_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                           MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
 
+            if self.matrix.cost[ship.position.y][ship.position.x] > ship.halite_amount:
+                self.matrix.stuck[ship.position.y][ship.position.x] = Matrix_val.ONE
+
+
+        print_matrix("Occupied", self.matrix.occupied)
 
     def populate_enemyShips_influenced(self):
         """
@@ -203,7 +192,7 @@ class Matrices(abc.ABC):
         for id, player in self.players.items():
             if id != self.my_id:
                 for ship in player.get_ships():
-                    self.matrix.enemyShips[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
+                    self.matrix.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.matrix.influenced = fill_circle(self.matrix.influenced,
@@ -212,7 +201,7 @@ class Matrices(abc.ABC):
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_manhattan(self.matrix.influenced, Matrix_val.OCCUPIED, ship.position,
+                    populate_manhattan(self.matrix.influenced, Matrix_val.ONE, ship.position,
                                   constants.INSPIRATION_RADIUS, cummulative=True)
                     populate_manhattan(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
                                   MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
@@ -236,11 +225,23 @@ class Matrices(abc.ABC):
         self.matrix.harvest = myRound(harvest)
 
 
-    def mark_unsafe(self, position):
+    def populate_sectioned_halite(self):
         """
-        MARK POSITION PROVIDED WITH UNSAFE
+        POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
+
+        RECORD AVERAGE OF EACH SECTION
         """
-        self.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
+        for y, row in enumerate(self.matrix.sectioned.halite):
+            for x, col in enumerate(row):
+                section = self.matrix.halite[
+                          y * MyConstants.SECTION_SIZE:y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE,
+                          x * MyConstants.SECTION_SIZE:x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE]
+                sum = section.sum()
+                average_halite = sum // (MyConstants.SECTION_SIZE * 2)
+
+                self.matrix.sectioned.halite[y][x] = average_halite
+
+        print_matrix("sectioned halite", self.matrix.sectioned.halite)
 
 
     def populate_sectioned_distances(self):
@@ -312,6 +313,29 @@ class Matrices(abc.ABC):
                 self.matrix.average_manhattan[r][c] = get_average_manhattan(self.matrix.halite, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
         print_matrix("Average manhattan", self.matrix.average_manhattan)
+
+
+def get_values_matrix(seek_value, matrix, condition):
+    """
+    GET SPECIFIC VALUES IN MATRIX PROVIDED, GIVEN INEQUALITY CONDITION
+
+    :param seek_value:
+    :param matrix:
+    :param condition:
+    :return: LIST OF VALUES
+    """
+
+    if condition == Inequality.EQUAL:
+        r, c = np.where(matrix == seek_value)
+    elif condition == Inequality.GREATERTHAN:
+        r, c = np.where(matrix > seek_value)
+    elif condition == Inequality.LESSTHAN:
+        r, c = np.where(matrix < seek_value)
+    else:
+        raise NotImplemented
+
+    ## EXTRACT CORRESPONDING VALUES
+    return matrix[r, c]
 
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):
@@ -430,12 +454,37 @@ def get_average_manhattan(matrix, loc, dist):
     return sum/num
 
 
+def get_position_highest_section(data):
+    """
+    GET POSITION OF HIGHEST SECTION
+
+    :param data:
+    :return: POSITION
+    """
+    section_coord = get_index_highest_val(data.matrix.sectioned.halite)
+    destination = convert_section_coord(section_coord)
+
+    return destination
 
 def get_index_highest_val(matrix):
     """
     GET INDEX OF HIGHEST VALUE IN MATRIX
 
     :param matrix:
-    :return: INDEX OF HIGHEST VALUE
+    :return: TUPLE (INDEX OF HIGHEST VALUE)
     """
     return np.unravel_index(np.argmax(matrix, axis=None), matrix.shape)
+
+
+def convert_section_coord(section_coord):
+    """
+    CONVERT SECTION COORD TO POSITION IN GAME MAP
+
+    :param section_coord: TUPLE
+    :return: POSITION ON GAME MAP
+    """
+    section_y, section_x = section_coord[0], section_coord[1]
+    x = section_x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
+    y = section_y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
+
+    return Position(x, y)

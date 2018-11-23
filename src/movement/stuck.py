@@ -1,7 +1,9 @@
 import logging
 from hlt.positionals import Direction
-from src.common.movement import Moves
-from src.common.print import print_heading
+from src.common.moves import Moves
+from src.common.print import print_heading, print_matrix
+from src.common.matrix import get_values_matrix
+from src.common.values import Inequality
 
 
 class Stuck(Moves):
@@ -13,6 +15,20 @@ class Stuck(Moves):
     def move_ships(self):
         print_heading("Moving stuck ships......")
 
+        # ## USING STUCK MATRIX
+        # matrix = self.data.matrix.stuck * self.data.matrix.myShipsID
+        # ship_ids = get_values_matrix(0, matrix, Inequality.GREATERTHAN)
+        #
+        # for ship_id in ship_ids:
+        #     ship = self.data.me._ships.get(ship_id)
+        #
+        #     logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
+        #     direction = Direction.Still
+        #
+        #     self.move_mark_unsafe(ship, direction)
+
+        ## THIS MIGHT BE FASTER THAN ABOVE, SINCE LOOPING THROUGH <300 SHIPS COULD BE FASTER THAN
+        ## PERFORMING MATRIX MULTIPLICATION AND LOOKING FOR THE VALUES IN A 64x64 MATRIX
         ## MOVE SHIPS THAT CANNOT MOVE YET
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
@@ -22,3 +38,5 @@ class Stuck(Moves):
                 direction = Direction.Still
 
                 self.move_mark_unsafe(ship, direction)
+
+

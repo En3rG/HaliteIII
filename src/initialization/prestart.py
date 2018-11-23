@@ -1,7 +1,7 @@
-from src.common.matrix import Matrices
+from src.common.matrix import Data
 from src.common.print import print_matrix
 
-class Init(Matrices):
+class Init(Data):
     def __init__(self, game):
         super().__init__(game)
         self.update_matrix()
@@ -22,7 +22,7 @@ class Init(Matrices):
 
         print_matrix("halite", self.matrix.halite)
 
-        
+
 
 
 

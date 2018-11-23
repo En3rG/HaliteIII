@@ -56,10 +56,11 @@ class RetreatPoints():
 
     shipyard > not occupied > least potential ally collisions
     """
-    def __init__(self, shipyard, safe, potential_collision, direction):
+    def __init__(self, shipyard, safe, stuck, potential_ally_collision, direction):
         self.shipyard = shipyard
         self.safe = safe
-        self.potential_collision = potential_collision
+        self.stuck = -stuck
+        self.potential_ally_collision = potential_ally_collision
         self.direction = direction
 
     def __gt__(self, other):
@@ -72,9 +73,13 @@ class RetreatPoints():
                 return True
             elif self.safe < other.safe:
                 return False
-            elif self.potential_collision > other.potential_collision:
+            elif self.stuck > other.stuck:
                 return True
-            elif self.potential_collision < other.potential_collision:
+            elif self.stuck < other.stuck:
+                return False
+            elif self.potential_ally_collision > other.potential_ally_collision:
+                return True
+            elif self.potential_ally_collision < other.potential_ally_collision:
                 return False
             else:
                 return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
@@ -91,14 +96,27 @@ class RetreatPoints():
                 return True
             elif self.safe > other.safe:
                 return False
-            elif self.potential_collision < other.potential_collision:
+            elif self.stuck < other.stuck:
                 return True
-            elif self.potential_collision > other.potential_collision:
+            elif self.stuck > other.stuck:
+                return False
+            elif self.potential_ally_collision < other.potential_ally_collision:
+                return True
+            elif self.potential_ally_collision > other.potential_ally_collision:
                 return False
             else:
                 return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
 
         return NotImplemented
+
+    def __repr__(self):
+        return "{} shipyard: {} safe: {} stuck: {} potential_ally_collision: {} direction: {}".format(self.__class__.__name__,
+                                                                                           self.shipyard,
+                                                                                           self.safe,
+                                                                                           self.stuck,
+                                                                                           self.potential_ally_collision,
+                                                                                           self.direction)
+
 
 
 class DepositPoints():
@@ -107,9 +125,11 @@ class DepositPoints():
 
     not occupied > cost
     """
-    def __init__(self, safe, cost, direction):
+    def __init__(self, safe, potential_enemy_collision, potential_ally_collision, cost, direction):
         self.safe = safe
-        self.cost = cost
+        self.potential_enemy_collision = potential_enemy_collision
+        self.potential_ally_collision = potential_ally_collision
+        self.cost = -cost  ## NEGATIVE BECAUSE WE WANT THE LEAST COST
         self.direction = direction
 
     def __gt__(self, other):
@@ -117,6 +137,14 @@ class DepositPoints():
             if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return False
+            elif self.potential_ally_collision > other.potential_ally_collision:
+                return True
+            elif self.potential_ally_collision < other.potential_ally_collision:
                 return False
             elif self.cost > other.cost:
                 return True
@@ -133,6 +161,14 @@ class DepositPoints():
                 return True
             elif self.safe > other.safe:
                 return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return False
+            elif self.potential_ally_collision < other.potential_ally_collision:
+                return True
+            elif self.potential_ally_collision > other.potential_ally_collision:
+                return False
             elif self.cost < other.cost:
                 return True
             elif self.cost > other.cost:
@@ -141,6 +177,15 @@ class DepositPoints():
                 return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
 
         return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(self.__class__.__name__,
+                                                                                           self.safe,
+                                                                                           self.potential_enemy_collision,
+                                                                                           self.potential_ally_collision,
+                                                                                           self.cost,
+                                                                                           self.direction)
+
 
 
 class HarvestPoints():
@@ -151,9 +196,10 @@ class HarvestPoints():
     HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
 
     """
-    def __init__(self, safe, potential_collision, harvest, direction):
+    def __init__(self, safe, occupied, potential_enemy_collision, harvest, direction):
         self.safe = safe
-        self.potential_collision = potential_collision
+        self.occupied = occupied
+        self.potential_enemy_collision = potential_enemy_collision
         self.harvest = harvest
         self.direction = direction
 
@@ -163,9 +209,13 @@ class HarvestPoints():
                 return True
             elif self.safe < other.safe:
                 return False
-            elif self.potential_collision > other.potential_collision:
+            elif self.occupied > other.occupied:
                 return True
-            elif self.potential_collision < other.potential_collision:
+            elif self.occupied < other.occupied:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return False
             elif self.harvest > other.harvest:
                 return True
@@ -182,9 +232,13 @@ class HarvestPoints():
                 return True
             elif self.safe > other.safe:
                 return False
-            elif self.potential_collision < other.potential_collision:
+            elif self.occupied < other.occupied:
                 return True
-            elif self.potential_collision > other.potential_collision:
+            elif self.occupied > other.occupied:
+                return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
                 return False
             elif self.harvest < other.harvest:
                 return True
@@ -196,8 +250,76 @@ class HarvestPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} potential_collision: {} harvest: {} direction: {}".format(self.__class__.__name__,
-                                                                                     self.safe,
-                                                                                     self.potential_collision,
-                                                                                     self.harvest,
-                                                                                     self.direction)
+        return "{} safe: {} occupied: {} potential_collision: {} harvest: {} direction: {}".format(self.__class__.__name__,
+                                                                                                   self.safe,
+                                                                                                   self.occupied,
+                                                                                                   self.potential_enemy_collision,
+                                                                                                   self.harvest,
+                                                                                                   self.direction)
+
+
+class ExplorePoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR EXPLORING
+    """
+    def __init__(self, safe, occupied, potential_enemy_collision, cost, direction):
+        self.safe = safe
+        self.occupied = occupied
+        self.potential_enemy_collision = potential_enemy_collision
+        self.cost = -cost
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, ExplorePoints):
+            if self.safe > other.safe:
+                return True
+            elif self.safe < other.safe:
+                return False
+            elif self.occupied > other.occupied:
+                return True
+            elif self.occupied < other.occupied:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return False
+            elif self.cost > other.cost:
+                return True
+            elif self.cost < other.cost:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, ExplorePoints):
+            if self.safe < other.safe:
+                return True
+            elif self.safe > other.safe:
+                return False
+            elif self.occupied < other.occupied:
+                return True
+            elif self.occupied > other.occupied:
+                return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return False
+            elif self.cost < other.cost:
+                return True
+            elif self.cost > other.cost:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} occupied: {} potential_collision: {} cost: {} direction: {}".format(
+            self.__class__.__name__,
+            self.safe,
+            self.occupied,
+            self.potential_enemy_collision,
+            self.cost,
+            self.direction)

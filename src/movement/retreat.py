@@ -1,8 +1,8 @@
 import logging
 import heapq
 from hlt import constants
-from src.common.movement import Moves
-from src.common.values import MoveMode
+from src.common.moves import Moves
+from src.common.values import MoveMode, MyConstants
 from src.common.points import FarthestShip, RetreatPoints
 from hlt.positionals import Direction
 from src.common.print import print_heading
@@ -29,7 +29,7 @@ class Retreat(Moves):
         print_heading("Check retreat......")
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turn_left))
 
-        if self.farthest_ship.distance + 1 > self.turn_left:
+        if self.farthest_ship.distance + MyConstants.EXTRA_TURNS_RETREAT > self.turn_left:
             self.retreat_ships()
 
 
@@ -74,21 +74,20 @@ class Retreat(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [RetreatPoints(shipyard=0, safe=1, potential_collision=-999, direction=Direction.Still)]
+        points = [ RetreatPoints(shipyard=0, safe=1, stuck=0, potential_ally_collision=-999, direction=Direction.Still) ]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
             shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
             safe = self.data.matrix.safe[destination.y][destination.x]
-            potential_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
+            potential_ally_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
+            stuck = self.data.matrix.stuck[ship.position.y][ship.position.x] ## STUCK BASED ON SHIPS CURRENT POSITION
 
-            logging.debug("shipyard: {} safe: {} potential_collision: {} direction: {}".format(shipyard,
-                                                                                                 safe,
-                                                                                                 potential_collision,
-                                                                                                 direction))
-            c = RetreatPoints(shipyard, safe, potential_collision, direction)
+            c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)
+
+        logging.debug(points)
 
         return points
 

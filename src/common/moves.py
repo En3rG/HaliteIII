@@ -7,6 +7,7 @@ import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.matrix import move_populate_manhattan, Section, get_index_highest_val
 from src.common.points import HarvestPoints
+from src.common.print import print_matrix
 
 
 class Moves(abc.ABC):
@@ -22,29 +23,88 @@ class Moves(abc.ABC):
         """
         GIVEN THE SHIP AND DIRECTION,
         POPULATE SAFE MATRIX, TAKING WRAPPING INTO ACCOUNT
-
+        MOVE OCCUPIED TO DESTINATION
         UPDATE POTENTIAL ALLY COLLISION MATRIX (MOVE AREA TO DIRECTION)
-
-        APPEND MOVE TO COMMAND QUEUE
-
+        RECORD HALITE STAT
         REMOVE SHIP ID TO SHIP TO MOVE
+        APPEND MOVE TO COMMAND QUEUE
+        CHECK IF ANY SHIPS ARE BEING KICKED OUT
+        REMOVE CURRENT SHIP FROM KICKED SHIPS (IF APPLICABLE)
 
         :param ship: SHIP OBJECT
         :param direction: MOVE DIRECTION
-        :return:
+        :return: NONE
         """
         destination = self.get_destination(ship, direction)
-        self.data.mark_unsafe(destination)
 
-        move_populate_manhattan(self.data.matrix.potential_ally_collisions,
-                           ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
+        self.mark_unsafe(destination)
+
+        self.move_occupied(ship, direction)
+
+        move_populate_manhattan(self.data.matrix.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
         self.data.ships_to_move.remove(ship.id)
 
-        logging.debug("Ship id: {} moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
+        self.check_kicked(ship, direction)
+
+        self.remove_kicked(ship)
+
         self.data.command_queue.append(ship.move(direction))
+        logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
+
+
+    def check_kicked(self, ship, direction):
+        """
+        CHECK IF THE SHIP WITH DIRECTION GIVEN WILL TAKE A SPOT WHERE ANOTHER SHIP IS ALREADY RESIDING
+        THE OTHER SHIP MAY OR MAY NOT HAVE MOVE YET
+
+        :param ship:
+        :param direction:
+        :return:
+        """
+        destination = self.get_destination(ship, direction)
+        occupied = self.data.matrix.occupied[destination.y][destination.x]
+        if occupied < -1:
+            shipID_kicked = self.data.matrix.myShipsID[destination.y][destination.x]
+
+            if shipID_kicked in self.data.ships_to_move:
+                logging.debug("ship id {} added to ships kicked, by ship {}".format(shipID_kicked, ship.id))
+                self.data.ships_kicked.add(shipID_kicked)
+            else:
+                logging.debug("ship id {} will not be added to ships kicked (moved already), by ship {}".format(shipID_kicked, ship.id))
+
+
+    def remove_kicked(self, ship):
+        """
+        REMOVE SHIP ID FROM ships_kicked
+
+        :param ship: SHIP OBJECT
+        :return: NONE
+        """
+        if ship.id in self.data.ships_kicked:
+            self.data.ships_kicked.remove(ship.id)
+
+
+    def mark_unsafe(self, position):
+        """
+        MARK POSITION PROVIDED WITH UNSAFE
+        """
+        self.data.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
+
+
+    def move_occupied(self, ship, direction):
+        """
+        MOVE OCCUPIED POSITION TOWARDS DIRECTION
+
+        :param ship:
+        :param direction:
+        :return:
+        """
+        self.data.matrix.occupied[ship.position.y][ship.position.x] += Matrix_val.ONE
+        destination = self.get_destination(ship, direction)
+        self.data.matrix.occupied[destination.y][destination.x] += Matrix_val.OCCUPIED
 
 
     def best_direction(self, ship, directions=None, mode=""):
@@ -66,7 +126,7 @@ class Moves(abc.ABC):
         elif mode == MoveMode.HARVEST:
             points = self.get_points_harvest(ship)
         elif mode == MoveMode.EXPLORE:
-            points = self.get_points_explore(ship)
+            points = self.get_points_explore(ship, directions)
         else:
             raise NotImplemented
 
@@ -77,12 +137,16 @@ class Moves(abc.ABC):
 
         logging.debug("best direction: {}".format(best.direction))
 
+        if best.safe == -1 and mode != MoveMode.RETREAT:
+            logging.debug("Avoiding collision for ship {}!!!!!!! ships kicked: {}".format(ship.id, self.data.ships_kicked))
+            return self.get_highest_harvest_move(ship)
+
         return best.direction
 
 
     def get_directions_target(self, ship, destination):
         """
-        GET DIRECTION TOWARDS TARGET, TAKE WRAPPING INTO ACCOUNT
+        GET DIRECTIONS TOWARDS TARGET, TAKE WRAPPING INTO ACCOUNT
 
         :param ship:
         :param destination:
@@ -192,42 +256,7 @@ class Moves(abc.ABC):
             return Direction.Still
 
 
-    def get_points(self, ship, direction, harvest, points):
-        """
-        GATHER POINTS WITH DIRECTION PROVIDED
 
-        :param direction:
-        :param harvest:
-        :return:
-        """
-        destination = self.get_destination(ship, direction)
-        safe = self.data.matrix.safe[destination.y][destination.x]
-        potential_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
-
-        c = HarvestPoints(safe, potential_collision, harvest, direction)
-        points.append(c)
-
-
-    def get_harvest(self, ship, direction, leave_cost=None, harvest_stay=None):
-        """
-        HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
-
-        :return:
-        """
-        destination = self.get_destination(ship, direction)
-        harvest = self.data.matrix.harvest[destination.y][destination.x]
-        cost = self.data.matrix.cost[destination.y][destination.x]
-        influenced = True if self.data.matrix.influenced[destination.y][
-                                 destination.x] >= MyConstants.INFLUENCED else False
-        bonus = 0 if influenced else (harvest * 2)
-
-        if direction == Direction.Still:
-            harvest = harvest + bonus
-        else:
-            twoTurn_harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
-            harvest = harvest + bonus - leave_cost - twoTurn_harvest
-
-        return cost, harvest
 
 
 

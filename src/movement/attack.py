@@ -1,5 +1,5 @@
 from src.common.print import print_heading
-from src.common.movement import Moves
+from src.common.moves import Moves
 
 
 class Attack(Moves):

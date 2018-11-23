@@ -19,10 +19,12 @@
     * Harvesting
         * Immediate Movement (next neighbor)
         * Further goal when immediate movement is relatively low
+        * When a lot of ships are together, one might move first to a spot where a ship exists, but that ship later cannot move anywhere (stuck) will cause collision!!!!
     * Inspired Harvesting
     * Returning
         * Ships that are full should have priority?
         * Currently still colliding when 3 returning to home, 1 going to shipyard, but 3 move first to 2s position, then 2 cannot move thus stays and collide with 3
+        * Should harvest if cell has too much halite and can carry some more
     * Building (create dock)
     * Attacking (get enemy with high halite)
         * Attacker

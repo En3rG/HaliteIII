@@ -1,6 +1,6 @@
 import logging
 import heapq
-from src.common.movement import Moves
+from src.common.moves import Moves
 from src.common.points import FarthestShip, DepositPoints
 from src.common.values import MoveMode
 from hlt.positionals import Direction
@@ -11,7 +11,7 @@ class Deposit(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
         self.heap_dist = []
-        self.heap_set = set()
+        self.heap_set = set() ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
 
         self.move_ships()
 
@@ -33,7 +33,7 @@ class Deposit(Moves):
                 if ship and ship.position != self.data.me.shipyard.position:
                     self.populate_heap(ship)
 
-        ## MOVE SHIPS RETURNING (JUST HIT MAX AND PREVIOUSLY RETURNING)
+        ## MOVE SHIPS
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
             ship = self.data.me._ships.get(s.ship_id)
@@ -59,6 +59,9 @@ class Deposit(Moves):
 
 
     def returning(self, ship, directions):
+        """
+        SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
+        """
         logging.debug("Ship id: {} is returning".format(ship.id))
         direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
         self.move_mark_unsafe(ship, direction)
@@ -74,16 +77,24 @@ class Deposit(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [ DepositPoints(safe=1, cost=-999, direction=Direction.Still) ]
+        potential_enemy_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_ally_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
+        points = [ DepositPoints(safe=1,
+                                 potential_enemy_collision=potential_enemy_collision,
+                                 potential_ally_collision=potential_ally_collision,
+                                 cost=999,
+                                 direction=Direction.Still) ]
 
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
             safe = self.data.matrix.safe[destination.y][destination.x]
             cost = self.data.matrix.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
+            potential_ally_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
 
-            logging.debug("safe: {} cost: {} direction: {}".format(safe, cost, direction))
-            c = DepositPoints(safe, cost, direction)
+            c = DepositPoints(safe, potential_enemy_collision, potential_ally_collision, cost, direction)
             points.append(c)
 
+        logging.debug(points)
         return points

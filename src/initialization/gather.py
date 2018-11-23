@@ -1,7 +1,7 @@
-from src.common.matrix import Matrices
+from src.common.matrix import Data
 from src.common.print import print_heading, print_matrix
 
-class Data(Matrices):
+class MyData(Data):
     def __init__(self, game, prev_data, halite_stats):
         super().__init__(game)
         self.halite_stats = halite_stats
@@ -10,8 +10,7 @@ class Data(Matrices):
         self.all_ships = set(self.me._ships.keys())         ## ALL SHIPS
         self.ships_to_move = set(self.me._ships.keys())     ## SHIPS TO MOVE
         self.ships_returning = set()                        ## SHIPS RETURNING HALITE
-        self.ships_harvesting = set()                       ## SHIPS HARVESTING/STILL
-        self.ships_retreating = set()                       ## SHIPS RETREATING BEFORE GAME ENDS
+        self.ships_kicked = set()
 
         self.count_ships_died(prev_data)                    ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
@@ -27,10 +26,10 @@ class Data(Matrices):
         self.populate_halite()
         self.populate_myShipyard()
         self.populate_enemyShipyard()
-        self.populate_myShips()
-        self.populate_enemyShips_influenced()
         self.populate_cost()
         self.populate_harvest()
+        self.populate_myShips()
+        self.populate_enemyShips_influenced()
 
         self.populate_sectioned_halite()
 
