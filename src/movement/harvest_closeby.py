@@ -57,7 +57,6 @@ class Harvest(Moves):
         """
         if direction == Direction.Still and \
                 (self.data.matrix.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
-            logging.debug("Ship id: {} is harvesting now".format(ship.id))
             return True
 
         return False
@@ -72,7 +71,6 @@ class Harvest(Moves):
         # direction = self.get_highest_harvest_move(ship)
         direction = self.best_direction(ship, mode=MoveMode.HARVEST)
         if self.isGoodHarvest(ship, direction):
-            logging.debug("Ship id: {} is harvesting next turn".format(ship.id))
             self.move_mark_unsafe(ship, direction)
 
         elif kicked: ## IF NOT A GOOD HARVEST AND KICKED, ADD TO TEMP TO BE MOVED LATER FOR EXPLORE

@@ -11,7 +11,7 @@ def print_matrix(text, matrix):
     :return:
     """
     np.set_printoptions(threshold=np.inf, linewidth=np.inf)         ## SET NUMPY PRINT THRESHOLD TO INFINITY
-    logging.debug("Print matrix {}: {}".format(text, matrix))
+    logging.debug("Print matrix {}: \n{}".format(text, matrix))
     np.set_printoptions(threshold=10)                               ## SET NUMPY PRINT THRESHOLD TO 10
 
 

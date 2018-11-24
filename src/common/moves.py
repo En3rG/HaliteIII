@@ -199,10 +199,6 @@ class Moves(abc.ABC):
         directions = GameMap._get_target_direction(start, Position(x, y))
 
         clean_directions = [x for x in directions if x != None]  ## CAN HAVE A NONE
-        logging.debug("ship id: {} ship position: {} shipyard position: {} clean_directions: {}".format(ship.id,
-                                                                                                        ship.position,
-                                                                                                        destination,
-                                                                                                        clean_directions))
 
         return clean_directions
 

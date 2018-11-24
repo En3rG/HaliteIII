@@ -20,7 +20,14 @@ class Init(Data):
         self.populate_sectioned_distances()
         self.populate_average_manhattan()
 
+        self.populate_depleted()
+
+        print_matrix("myShipyard", self.matrix.myShipyard)
         print_matrix("halite", self.matrix.halite)
+        print_matrix("depleted shipyard distances", self.matrix.depleted.shipyard_distances)
+        print_matrix("depleted harvest_turns", self.matrix.depleted.harvest_turns)
+        print_matrix("depleted total turns", self.matrix.depleted.total_turns)
+        print_matrix("depleted harvest area", self.matrix.depleted.harvest_area)
 
 
 

@@ -22,6 +22,12 @@ import hlt
 ## REGULAR STDOUT (PRINT STATEMENTS) ARE RESERVED FOR ENGINE-BOT COMMUNICATION.
 import logging
 
+class PrevData():
+    def __init__(self, data):
+        self.me = data.me
+        self.all_ships = data.all_ships
+        self.ships_returning = data.ships_returning
+
 """ <<<Game Begin>>> """
 
 ## THIS GAME OBJECT CONTAINS THE INITIAL GAME STATE.
@@ -37,14 +43,6 @@ game.ready("En3rG")
 logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
 
 """ <<<Game Loop>>> """
-
-
-class PrevData():
-    def __init__(self, data):
-        self.me = data.me
-        self.all_ships = data.all_ships
-        self.ships_returning = data.ships_returning
-
 
 prev_data = None
 halite_stats = Halite_stats()

@@ -20,7 +20,6 @@ class Explore(Moves):
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.ships_kicked:
-                logging.debug("ships kicked: {}".format(self.data.ships_kicked))
                 ship_kicked = self.data.ships_kicked.pop()
                 logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
                 self.exploreNow(ship_kicked)

@@ -25,8 +25,10 @@ class Retreat(Moves):
 
         :return: COMMAND_QUEUE
         """
-        self.populate_heap()
         print_heading("Check retreat......")
+
+        self.populate_heap()
+
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turn_left))
 
         if self.farthest_ship.distance + MyConstants.EXTRA_TURNS_RETREAT > self.turn_left:
@@ -57,7 +59,7 @@ class Retreat(Moves):
 
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
-            logging.debug("Ship id: {} is retreating, with distance {}".format(s.ship_id, s.distance))
+            logging.debug(s)
 
             ship = self.data.me.get_ship(s.ship_id)
             direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
