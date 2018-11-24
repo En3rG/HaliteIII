@@ -22,7 +22,7 @@ class FarthestShip:
                 return True
             elif self.num_directions < other.num_directions:
                 return False
-            elif self.ship_id > other.ship_id:
+            elif self.ship_id >= other.ship_id:
                 return True
             elif self.ship_id < other.ship_id:
                 return False
@@ -39,7 +39,7 @@ class FarthestShip:
                 return True
             elif self.num_directions > other.num_directions:
                 return False
-            elif self.ship_id < other.ship_id:
+            elif self.ship_id <= other.ship_id:
                 return True
             elif self.ship_id > other.ship_id:
                 return False
