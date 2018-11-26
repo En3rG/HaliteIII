@@ -3,9 +3,23 @@ from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 
 
+def shift_matrix(x_shift, y_shift, matrix):
+    """
+    SHIFT MATRIX GIVEN X & Y ROLL
+
+    :param x_shift:
+    :param y_shift:
+    :param matrix:
+    :return:
+    """
+    return np.roll(np.roll(matrix, shift=x_shift, axis=1), shift=y_shift, axis=0)
+
+
 def get_distance_matrix(start_tuple, height, width):
     """
     GENERATES A TABLE WITH ACTUAL DISTANCES FROM START
+
+    WARNING!!! THIS TIMES OUT WHEN USED ON A 64x64 MAP (WHEN USED PER CELL DISTANCE CALCULATION)
 
     :param start_tuple: START IN TUPLE
     :param height: HEIGHT OF THE MAP

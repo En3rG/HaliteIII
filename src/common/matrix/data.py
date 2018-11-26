@@ -4,10 +4,12 @@ from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.print import print_matrix, print_heading
-from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, get_average_manhattan
+from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
+    get_average_manhattan, shift_matrix
 from src.common.matrix.vectorized import myRound, myHarvestCounter, myHarvestArea, myTurnCounter
 import abc
 import copy
+import sys
 
 
 class Section():
@@ -280,10 +282,20 @@ class Data(abc.ABC):
         height = self.map_height + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
         width = self.map_width + 1
 
+        curr_cell = (0, 0)
+        base_matrix = get_distance_matrix(curr_cell, height, width)
+
         for r in range(height):
             for c in range(width):
                 curr_cell = (r, c)
-                self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+                ## THIS METHOD WILL TIME OUT (ALSO UNNECESSARY CALCULATIONS
+                ## SINCE DISTANCE MATRIX IS PRETTY SIMILAR
+                #self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+
+                self.matrix.distances[curr_cell] = shift_matrix(r, c, base_matrix)
+
+
+                #print_matrix("Distances on {}".format(curr_cell), self.matrix.distances[curr_cell])
 
 
     def populate_average(self):

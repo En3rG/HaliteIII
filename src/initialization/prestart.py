@@ -17,10 +17,8 @@ class Init(Data):
         self.populate_cost()
         self.populate_harvest()
 
-
         self.populate_distances()
         self.populate_top_halite()
-
 
         self.populate_sectioned_halite()
         self.populate_sectioned_distances()
