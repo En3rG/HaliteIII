@@ -2,7 +2,7 @@ import logging
 from hlt.positionals import Direction
 from src.common.moves import Moves
 from src.common.print import print_heading, print_matrix
-from src.common.matrix import get_values_matrix
+from src.common.matrix.functions import get_values_matrix
 from src.common.values import Inequality
 
 

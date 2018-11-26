@@ -5,7 +5,8 @@ from hlt.positionals import Direction
 import abc
 import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
-from src.common.matrix import move_populate_manhattan, Section, get_index_highest_val
+from src.common.matrix.functions import move_populate_manhattan, get_index_highest_val
+from src.common.matrix.data import Section
 from src.common.points import HarvestPoints
 from src.common.print import print_matrix
 

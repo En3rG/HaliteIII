@@ -2,7 +2,7 @@ from src.common.moves import Moves
 from src.common.values import MoveMode, MyConstants
 import logging
 from src.common.print import print_heading, print_matrix
-from src.common.matrix import get_position_highest_section, get_coord_closest
+from src.common.matrix.functions import get_position_highest_section, get_coord_closest
 from hlt.positionals import Direction
 from src.common.points import ExplorePoints
 from hlt.positionals import Position

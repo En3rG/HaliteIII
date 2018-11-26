@@ -1,4 +1,4 @@
-from src.common.matrix import Data
+from src.common.matrix.data import Data
 from src.common.print import print_matrix
 import logging
 
