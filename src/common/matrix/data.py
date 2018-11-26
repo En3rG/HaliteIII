@@ -290,12 +290,11 @@ class Data(abc.ABC):
                 curr_cell = (r, c)
                 ## THIS METHOD WILL TIME OUT (ALSO UNNECESSARY CALCULATIONS
                 ## SINCE DISTANCE MATRIX IS PRETTY SIMILAR
-                #self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+                # self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+                # print_matrix("Distances (1) on {}".format(curr_cell), self.matrix.distances[curr_cell])
 
                 self.matrix.distances[curr_cell] = shift_matrix(r, c, base_matrix)
-
-
-                #print_matrix("Distances on {}".format(curr_cell), self.matrix.distances[curr_cell])
+                # print_matrix("Distances (2) on {}".format(curr_cell), self.matrix.distances[curr_cell])
 
 
     def populate_average(self):

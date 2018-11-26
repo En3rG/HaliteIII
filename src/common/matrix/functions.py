@@ -3,7 +3,7 @@ from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 
 
-def shift_matrix(x_shift, y_shift, matrix):
+def shift_matrix(y_shift, x_shift, matrix):
     """
     SHIFT MATRIX GIVEN X & Y ROLL
 
