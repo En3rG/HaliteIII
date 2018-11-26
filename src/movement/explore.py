@@ -2,9 +2,10 @@ from src.common.moves import Moves
 from src.common.values import MoveMode, MyConstants
 import logging
 from src.common.print import print_heading, print_matrix
-from src.common.matrix import get_position_highest_section
+from src.common.matrix import get_position_highest_section, get_coord_closest
 from hlt.positionals import Direction
 from src.common.points import ExplorePoints
+from hlt.positionals import Position
 
 class Explore(Moves):
     def __init__(self, data, prev_data):
@@ -35,8 +36,22 @@ class Explore(Moves):
         """
         ship = self.data.me._ships.get(ship_id)
 
+        ## GET DIRECTION TO HIGHEST NEIGHBOR
         #direction = self.get_highest_harvest_move(ship)
-        destination = get_position_highest_section(self.data)
+
+
+        ## GET DIRECTION TO HIGHEST SECTION
+        # destination = get_position_highest_section(self.data)
+        # directions = self.get_directions_target(ship, destination)
+        # direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        # self.move_mark_unsafe(ship, direction)
+
+
+        ## GET DIRECTION TO CLOSEST TOP HALITE
+        curr_cell = (ship.position.y, ship.position.x)
+        seek_val = 10
+        coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.top_halite, self.data.init_data.matrix.distances[curr_cell])
+        destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
         direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
         self.move_mark_unsafe(ship, direction)

@@ -56,7 +56,7 @@ myTurnCounter = np.vectorize(turnCounter)
 
 def harvestArea(max_x, x):
     """
-    SPECIFY GOOD AREA TO HARVEST
+    POPULATE GOOD AREA TO HARVEST
 
     :param max_x:
     :param x:
@@ -139,10 +139,10 @@ class Section():
 class Sectioned():
     def __init__(self, map_height, map_width):
         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
-        self.distances = {}
+        self.distances = {}  ## ONLY FILLED IN INIT
 
 
-class Depleted():
+class Depletion():
     def __init__(self, map_height, map_width):
         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
         self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
@@ -152,12 +152,20 @@ class Depleted():
         self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)
 
 
+class Average():
+    def __init__(self, map_height, map_width):
+        self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)
+        self.top_10 = np.zeros((map_height, map_width), dtype=np.float16)
+
+
 class Matrix():
     """
     CONTAINS ALL THE MATRICES
     """
     def __init__(self, map_height, map_width):
         self.halite = np.zeros((map_height, map_width), dtype=np.int16)
+        self.top_halite = np.zeros((map_height, map_width), dtype=np.int16)
+        self.distances = {} ## ONLY FILLED IN INIT
         self.myShipyard = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipyard = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
@@ -174,9 +182,10 @@ class Matrix():
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.sectioned = Sectioned(map_height, map_width)
-        self.average_manhattan = np.zeros((map_height, map_width), dtype=np.float16)
 
-        self.depleted = Depleted(map_height, map_width)
+        self.average = Average(map_height, map_width)
+
+        self.depletion = Depletion(map_height, map_width)
 
 
 class Data(abc.ABC):
@@ -320,38 +329,73 @@ class Data(abc.ABC):
 
                 #print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
 
+    def populate_distances(self):
+        """
+        POPULATE DISTANCES OF EACH CELLS TO ONE ANOTHER
 
-    def populate_average_manhattan(self):
+        self.matrix.distances[curr_section][y][x] = distance
+
+        :return:
         """
-        POPULATE THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
+        height = self.map_height + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
+        width = self.map_width + 1
+
+        for r in range(height):
+            for c in range(width):
+                curr_cell = (r, c)
+                self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+
+
+    def populate_average(self):
         """
+        POPULATE AVERAGES
+        """
+        ## THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
         for r in range(self.map_height):
             for c in range(self.map_width):
                 loc = Position(c, r) ## Position(x, y)
-                self.matrix.average_manhattan[r][c] = get_average_manhattan(self.matrix.halite, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+                self.matrix.average.manhattan[r][c] = get_average_manhattan(self.matrix.halite, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
-        print_matrix("Average manhattan", self.matrix.average_manhattan)
+        ## POPULATE WHERE TOP N PLACES ARE BASED ON self.matrix.average.manhattan
+        top_indexes = set()
+        average_manhattan = copy.deepcopy(self.matrix.average.manhattan)
+        for _ in range(MyConstants.TOP_N):  ## GET INDEXES OF TOP N
+            top_1, ind = get_n_largest_values(average_manhattan, 1)
+            loc = (ind[0][0], ind[1][0])
+            position = Position(loc[1], loc[0]) ## Position(x, y)
+            top_indexes.add(loc)
+            populate_manhattan(average_manhattan, 0, position, MyConstants.AVERAGE_MANHATTAN_DISTANCE, cummulative=False)
+        for ind in top_indexes:
+            self.matrix.average.top_10[ind[0]][ind[1]] = self.matrix.average.manhattan[ind[0]][ind[1]]
 
 
-    def populate_depleted(self):
+    def populate_depletion(self):
         """
         POPULATE
         """
         ## POPULATE NUMBER OF TURNS TO HAVE HALITE <= DONT_HARVEST_BELOW
-        self.matrix.depleted.harvest_turns =  myHarvestCounter(self.matrix.halite)
+        self.matrix.depletion.harvest_turns =  myHarvestCounter(self.matrix.halite)
 
         ## POPULATE SHIPYARD DISTANCES
         start_tuple = (self.me.shipyard.position.y, self.me.shipyard.position.x)
-        self.matrix.depleted.shipyard_distances = get_distance_matrix(start_tuple, self.map_height, self.map_width)
+        self.matrix.depletion.shipyard_distances = get_distance_matrix(start_tuple, self.map_height, self.map_width)
 
         ## POPULATE TOTAL NUMBER OF TURNS TO DEPLETE HALITE, INCLUDING TRAVELING THERE BACK AND FORTH
-        self.matrix.depleted.total_turns = myTurnCounter(self.matrix.depleted.harvest_turns, self.matrix.depleted.shipyard_distances)
+        self.matrix.depletion.total_turns = myTurnCounter(self.matrix.depletion.harvest_turns, self.matrix.depletion.shipyard_distances)
 
         ## POPULATE IF A GOOD HARVEST AREA
-        max_num = np.max(self.matrix.depleted.total_turns)
-        max_matrix = self.matrix.depleted.max_matrix * max_num
-        self.matrix.depleted.harvest_area = myHarvestArea(max_matrix, self.matrix.depleted.total_turns)
+        max_num = np.max(self.matrix.depletion.total_turns)
+        max_matrix = self.matrix.depletion.max_matrix * max_num
+        self.matrix.depletion.harvest_area = myHarvestArea(max_matrix, self.matrix.depletion.total_turns)
 
+
+    def populate_top_halite(self):
+        """
+        POPULATE TOP HALITE CELLS
+        """
+        num_cells = int(MyConstants.TOP_N_HALITE * (self.map_height * self.map_width))
+        top, ind = get_n_largest_values(self.matrix.halite, num_cells)
+        self.matrix.top_halite[ind] = 10
 
 
 def get_distance_matrix(start_tuple, height, width):
@@ -431,7 +475,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
     :param seek_val: VALUE WE ARE LOOKING FOR
     :param value_matrix: MATRIX WITH VALUES
     :param distance_matrix: MATRIX THAT REPRESENTS ITS DISTANCE
-    :return: VALUES/DISTANCES PASSED, MIN DISTANCE, VALUE WITH MINIMUM DISTANCE
+    :return: COORD, MIN DISTANCE, VALUE WITH MINIMUM DISTANCE
     """
     ## GET ROW, COL INDICES FOR THE CONDITION
     r, c = np.where(value_matrix == seek_val)
@@ -524,7 +568,7 @@ def get_average_manhattan(matrix, loc, dist):
     :param matrix:
     :param loc: CENTER
     :param dist: DISTANCE AWAY FROM THE CENTER
-    :return:
+    :return: AVERAGE
     """
     sum = 0
     num = 0
@@ -537,7 +581,7 @@ def get_average_manhattan(matrix, loc, dist):
             sum += matrix[y_, x_]
             num += 1
 
-    return sum/num
+    return int(sum/num) ## FORCING TO INT FOR READABILITY (CHANGE LATER)
 
 
 def get_position_highest_section(data):
@@ -551,6 +595,7 @@ def get_position_highest_section(data):
     destination = convert_section_coord(section_coord)
 
     return destination
+
 
 def get_index_highest_val(matrix):
     """
@@ -574,3 +619,21 @@ def convert_section_coord(section_coord):
     y = section_y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
 
     return Position(x, y)
+
+
+def get_n_largest_values(matrix, n):
+    """
+    :param n:
+    :param matrix:
+    :return: n LARGEST VALUES FROM MATRIX, AND ITS INDICES
+    """
+    ind = largest_indices(matrix, n)
+    return matrix[ind], ind
+
+
+def largest_indices(matrix, n):
+    """Returns the n largest indices from a numpy array."""
+    flat = matrix.flatten()
+    indices = np.argpartition(flat, -n)[-n:]
+    indices = indices[np.argsort(-flat[indices])]
+    return np.unravel_index(indices, matrix.shape)

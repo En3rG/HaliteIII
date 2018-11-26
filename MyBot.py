@@ -53,7 +53,7 @@ while True:
     game.update_frame()
 
     ## EXTRACT GAME DATA
-    data = MyData(game, prev_data, halite_stats)
+    data = MyData(game, INIT_DATA, prev_data, halite_stats)
 
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)
