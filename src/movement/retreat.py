@@ -12,26 +12,25 @@ class Retreat(Moves):
         super().__init__(data, prev_data)
 
         self.turn_number = data.game.turn_number
-        self.turn_left = constants.MAX_TURNS - self.turn_number
+        self.turns_left = constants.MAX_TURNS - self.turn_number
         self.heap_dist = []
         self.farthest_ship = FarthestShip(0, 0, 0, None)
 
         self.check_retreat()
 
+
     def check_retreat(self):
         """
-        POPULATE HEAP BASED ON DISTANCE FROM SHIPYARD
-        CHECK IF WE NEED TO START RETREATING BACK TO SHIPYARD
-
-        :return: COMMAND_QUEUE
+        POPULATE HEAP BASED ON DISTANCE FROM SHIPYARD/DOCKS
+        CHECK IF WE NEED TO START RETREATING BACK
         """
         print_heading("Check retreat......")
 
         self.populate_heap()
 
-        logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turn_left))
+        logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turns_left))
 
-        if self.farthest_ship.distance + MyConstants.EXTRA_TURNS_RETREAT > self.turn_left:
+        if self.farthest_ship.distance + MyConstants.EXTRA_TURNS_RETREAT > self.turns_left:
             self.retreat_ships()
 
 
@@ -54,12 +53,11 @@ class Retreat(Moves):
 
     def retreat_ships(self):
         """
-        MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD
+        MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD/DOCKS
         """
-
         while self.heap_dist:
-            s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
-            logging.debug(s)
+            s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            logging.debug(s)                    ## FARTHEST SHIP OBJECT
 
             ship = self.data.me.get_ship(s.ship_id)
             direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)

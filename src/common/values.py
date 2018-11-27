@@ -18,6 +18,7 @@ class MoveMode():
 class Matrix_val():
     ZERO = 0
     ONE = 1
+    TEN = 10                        ## JUST USED FOR BETTER READABILITY WITH A LOT OF 0s
     OCCUPIED = -1
     UNSAFE = -1
     POTENTIAL_COLLISION = -1

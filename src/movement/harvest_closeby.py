@@ -15,11 +15,13 @@ class Harvest(Moves):
         self.ships_kicked_temp = set()
         self.move_ships()
 
+
     def move_ships(self):
         print_heading("Moving harvesting (now) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NOW)
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             self.harvestNow(ship_id)
+
 
         print_heading("Moving harvesting (later) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)

@@ -15,6 +15,7 @@ class Deposit(Moves):
 
         self.move_ships()
 
+
     def move_ships(self):
         print_heading("Moving depositing ships......")
 
@@ -33,7 +34,7 @@ class Deposit(Moves):
                 if ship and ship.position != self.data.me.shipyard.position:
                     self.populate_heap(ship)
 
-        ## MOVE SHIPS
+        ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
             ship = self.data.me._ships.get(s.ship_id)

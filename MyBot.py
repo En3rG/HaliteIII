@@ -23,6 +23,10 @@ import hlt
 import logging
 
 class PrevData():
+    """
+    USED TO MINIMIZE THE SIZE OF PREVIOUS DATA COPIED
+    SHOULD ONLY CONTAIN NECESSARY INFORMATION FROM DATA
+    """
     def __init__(self, data):
         self.me = data.me
         self.all_ships = data.all_ships

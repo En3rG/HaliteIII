@@ -1,5 +1,5 @@
 from src.common.moves import Moves
-from src.common.values import MoveMode, MyConstants
+from src.common.values import MoveMode, MyConstants, Matrix_val
 import logging
 from src.common.print import print_heading, print_matrix
 from src.common.matrix.functions import get_position_highest_section, get_coord_closest
@@ -12,6 +12,7 @@ class Explore(Moves):
         super().__init__(data, prev_data)
 
         self.move_ships()
+
 
     def move_ships(self):
         print_heading("Moving exploring ships......")
@@ -49,7 +50,7 @@ class Explore(Moves):
 
         ## GET DIRECTION TO CLOSEST TOP HALITE
         curr_cell = (ship.position.y, ship.position.x)
-        seek_val = 10
+        seek_val = Matrix_val.TEN
         coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.top_halite, self.data.init_data.matrix.distances[curr_cell])
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)

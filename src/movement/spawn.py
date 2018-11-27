@@ -15,8 +15,6 @@ def spawn_ships(data):
     -NO SHIP GOING TO SHIPYARD
 
     :param data:
-    :param command_queue:
-    :return: command_queue (NOT NECESSARY)
     """
     if data.game.turn_number <= constants.MAX_TURNS * MyConstants.STOP_SPAWNING \
             and data.me.halite_amount >= constants.SHIP_COST \

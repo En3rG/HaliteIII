@@ -27,8 +27,10 @@ class Stuck(Moves):
         #
         #     self.move_mark_unsafe(ship, direction)
 
-        ## THIS MIGHT BE FASTER THAN ABOVE, SINCE LOOPING THROUGH <300 SHIPS COULD BE FASTER THAN
+
+        ## THIS MIGHT BE FASTER THAN ABOVE, SINCE LOOPING THROUGH ~200 SHIPS COULD BE FASTER THAN
         ## PERFORMING MATRIX MULTIPLICATION AND LOOKING FOR THE VALUES IN A 64x64 MATRIX
+
         ## MOVE SHIPS THAT CANNOT MOVE YET
         for ship_id in (self.data.all_ships & self.data.ships_to_move):
             ship = self.data.me._ships.get(ship_id)
