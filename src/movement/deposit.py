@@ -34,6 +34,14 @@ class Deposit(Moves):
                 if ship and ship.position != self.data.me.shipyard.position:
                     self.populate_heap(ship)
 
+        ## MOVE KICKED SHIPS FIRST (IF ANY)
+        while self.data.ships_kicked:
+            ship_kicked = self.data.ships_kicked.pop()
+            logging.debug("Moving kicked ship ({}) for deposit".format(ship_kicked))
+            ship = self.data.me._ships.get(ship_kicked)
+            directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+            self.returning(ship, directions)  ## CANNOT ASSUME SHIP KICKED BY DEPART IS RETURNING!!!!!!!!!1
+
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)

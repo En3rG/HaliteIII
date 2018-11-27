@@ -10,6 +10,7 @@ from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.attack import Attack
+from src.movement.depart import Depart
 from src.movement.kicked import Kicked
 from src.movement.build import Build
 from src.common.halite_statistics import Halite_stats
@@ -68,23 +69,26 @@ while True:
     ## BUILD DOCK
     C = Build(data, prev_data)
 
+    ## DEPART SHIPS (FROM SHIPYARD/DOCK)
+    #D = Depart(data, prev_data)
+
     ## DEPOSIT SHIPS
-    D = Deposit(data, prev_data)
+    E = Deposit(data, prev_data)
 
     ## ATTACK SHIPS
-    E = Attack(data, prev_data)
+    F = Attack(data, prev_data)
 
     ## HARVEST SHIPS
-    F = Kicked(data, prev_data)
+    G = Kicked(data, prev_data)
 
     ## HARVEST SHIPS
-    G = Harvest(data, prev_data)
+    H = Harvest(data, prev_data)
 
     ## EXPLORE SHIPS
-    H = Explore(data, prev_data)
+    I = Explore(data, prev_data)
 
     ## SPAWN SHIPS
-    I = spawn_ships(data)
+    J = spawn_ships(data)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     game.end_turn(data.command_queue)

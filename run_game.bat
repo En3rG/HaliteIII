@@ -1,10 +1,2 @@
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
-halite.exe --replay-directory replays/ -vvv --width 48 --height 48 "python v4_v5/MyBot.py" "python MyBot.py"
+halite.exe --replay-directory replays/ -vvv --width 32 --height 32 --seed 1543288500 "python v6/MyBot.py" "python MyBot.py"
+

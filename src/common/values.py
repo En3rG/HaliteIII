@@ -13,6 +13,7 @@ class MoveMode():
     DEPOSIT = "deposit"
     HARVEST = "harvest"
     EXPLORE = "explore"
+    DEPART = "depart"
 
 
 class Matrix_val():
@@ -46,7 +47,7 @@ class MyConstants():
 
     DIRECT_NEIGHBORS_SELF = np.array([[0, 1, 0],
                                       [1, 1, 1],
-                                      [0, 1, 0]])
+                                      [0, 1,0]])
 
     DIRECT_NEIGHBORS = np.array([[0,1,0],
                                  [1,0,1],

@@ -128,6 +128,8 @@ class Moves(abc.ABC):
             points = self.get_points_harvest(ship)
         elif mode == MoveMode.EXPLORE:
             points = self.get_points_explore(ship, directions)
+        elif mode == MoveMode.DEPART:
+            points = self.get_points_depart(ship, directions)
         else:
             raise NotImplemented
 
@@ -235,6 +237,9 @@ class Moves(abc.ABC):
         actual_harvest = harvest_matrix - cost_matrix  ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
         safe = Section(self.data.matrix.safe, ship.position, size=1)  ## SECTION SAFE
         safe_harvest = actual_harvest * safe.matrix  ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+
+        logging.debug("actual harvest: {}".format(actual_harvest))
+        logging.debug("safe_harvest: {}".format(safe_harvest))
 
         max_index = get_index_highest_val(safe_harvest)
 

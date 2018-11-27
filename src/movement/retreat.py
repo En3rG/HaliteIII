@@ -7,6 +7,15 @@ from src.common.points import FarthestShip, RetreatPoints
 from hlt.positionals import Direction
 from src.common.print import print_heading
 
+
+"""
+TO DO!!!!!!!!!!!
+
+IMPROVE MOVEMENT WHEN THERE ARE TONS OF SHIPS TRYING TO GO TO THE DOCK
+
+
+"""
+
 class Retreat(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)

@@ -3,6 +3,15 @@ from src.common.moves import Moves
 import logging
 
 
+"""
+
+TO DO!!!
+
+KICKED STAYING SINCE HIGHEST HARVEST IS STILL STAYING, EVEN THOUGH KICKED
+
+"""
+
+
 class Kicked(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)

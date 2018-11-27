@@ -7,6 +7,17 @@ from hlt.positionals import Direction
 from src.common.points import ExplorePoints
 from hlt.positionals import Position
 
+
+"""
+TO DO!!!!!!!!!!!
+
+ADD HEAP TO AVOID COLLISIONS/KICKING
+
+AVOID SWARMING INTO AN AREA WHERE OTHERS HAVE NO PLACE TO GO
+
+
+"""
+
 class Explore(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
