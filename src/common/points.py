@@ -47,7 +47,50 @@ class FarthestShip:
         return NotImplemented
 
     def __repr__(self):
-        return "Ship id: {} distance: {}".format(self.ship_id, self.distance)
+        return "{} Ship id: {} distance: {}".format(self.__class__.__name__, self.ship_id, self.distance)
+
+
+class ExploreShip:
+    """
+    USED TO DETERMINE FARTHEST SHIP FOR EXPLORING
+    ALSO USED FOR HEAPQ PURPOSES
+
+    """
+    def __init__(self, dist, id, curr_cell, destination):
+        self.distance = dist
+        self.ship_id = id
+        self.curr_cell = curr_cell
+        self.destination = destination
+
+    def __gt__(self, other):
+        if isinstance(other, ExploreShip):
+            if self.distance > other.distance:
+                return True
+            elif self.distance < other.distance:
+                return False
+            elif self.ship_id >= other.ship_id:
+                return True
+            elif self.ship_id < other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, ExploreShip):
+            if self.distance < other.distance:
+                return True
+            elif self.distance > other.distance:
+                return False
+            elif self.ship_id <= other.ship_id:
+                return True
+            elif self.ship_id > other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} Ship id: {} distance: {}".format(self.__class__.__name__, self.ship_id, self.distance)
+
 
 
 class RetreatPoints():

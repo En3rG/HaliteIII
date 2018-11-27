@@ -4,8 +4,9 @@ import logging
 from src.common.print import print_heading, print_matrix
 from src.common.matrix.functions import get_position_highest_section, get_coord_closest
 from hlt.positionals import Direction
-from src.common.points import ExplorePoints
+from src.common.points import ExplorePoints, ExploreShip
 from hlt.positionals import Position
+import heapq
 
 
 """
@@ -22,13 +23,31 @@ class Explore(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
 
+        self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
+        self.heap_dist = []
         self.move_ships()
 
 
     def move_ships(self):
         print_heading("Moving exploring ships......")
 
-        ## MOVE REST OF THE SHIPS
+        ## MOVE REST OF THE SHIPS TO EXPLORE
+        ## MOVE KICKED SHIPS FIRST
+        # ships = (self.data.all_ships & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        # for ship_id in ships:
+        #     ## MOVE KICKED SHIPS FIRST (IF ANY)
+        #     while self.data.ships_kicked:
+        #         ship_kicked = self.data.ships_kicked.pop()
+        #         logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
+        #         self.exploreNow(ship_kicked)
+        #
+        #     ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
+        #     if ship_id in self.data.ships_to_move:
+        #         self.exploreNow(ship_id)
+
+
+        ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
+        ## THIS SEEMS TO PERFORM WORST THAN ABOVE, WHY???
         ships = (self.data.all_ships & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -39,7 +58,32 @@ class Explore(Moves):
 
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
             if ship_id in self.data.ships_to_move:
-                self.exploreNow(ship_id)
+                self.populate_heap(ship_id)
+
+        while self.heap_dist:
+            s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            logging.debug(s)                    ## EXPLORE SHIP OBJECT
+
+            ship = self.data.me._ships.get(s.ship_id)
+            directions = self.get_directions_target(ship, s.destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+            self.move_mark_unsafe(ship, direction)
+
+
+    def populate_heap(self, ship_id):
+        if ship_id not in self.heap_set:
+            self.heap_set.add(ship_id)
+
+            ship = self.data.me._ships.get(ship_id)
+
+            curr_cell = (ship.position.y, ship.position.x)
+            seek_val = Matrix_val.TEN
+            coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.top_halite,
+                                                   self.data.init_data.matrix.distances[curr_cell])
+            destination = Position(coord[1], coord[0])
+
+            s = ExploreShip(min_di, ship_id, curr_cell, destination)
+            heapq.heappush(self.heap_dist, s)
 
 
     def exploreNow(self, ship_id):
