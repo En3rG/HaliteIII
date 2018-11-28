@@ -5,7 +5,7 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 
 def shift_matrix(y_shift, x_shift, matrix):
     """
-    SHIFT MATRIX GIVEN X & Y ROLL
+    SHIFT (ROLL) MATRIX GIVEN X & Y
 
     :param x_shift:
     :param y_shift:
@@ -17,9 +17,11 @@ def shift_matrix(y_shift, x_shift, matrix):
 
 def get_distance_matrix(start_tuple, height, width):
     """
-    GENERATES A TABLE WITH ACTUAL DISTANCES FROM START
+    GENERATES A TABLE WITH ACTUAL DISTANCES FROM START PROVIDED
 
     WARNING!!! THIS TIMES OUT WHEN USED ON A 64x64 MAP (WHEN USED PER CELL DISTANCE CALCULATION)
+
+    OBSOLETE, NO LONGER USED
 
     :param start_tuple: START IN TUPLE
     :param height: HEIGHT OF THE MAP
@@ -61,7 +63,6 @@ def calculate_distance(start, destination, height, width):
     resulting_position = abs(start - destination)
     return min(resulting_position.x, width - resulting_position.x) + \
            min(resulting_position.y, height - resulting_position.y)
-
 
 
 def get_values_matrix(seek_value, matrix, condition):
@@ -206,6 +207,8 @@ def get_average_manhattan(matrix, loc, dist):
 def get_position_highest_section(data):
     """
     GET POSITION OF HIGHEST SECTION
+
+    OBSOLETE, NO LONGER USED
 
     :param data:
     :return: POSITION

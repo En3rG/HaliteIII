@@ -25,7 +25,7 @@ import logging
 
 class PrevData():
     """
-    USED TO MINIMIZE THE SIZE OF PREVIOUS DATA COPIED
+    USED TO MINIMIZE THE SIZE OF PREVIOUS DATA WHEN COPIED
     SHOULD ONLY CONTAIN NECESSARY INFORMATION FROM DATA
     """
     def __init__(self, data):
@@ -40,7 +40,7 @@ game = hlt.Game()
 
 ## AT THIS POINT GAME VARIABLE IS POPULATED WITH INITIAL MAP DATA
 ## THIS IS A GOOD PLACE TO DO COMPUTATIONALLY EXPENSIVE START-UP PRE-PROCESING (30 secs)
-INIT_DATA = MyInitData(game)
+init_data = MyInitData(game)
 
 ## AS SOON AS YOU CALL "ready" FUNCTION BELOW, THE 2 SECOND PER TURN TIMER WILL START.,
 game.ready("En3rG")
@@ -58,7 +58,7 @@ while True:
     game.update_frame()
 
     ## EXTRACT GAME DATA
-    data = MyData(game, INIT_DATA, prev_data, halite_stats)
+    data = MyData(game, init_data, prev_data, halite_stats)
 
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)

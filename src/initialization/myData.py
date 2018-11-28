@@ -36,7 +36,7 @@ class MyData(Data):
         #self.populate_sectioned_halite()
 
         self.populate_top_halite()
-        self.populate_average_halite()
+        self.get_average_halite()
 
 
     def count_ships_died(self, prev_data):

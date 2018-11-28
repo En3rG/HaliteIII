@@ -76,7 +76,7 @@ class Deposit(Moves):
             num_directions = len(directions)
             s = FarthestShip(distance, num_directions, ship.id, directions)
             heapq.heappush(self.heap_dist, s)
-            
+
 
     def returning(self, ship, directions):
         """

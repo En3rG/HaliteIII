@@ -81,12 +81,18 @@ class Section():
 
 
 class Sectioned():
+    """
+    MAP DIVIDED INTO SECTIONS
+    """
     def __init__(self, map_height, map_width):
         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
         self.distances = {}  ## ONLY FILLED IN INIT
 
 
 class Depletion():
+    """
+    USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
+    """
     def __init__(self, map_height, map_width):
         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
         self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
@@ -97,9 +103,13 @@ class Depletion():
 
 
 class Average():
+    """
+    USED TO GET THE AVERAGE HALITE PER CELL IN THE MAP
+    BASED ON THE MANHATTAN DISTANCE DEFINED IN COMMON VALUES
+    """
     def __init__(self, map_height, map_width):
         self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)
-        self.top_10 = np.zeros((map_height, map_width), dtype=np.float16)
+        self.top_N = np.zeros((map_height, map_width), dtype=np.float16)
 
 
 class Matrix():
@@ -183,7 +193,7 @@ class Data(abc.ABC):
 
     def populate_docks(self):
         """
-        POPULATE SHIPYARD AND DOCKS
+        POPULATE SHIPYARD AND DOCKS POSITION
         """
         myShipyard_position = self.me.shipyard.position
         self.matrix.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
@@ -225,15 +235,21 @@ class Data(abc.ABC):
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_manhattan(self.matrix.influenced, Matrix_val.ONE, ship.position,
-                                  constants.INSPIRATION_RADIUS, cummulative=True)
-                    populate_manhattan(self.matrix.potential_enemy_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
-                                  MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
+                    populate_manhattan(self.matrix.influenced,
+                                       Matrix_val.ONE,
+                                       ship.position,
+                                       constants.INSPIRATION_RADIUS,
+                                       cummulative=True)
+                    populate_manhattan(self.matrix.potential_enemy_collisions,
+                                       Matrix_val.POTENTIAL_COLLISION,
+                                       ship.position,
+                                       MyConstants.DIRECT_NEIGHBOR_RADIUS,
+                                       cummulative=True)
 
 
     def populate_cost(self):
         """
-        POPULATE MATRIX COST
+        POPULATE MATRIX COST TO LEAVE EACH CELL
         """
         cost = self.matrix.halite * 0.1
         #self.matrix.cost = np.round(cost)           ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
@@ -242,7 +258,8 @@ class Data(abc.ABC):
 
     def populate_harvest(self):
         """
-        POPULATE MATRIX HARVEST
+        POPULATE MATRIX HARVEST, IF WE STAY STILL IN EACH CELL FOR A SINGLE TURN
+        DOES NOT CONSIDER INFLUENCE
         """
         harvest = self.matrix.halite * 0.25
         #self.matrix.harvest = np.round(harvest)     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
@@ -254,6 +271,8 @@ class Data(abc.ABC):
         POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
 
         RECORD AVERAGE OF EACH SECTION
+
+        OBSOLETE? NO LONGER USED
         """
         for y, row in enumerate(self.matrix.sectioned.halite):
             for x, col in enumerate(row):
@@ -274,7 +293,7 @@ class Data(abc.ABC):
 
         self.matrix.sectioned.distances[curr_section][y][x] = distance
 
-        :return:
+        OBSOLETE? NO LONGER USED
         """
         height = (self.map_height // MyConstants.SECTION_SIZE) + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
         width = (self.map_width // MyConstants.SECTION_SIZE) + 1
@@ -286,13 +305,12 @@ class Data(abc.ABC):
 
                 #print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
 
-    def populate_distances(self):
+
+    def populate_cell_distances(self):
         """
         POPULATE DISTANCES OF EACH CELLS TO ONE ANOTHER
 
         self.matrix.distances[curr_section][y][x] = distance
-
-        :return:
         """
         height = self.map_height + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
         width = self.map_width + 1
@@ -312,7 +330,7 @@ class Data(abc.ABC):
                 # print_matrix("Distances (2) on {}".format(curr_cell), self.matrix.distances[curr_cell])
 
 
-    def populate_averages(self):
+    def populate_cell_averages(self):
         """
         POPULATE AVERAGES
         """
@@ -332,7 +350,7 @@ class Data(abc.ABC):
             top_indexes.add(loc)
             populate_manhattan(average_manhattan, 0, position, MyConstants.AVERAGE_MANHATTAN_DISTANCE, cummulative=False)
         for ind in top_indexes:
-            self.matrix.average.top_10[ind[0]][ind[1]] = self.matrix.average.manhattan[ind[0]][ind[1]]
+            self.matrix.average.top_N[ind[0]][ind[1]] = self.matrix.average.manhattan[ind[0]][ind[1]]
 
 
     def populate_depletion(self):
@@ -364,7 +382,7 @@ class Data(abc.ABC):
         self.matrix.top_halite[ind] = 10
 
 
-    def populate_average_halite(self):
+    def get_average_halite(self):
         self.average_halite = int(np.average(self.matrix.halite))
 
 

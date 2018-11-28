@@ -18,13 +18,13 @@ class MyInitData(Data):
         self.populate_harvest()
         self.populate_docks()
 
-        self.populate_distances()
+        self.populate_cell_distances()
         self.populate_top_halite()
-        self.populate_average_halite()
+        self.get_average_halite()
 
         self.populate_sectioned_halite()
         self.populate_sectioned_distances()
-        self.populate_averages()
+        self.populate_cell_averages()
 
         self.populate_depletion()
 
@@ -35,7 +35,7 @@ class MyInitData(Data):
         logging.debug("Halite average: {}".format(self.average_halite))
 
         print_matrix("Average: manhattan", self.matrix.average.manhattan)
-        print_matrix("Average: top 10", self.matrix.average.top_10)
+        print_matrix("Average: top N", self.matrix.average.top_N)
 
         print_matrix("depletion: shipyard distances", self.matrix.depletion.shipyard_distances)
         print_matrix("depletion: harvest_turns", self.matrix.depletion.harvest_turns)
