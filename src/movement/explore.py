@@ -78,10 +78,10 @@ class Explore(Moves):
 
             curr_cell = (ship.position.y, ship.position.x)
             seek_val = Matrix_val.TEN
-            coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.top_halite,
+            coord, min_di, val = get_coord_closest(seek_val,
+                                                   self.data.matrix.top_halite,
                                                    self.data.init_data.matrix.distances[curr_cell])
             destination = Position(coord[1], coord[0])
-
             s = ExploreShip(min_di, ship_id, curr_cell, destination)
             heapq.heappush(self.heap_dist, s)
 

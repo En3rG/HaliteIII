@@ -13,7 +13,7 @@ class Deposit(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
         self.heap_dist = []
-        self.heap_set = set() ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
+        self.heap_set = set()   ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
 
         self.move_ships()
 
@@ -33,7 +33,7 @@ class Deposit(Moves):
             for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
                 ship = self.data.me._ships.get(ship_id)
 
-                if ship and ship.position != self.data.me.shipyard.position:
+                if ship and (ship.position.y, ship.position.x) not in self.data.dock_positions:
                     self.populate_heap(ship)
 
         ## MOVE KICKED SHIPS FIRST (IF ANY)

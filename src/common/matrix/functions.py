@@ -101,13 +101,13 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
     r, c = np.where(value_matrix == seek_val)
 
     ## EXTRACT CORRESPONDING VALUES OF DISTANCES
-    di = distance_matrix[r, c]
+    distances = distance_matrix[r, c]
 
-    if len(di) >= 1:
-        min_di = di.min()
+    if len(distances) >= 1:
+        min_distance = distances.min()
 
         ## GET INDICES (INDEXABLE INTO r,c) CORRESPONDING TO LOWEST DISTANCE
-        ld_indx = np.flatnonzero(di == min_di)
+        ld_indx = np.flatnonzero(distances == min_distance)
 
         ## GETTING CLOSEST seek_val, MAX NOT NECESSARY??
         ## GET MAX INDEX (BASED OFF v) OUT OF THE SELECTED INDICES
@@ -115,14 +115,14 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
 
         ## INDEX INTO r,c WITH THE LOWEST DIST INDICES AND
         ## FROM THOSE SELECT MAXED ONE BASED OF VALUE
-        return (r[ld_indx][max_idx], c[ld_indx][max_idx]), min_di, value_matrix[r[ld_indx][max_idx], c[ld_indx][max_idx]]
+        return (r[ld_indx][max_idx], c[ld_indx][max_idx]), min_distance, value_matrix[r[ld_indx][max_idx], c[ld_indx][max_idx]]
 
     else:
         ## NO seek_val FOUND
         return None, None, None
 
 
-def populate_manhattan(matrix, val, loc, dist, cummulative=False):
+def populate_manhattan(matrix, val, position, dist, cummulative=False):
     """
     POPULATE AREA IN MATRIX PROVIDED (BASED ON DISTANCE FROM ORIGIN OR LOC)
 
@@ -131,14 +131,14 @@ def populate_manhattan(matrix, val, loc, dist, cummulative=False):
 
     :param matrix: MATRIX TO BE POPULATED
     :param val: VALUE TO ADD IN MATRIX
-    :param loc: SHIP LOCATION
+    :param position: SHIP LOCATION
     :return:
     """
     size, size = matrix.shape
     for y in range(-dist, dist + 1):
         for x in range(-dist + abs(y), dist - abs(y) + 1):
-            y_ = (y + loc.y) % size
-            x_ = (x + loc.x) % size
+            y_ = (y + position.y) % size
+            x_ = (x + position.x) % size
 
             if cummulative:
                 matrix[y_, x_] += val

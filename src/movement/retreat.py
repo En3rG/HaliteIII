@@ -99,7 +99,7 @@ class Retreat(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            shipyard = self.data.matrix.myShipyard[destination.y][destination.x]
+            shipyard = self.data.matrix.myDocks[destination.y][destination.x]
             safe = self.data.matrix.safe[destination.y][destination.x]
             potential_ally_collision = self.data.matrix.potential_ally_collisions[destination.y][destination.x]
             stuck = self.data.matrix.stuck[ship.position.y][ship.position.x] ## STUCK BASED ON SHIPS CURRENT POSITION

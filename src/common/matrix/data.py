@@ -142,6 +142,8 @@ class Matrix():
 
         self.depletion = Depletion(map_height, map_width)
 
+        self.dock_placement = np.zeros((map_height, map_width), dtype=np.int16)
+
 
 class Data(abc.ABC):
     def __init__(self, game):
@@ -153,6 +155,7 @@ class Data(abc.ABC):
         self.map_width = self.game_map.width
         self.map_height = self.game_map.height
         self.average_halite = 0
+        self.dock_positions = set()
 
         self.matrix = Matrix(self.map_height, self.map_width)
 
@@ -196,9 +199,11 @@ class Data(abc.ABC):
         POPULATE SHIPYARD AND DOCKS POSITION
         """
         myShipyard_position = self.me.shipyard.position
+        self.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
         self.matrix.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         for dropoff in self.me.get_dropoffs():
+            self.dock_positions.add((dropoff.position.y, dropoff.position.x))
             self.matrix.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 

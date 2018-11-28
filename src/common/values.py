@@ -46,6 +46,9 @@ class MyConstants():
     AVERAGE_MANHATTAN_DISTANCE = 6  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
     TOP_N = 20                      ## TOP N BASED ON AVERAGE MANHATTAN
 
+    MIN_DIST_BTW_DOCKS = 12         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
+
+
     DIRECT_NEIGHBORS_SELF = np.array([[0, 1, 0],
                                       [1, 1, 1],
                                       [0, 1,0]])
