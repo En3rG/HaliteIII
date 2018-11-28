@@ -112,6 +112,7 @@ class Matrix():
         self.distances = {} ## ONLY FILLED IN INIT
         self.myShipyard = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipyard = np.zeros((map_height, map_width), dtype=np.int16)
+        self.myDocks = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
@@ -141,6 +142,7 @@ class Data(abc.ABC):
         self.game_map = game.game_map
         self.map_width = self.game_map.width
         self.map_height = self.game_map.height
+        self.average_halite = 0
 
         self.matrix = Matrix(self.map_height, self.map_width)
 
@@ -177,6 +179,17 @@ class Data(abc.ABC):
             if id != self.my_id:
                 enemyShipyard_position = player.shipyard.position
                 self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
+
+
+    def populate_docks(self):
+        """
+        POPULATE SHIPYARD AND DOCKS
+        """
+        myShipyard_position = self.me.shipyard.position
+        self.matrix.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
+
+        for dropoff in self.me.get_dropoffs():
+            self.matrix.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 
     def populate_myShips(self):
@@ -299,7 +312,7 @@ class Data(abc.ABC):
                 # print_matrix("Distances (2) on {}".format(curr_cell), self.matrix.distances[curr_cell])
 
 
-    def populate_average(self):
+    def populate_averages(self):
         """
         POPULATE AVERAGES
         """
@@ -349,5 +362,10 @@ class Data(abc.ABC):
         num_cells = int(MyConstants.TOP_N_HALITE * (self.map_height * self.map_width))
         top, ind = get_n_largest_values(self.matrix.halite, num_cells)
         self.matrix.top_halite[ind] = 10
+
+
+    def populate_average_halite(self):
+        self.average_halite = int(np.average(self.matrix.halite))
+
 
 

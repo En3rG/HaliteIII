@@ -89,7 +89,7 @@ def get_values_matrix(seek_value, matrix, condition):
 
 def get_coord_closest(seek_val, value_matrix, distance_matrix):
     """
-    GET CLOSESTS seek_val FROM SECTION PROVIDED
+    GET CLOSESTS seek_val FROM MATRIX PROVIDED
 
     :param seek_val: VALUE WE ARE LOOKING FOR
     :param value_matrix: MATRIX WITH VALUES

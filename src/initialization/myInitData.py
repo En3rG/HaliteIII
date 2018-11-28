@@ -2,7 +2,7 @@ from src.common.matrix.data import Data
 from src.common.print import print_matrix
 import logging
 
-class Init(Data):
+class MyInitData(Data):
     def __init__(self, game):
         super().__init__(game)
         self.update_matrix()
@@ -16,13 +16,15 @@ class Init(Data):
         self.populate_enemyShipyard()
         self.populate_cost()
         self.populate_harvest()
+        self.populate_docks()
 
         self.populate_distances()
         self.populate_top_halite()
+        self.populate_average_halite()
 
         self.populate_sectioned_halite()
         self.populate_sectioned_distances()
-        self.populate_average()
+        self.populate_averages()
 
         self.populate_depletion()
 
@@ -30,6 +32,7 @@ class Init(Data):
 
         print_matrix("halite", self.matrix.halite)
         print_matrix("top halite", self.matrix.top_halite)
+        logging.debug("Halite average: {}".format(self.average_halite))
 
         print_matrix("Average: manhattan", self.matrix.average.manhattan)
         print_matrix("Average: top 10", self.matrix.average.top_10)

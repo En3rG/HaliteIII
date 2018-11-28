@@ -57,11 +57,17 @@ class Harvest(Moves):
         """
         CHECK IF SHIP IS HARVESTING NOW
         """
+        ## USING DONT HARVEST BELOW
         if direction == Direction.Still and \
                 (self.data.matrix.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
             return True
 
-        return False
+        ## USING PERCENTAGE BASED ON AVERAGE HALITE
+        # if direction == Direction.Still and \
+        #         (self.data.matrix.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite) or self.isBlocked(ship)):
+        #     return True
+        #
+        # return False
 
 
     def harvestLater(self, ship_id, kicked=False):
@@ -88,8 +94,14 @@ class Harvest(Moves):
         :return: TRUE/FALSE
         """
         destination = self.get_destination(ship, direction)
+
+        ## USING DONT HARVEST BELOW
         return (self.data.matrix.harvest[destination.y][destination.x] > MyConstants.DONT_HARVEST_BELOW
                 and self.data.matrix.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+
+        ## USING PERCENTAGE BASED ON AVERAGE HALITE
+        # return (self.data.matrix.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite)
+        #         and self.data.matrix.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 
     def get_points_harvest(self, ship):

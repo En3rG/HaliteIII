@@ -30,11 +30,13 @@ class MyData(Data):
         self.populate_cost()
         self.populate_harvest()
         self.populate_myShips()
+        self.populate_docks()
         self.populate_enemyShips_influenced()
 
         #self.populate_sectioned_halite()
 
         self.populate_top_halite()
+        self.populate_average_halite()
 
 
     def count_ships_died(self, prev_data):

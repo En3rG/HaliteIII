@@ -2,10 +2,12 @@ import logging
 import heapq
 from hlt import constants
 from src.common.moves import Moves
-from src.common.values import MoveMode, MyConstants
+from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.points import FarthestShip, RetreatPoints
 from hlt.positionals import Direction
 from src.common.print import print_heading
+from src.common.matrix.functions import get_coord_closest
+from hlt.positionals import Position
 
 
 """
@@ -46,14 +48,23 @@ class Retreat(Moves):
     def populate_heap(self):
         """
         GET DISTANCE FROM SHIPYARD
-
-        NEED TO ADD GETTING CLOSEST DOCK LATER!!!!!!!!!!!11
-
-        :return:
         """
+        ## ONLY BASED ON SHIPYARD POSITION
+        # for ship in self.data.me.get_ships():
+        #     distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
+        #     directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+        #     num_directions = len(directions)
+        #     s = FarthestShip(distance, num_directions, ship.id, directions)
+        #     self.farthest_ship = max(s , self.farthest_ship)
+        #     heapq.heappush(self.heap_dist, s)
+
+
+        ## TAKING DOCKS INTO ACCOUNT
         for ship in self.data.me.get_ships():
-            distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
-            directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+            curr_cell = (ship.position.y, ship.position.x)
+            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.matrix.myDocks, self.data.init_data.matrix.distances[curr_cell])
+            position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, position)
             num_directions = len(directions)
             s = FarthestShip(distance, num_directions, ship.id, directions)
             self.farthest_ship = max(s , self.farthest_ship)
