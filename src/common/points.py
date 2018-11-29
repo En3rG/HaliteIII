@@ -415,9 +415,9 @@ class DepartPoints():
             self.direction)
 
 
-class KickedPoints():
+class CollisionPoints():
     """
-    USED TO DETERMINE BEST DIRECTION FOR DEPARTING
+    USED TO DETERMINE BEST DIRECTION FOR AVOIDING IMMINENT COLLISION
     """
     def __init__(self, safe, occupied, priority_direction, harvest, direction):
         self.safe = safe
@@ -427,7 +427,7 @@ class KickedPoints():
         self.direction = direction
 
     def __gt__(self, other):
-        if isinstance(other, KickedPoints):
+        if isinstance(other, CollisionPoints):
             if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
@@ -450,7 +450,7 @@ class KickedPoints():
         return NotImplemented
 
     def __lt__(self, other):
-        if isinstance(other, KickedPoints):
+        if isinstance(other, CollisionPoints):
             if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:

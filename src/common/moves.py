@@ -7,7 +7,7 @@ import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.matrix.functions import move_populate_manhattan, get_index_highest_val
 from src.common.matrix.data import Section
-from src.movement.kicked import get_direction_kicked
+from src.movement.collision_prevention import avoid_collision_direction
 from src.common.points import HarvestPoints
 from src.common.print import print_matrix
 
@@ -143,8 +143,8 @@ class Moves(abc.ABC):
 
         if best.safe == -1 and mode != MoveMode.RETREAT:
             logging.debug("Avoiding collision for ship {}!!!!!!! ships kicked: {}".format(ship.id, self.data.ships_kicked))
-            return self.get_highest_harvest_move(ship)
-            #return get_direction_kicked(self, ship, mode, directions)
+            #return self.get_highest_harvest_move(ship)
+            return avoid_collision_direction(self, ship, directions)
 
         return best.direction
 
