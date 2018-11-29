@@ -7,6 +7,7 @@ import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.matrix.functions import move_populate_manhattan, get_index_highest_val
 from src.common.matrix.data import Section
+from src.movement.kicked import get_direction_kicked
 from src.common.points import HarvestPoints
 from src.common.print import print_matrix
 
@@ -56,6 +57,13 @@ class Moves(abc.ABC):
         logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
 
 
+    def mark_unsafe(self, position):
+        """
+        MARK POSITION PROVIDED WITH UNSAFE
+        """
+        self.data.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
+
+
     def check_kicked(self, ship, direction):
         """
         CHECK IF THE SHIP WITH DIRECTION GIVEN WILL TAKE A SPOT WHERE ANOTHER SHIP IS ALREADY RESIDING
@@ -86,13 +94,6 @@ class Moves(abc.ABC):
         """
         if ship.id in self.data.ships_kicked:
             self.data.ships_kicked.remove(ship.id)
-
-
-    def mark_unsafe(self, position):
-        """
-        MARK POSITION PROVIDED WITH UNSAFE
-        """
-        self.data.matrix.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 
     def move_occupied(self, ship, direction):
@@ -143,6 +144,7 @@ class Moves(abc.ABC):
         if best.safe == -1 and mode != MoveMode.RETREAT:
             logging.debug("Avoiding collision for ship {}!!!!!!! ships kicked: {}".format(ship.id, self.data.ships_kicked))
             return self.get_highest_harvest_move(ship)
+            #return get_direction_kicked(self, ship, mode, directions)
 
         return best.direction
 
@@ -230,15 +232,20 @@ class Moves(abc.ABC):
         :return:
         """
         logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-        harvest = Section(self.data.matrix.harvest, ship.position, size=1)  ## SECTION OF HARVEST MATRIX
-        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]  ## COST TO LEAVE CURRENT CELL
-        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost  ## APPLY COST TO DIRECT NEIGHBORS
-        harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF  ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
-        actual_harvest = harvest_matrix - cost_matrix  ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-        safe = Section(self.data.matrix.safe, ship.position, size=1)  ## SECTION SAFE
-        safe_harvest = actual_harvest * safe.matrix  ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
-
+        harvest = Section(self.data.matrix.harvest, ship.position, size=1)              ## SECTION OF HARVEST MATRIX
+        logging.debug("harvest: {}".format(harvest.matrix))
+        leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]            ## COST TO LEAVE CURRENT CELL
+        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                         ## APPLY COST TO DIRECT NEIGHBORS
+        logging.debug("cost_matrix: {}".format(cost_matrix))
+        harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF             ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
+        logging.debug("actual harvest_matrix: {}".format(harvest_matrix))
+        actual_harvest = harvest_matrix - cost_matrix                                   ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
         logging.debug("actual harvest: {}".format(actual_harvest))
+        safe = Section(self.data.matrix.safe, ship.position, size=1)                    ## SECTION SAFE
+        logging.debug("safe: {}".format(safe.matrix))
+        safe_harvest = actual_harvest * safe.matrix                                     ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+
+
         logging.debug("safe_harvest: {}".format(safe_harvest))
 
         max_index = get_index_highest_val(safe_harvest)

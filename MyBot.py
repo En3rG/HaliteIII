@@ -11,7 +11,6 @@ from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.attack import Attack
 from src.movement.depart import Depart
-from src.movement.kicked import Kicked
 from src.movement.build import Build
 from src.common.halite_statistics import Halite_stats
 from src.common.print import print_heading
@@ -79,7 +78,7 @@ while True:
     F = Attack(data, prev_data)
 
     ## HARVEST SHIPS
-    G = Kicked(data, prev_data)
+    #G = Kicked(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)

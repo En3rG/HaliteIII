@@ -156,6 +156,7 @@ class Data(abc.ABC):
         self.map_height = self.game_map.height
         self.average_halite = 0
         self.dock_positions = set()
+        self.isBuilding = False
 
         self.matrix = Matrix(self.map_height, self.map_width)
 

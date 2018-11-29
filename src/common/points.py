@@ -383,7 +383,7 @@ class DepartPoints():
                 return True
             elif self.safe < other.safe:
                 return False
-            if self.cost > other.cost:
+            elif self.cost > other.cost:
                 return True
             elif self.cost < other.cost:
                 return False
@@ -398,7 +398,7 @@ class DepartPoints():
                 return True
             elif self.safe > other.safe:
                 return False
-            if self.cost < other.cost:
+            elif self.cost < other.cost:
                 return True
             elif self.cost > other.cost:
                 return False
@@ -412,4 +412,71 @@ class DepartPoints():
             self.__class__.__name__,
             self.safe,
             self.cost,
+            self.direction)
+
+
+class KickedPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR DEPARTING
+    """
+    def __init__(self, safe, occupied, priority_direction, harvest, direction):
+        self.safe = safe
+        self.occupied = occupied
+        self.priority_direction = priority_direction
+        self.harvest = harvest
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, KickedPoints):
+            if self.safe > other.safe:
+                return True
+            elif self.safe < other.safe:
+                return False
+            elif self.occupied > other.occupied:
+                return True
+            elif self.occupied < other.occupied:
+                return False
+            elif self.priority_direction > other.priority_direction:
+                return True
+            elif self.priority_direction < other.priority_direction:
+                return False
+            elif self.harvest > other.harvest:
+                return True
+            elif self.harvest < other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, KickedPoints):
+            if self.safe < other.safe:
+                return True
+            elif self.safe > other.safe:
+                return False
+            elif self.occupied < other.occupied:
+                return True
+            elif self.occupied > other.occupied:
+                return False
+            elif self.priority_direction < other.priority_direction:
+                return True
+            elif self.priority_direction > other.priority_direction:
+                return False
+            elif self.harvest < other.harvest:
+                return True
+            elif self.harvest > other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} occupied: {} priority_direction: {} harvest: {} direction: {}".format(
+            self.__class__.__name__,
+            self.safe,
+            self.occupied,
+            self.priority_direction,
+            self.harvest,
             self.direction)

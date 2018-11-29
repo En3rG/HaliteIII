@@ -17,17 +17,22 @@ class Build(Moves):
 
         r, c = np.where(matrix != 0)
 
-        ships = self.data.matrix.myShipsID[r, c]
+        ships_on_docks = set(self.data.matrix.myShipsID[r, c])
         halite_amount = self.data.me.halite_amount
 
-        if len(ships) >= 1:
-            for ship_id in ships:
+        if len(ships_on_docks) >= 1:
+            ships_building = ships_on_docks & self.data.ships_to_move
+
+            for ship_id in ships_building:
                 ship = self.data.me._ships.get(ship_id)
                 self.mark_unsafe(ship.position)
                 self.data.ships_to_move.remove(ship.id)
 
+                self.data.isBuilding = True
+
                 if halite_amount > 4000:
                     halite_amount -= 4000
+
                     self.data.command_queue.append(ship.make_dropoff())
 
                     self.data.init_data.matrix.dock_placement[ship.position.y][ship.position.x] = 0
