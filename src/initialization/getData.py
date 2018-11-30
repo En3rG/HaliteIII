@@ -1,21 +1,21 @@
 from src.common.matrix.data import Data
 from src.common.print import print_heading, print_matrix
 
-class MyData(Data):
+class GetData(Data):
     def __init__(self, game, init_data, prev_data, halite_stats):
         super().__init__(game)
         self.halite_stats = halite_stats
         self.init_data = init_data
         self.command_queue = []
 
-        self.all_ships = set(self.me._ships.keys())         ## ALL SHIPS
-        self.ships_to_move = set(self.me._ships.keys())     ## SHIPS TO MOVE
+        self.ships_all = set(self.game.me._ships.keys())         ## ALL SHIPS
+        self.ships_to_move = set(self.game.me._ships.keys())     ## SHIPS TO MOVE
         self.ships_returning = set()                        ## SHIPS RETURNING HALITE
         self.ships_kicked = set()
 
         self.count_ships_died(prev_data)                    ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
-        print_heading("All ships [{} total]: {}".format(len(self.all_ships), self.all_ships))
+        print_heading("All ships [{} total]: {}".format(len(self.ships_all), self.ships_all))
 
         self.update_matrix()
 
@@ -42,7 +42,7 @@ class MyData(Data):
 
     def count_ships_died(self, prev_data):
         if prev_data:
-            self.ships_died = prev_data.all_ships - self.all_ships
+            self.ships_died = prev_data.ships_all - self.ships_all
             self.halite_stats.record_drop(self.ships_died, prev_data)
 
 

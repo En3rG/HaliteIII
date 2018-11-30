@@ -16,11 +16,11 @@ class Stuck(Moves):
         print_heading("Moving stuck ships......")
 
         # ## USING STUCK MATRIX
-        # matrix = self.data.matrix.stuck * self.data.matrix.myShipsID
+        # matrix = self.data.matrix.locations.stuck * self.data.matrix.locations.myShipsID
         # ship_ids = get_values_matrix(0, matrix, Inequality.GREATERTHAN)
         #
         # for ship_id in ship_ids:
-        #     ship = self.data.me._ships.get(ship_id)
+        #     ship = self.data.game.me._ships.get(ship_id)
         #
         #     logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
         #     direction = Direction.Still
@@ -31,10 +31,10 @@ class Stuck(Moves):
         ## THIS MIGHT BE FASTER THAN ABOVE, SINCE LOOPING THROUGH ~200 SHIPS COULD BE FASTER THAN
         ## PERFORMING MATRIX MULTIPLICATION AND LOOKING FOR THE VALUES IN A 64x64 MATRIX
         ## MOVE SHIPS THAT CANNOT MOVE YET
-        for ship_id in (self.data.all_ships & self.data.ships_to_move):
-            ship = self.data.me._ships.get(ship_id)
+        for ship_id in (self.data.ships_all & self.data.ships_to_move):
+            ship = self.data.game.me._ships.get(ship_id)
 
-            if self.data.matrix.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
+            if self.data.matrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
                 direction = Direction.Still
 
@@ -43,11 +43,11 @@ class Stuck(Moves):
 
         ## USING NP.WHERE
         ## PROBLEM IS AFTER RETREATING, STILL TRIES TO MOVE STUCK SHIP, WHICH WAS HANDLED IN RETREAT
-        # r, c = np.where(self.data.matrix.stuck == Matrix_val.ONE)
-        # ship_ids = self.data.matrix.myShipsID[r, c]
+        # r, c = np.where(self.data.matrix.locations.stuck == Matrix_val.ONE)
+        # ship_ids = self.data.matrix.locations.myShipsID[r, c]
         #
         # for ship_id in ship_ids:
-        #     ship = self.data.me._ships.get(ship_id)
+        #     ship = self.data.game.me._ships.get(ship_id)
         #
         #     logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
         #     direction = Direction.Still

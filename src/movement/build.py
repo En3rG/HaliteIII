@@ -13,18 +13,18 @@ class Build(Moves):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        matrix = self.data.matrix.myShipsID * self.data.init_data.matrix.dock_placement
+        matrix = self.data.matrix.locations.myShipsID * self.data.init_data.matrix.locations.dock_placement
 
         r, c = np.where(matrix != 0)
 
-        ships_on_docks = set(self.data.matrix.myShipsID[r, c])
-        halite_amount = self.data.me.halite_amount
+        ships_on_docks = set(self.data.matrix.locations.myShipsID[r, c])
+        halite_amount = self.data.game.me.halite_amount
 
         if len(ships_on_docks) >= 1:
             ships_building = ships_on_docks & self.data.ships_to_move
 
             for ship_id in ships_building:
-                ship = self.data.me._ships.get(ship_id)
+                ship = self.data.game.me._ships.get(ship_id)
                 self.mark_unsafe(ship.position)
                 self.data.ships_to_move.remove(ship.id)
 
@@ -35,7 +35,7 @@ class Build(Moves):
 
                     self.data.command_queue.append(ship.make_dropoff())
 
-                    self.data.init_data.matrix.dock_placement[ship.position.y][ship.position.x] = 0
+                    self.data.init_data.matrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
                 else:
                     self.data.command_queue.append(ship.move(Direction.Still))
 

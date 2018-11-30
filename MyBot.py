@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 ## Python 3.6
 
-from src.initialization.myInitData import MyInitData
-from src.initialization.myData import MyData
+from src.initialization.getInitData import GetInitData
+from src.initialization.getData import GetData
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
 from src.movement.explore import Explore
@@ -28,8 +28,9 @@ class PrevData():
     SHOULD ONLY CONTAIN NECESSARY INFORMATION FROM DATA
     """
     def __init__(self, data):
-        self.me = data.me
-        self.all_ships = data.all_ships
+        self.me = data.game.me
+        self.matrix = data.matrix
+        self.ships_all = data.ships_all
         self.ships_returning = data.ships_returning
 
 """ <<<Game Begin>>> """
@@ -39,7 +40,7 @@ game = hlt.Game()
 
 ## AT THIS POINT GAME VARIABLE IS POPULATED WITH INITIAL MAP DATA
 ## THIS IS A GOOD PLACE TO DO COMPUTATIONALLY EXPENSIVE START-UP PRE-PROCESING (30 secs)
-init_data = MyInitData(game)
+init_data = GetInitData(game)
 
 ## AS SOON AS YOU CALL "ready" FUNCTION BELOW, THE 2 SECOND PER TURN TIMER WILL START.,
 game.ready("En3rG")
@@ -57,7 +58,7 @@ while True:
     game.update_frame()
 
     ## EXTRACT GAME DATA
-    data = MyData(game, init_data, prev_data, halite_stats)
+    data = GetData(game, init_data, prev_data, halite_stats)
 
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)

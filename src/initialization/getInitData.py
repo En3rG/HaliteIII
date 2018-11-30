@@ -6,7 +6,7 @@ from hlt.positionals import Position
 import logging
 import copy
 
-class MyInitData(Data):
+class GetInitData(Data):
     def __init__(self, game):
         super().__init__(game)
         self.update_matrix()
@@ -35,8 +35,8 @@ class MyInitData(Data):
         self.populate_dock_placement()
 
 
-        # print_matrix("halite", self.matrix.halite)
-        # print_matrix("top halite", self.matrix.top_halite)
+        # print_matrix("halite", self.matrix.halite.amount)
+        # print_matrix("top halite", self.matrix.halite.top_amount)
         # logging.debug("Halite average: {}".format(self.average_halite))
         #
         # print_matrix("Average: manhattan", self.matrix.average.manhattan)
@@ -49,7 +49,10 @@ class MyInitData(Data):
 
 
     def populate_dock_placement(self):
-        shipyard = self.me.shipyard
+        """
+        DETERMINE WHERE TO PLACE DOCKS
+        """
+        shipyard = self.game.me.shipyard
         matrix = copy.deepcopy(self.matrix.average.top_N)
 
         print_matrix("Average: top N", self.matrix.average.top_N)
@@ -66,12 +69,12 @@ class MyInitData(Data):
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
             populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS)
-            self.matrix.dock_placement[position.y][position.x] = Matrix_val.ONE
+            self.matrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX
             coord, distance, val = get_coord_closest(matrix.max(), matrix, self.matrix.distances[curr_cell])
 
-        print_matrix("Final dock placement", self.matrix.dock_placement)
+        print_matrix("Final dock placement", self.matrix.locations.dock_placement)
 
 
 

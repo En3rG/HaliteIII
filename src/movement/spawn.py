@@ -19,10 +19,10 @@ def spawn_ships(data):
     """
     if data.game.turn_number <= constants.MAX_TURNS * data.stop_spawning \
             and data.isBuilding == False \
-            and data.me.halite_amount >= constants.SHIP_COST \
-            and data.matrix.safe[data.game_map[data.me.shipyard].position.y][data.game_map[data.me.shipyard].position.x] != Matrix_val.UNSAFE:
-            # and not data.game_map[data.me.shipyard].is_occupied\ ## NOT ACCURATE? LOOKS AT CURRENT TURN BUT SPAWN HAPPENS NEXT TURN
+            and data.game.me.halite_amount >= constants.SHIP_COST \
+            and data.matrix.locations.safe[data.game.game_map[data.game.me.shipyard].position.y][data.game.game_map[data.game.me.shipyard].position.x] != Matrix_val.UNSAFE:
+            # and not data.game.game_map[data.game.me.shipyard].is_occupied\ ## NOT ACCURATE? LOOKS AT CURRENT TURN BUT SPAWN HAPPENS NEXT TURN
 
         print_heading("Safe to spawn ship......")
         data.halite_stats.record_spent(BuildType.SHIP)
-        data.command_queue.append(data.me.shipyard.spawn())
+        data.command_queue.append(data.game.me.shipyard.spawn())

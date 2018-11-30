@@ -19,13 +19,13 @@ class Harvest(Moves):
     def move_ships(self):
         print_heading("Moving harvesting (now) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NOW)
-        for ship_id in (self.data.all_ships & self.data.ships_to_move):
+        for ship_id in (self.data.ships_all & self.data.ships_to_move):
             self.harvestNow(ship_id)
 
 
         print_heading("Moving harvesting (later) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
-        ships = (self.data.all_ships & self.data.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        ships = (self.data.ships_all & self.data.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.ships_kicked:
@@ -45,7 +45,7 @@ class Harvest(Moves):
         """
         CHECK IF SHIP WILL HARVEST NOW, IF SO, MOVE IT
         """
-        ship = self.data.me._ships.get(ship_id)
+        ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
         direction = self.best_direction(ship, mode=MoveMode.HARVEST)
@@ -59,12 +59,12 @@ class Harvest(Moves):
         """
         ## USING DONT HARVEST BELOW
         if direction == Direction.Still and \
-                (self.data.matrix.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
+                (self.data.matrix.halite.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
             return True
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
         # if direction == Direction.Still and \
-        #         (self.data.matrix.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite) or self.isBlocked(ship)):
+        #         (self.data.matrix.halite.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite) or self.isBlocked(ship)):
         #     return True
         #
         # return False
@@ -74,7 +74,7 @@ class Harvest(Moves):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
         """
-        ship = self.data.me._ships.get(ship_id)
+        ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
         direction = self.best_direction(ship, mode=MoveMode.HARVEST)
@@ -96,12 +96,12 @@ class Harvest(Moves):
         destination = self.get_destination(ship, direction)
 
         ## USING DONT HARVEST BELOW
-        return (self.data.matrix.harvest[destination.y][destination.x] > MyConstants.DONT_HARVEST_BELOW
-                and self.data.matrix.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+        return (self.data.matrix.halite.harvest[destination.y][destination.x] > MyConstants.DONT_HARVEST_BELOW
+                and self.data.matrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
-        # return (self.data.matrix.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite)
-        #         and self.data.matrix.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+        # return (self.data.matrix.halite.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite)
+        #         and self.data.matrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 
     def get_points_harvest(self, ship):
@@ -132,9 +132,9 @@ class Harvest(Moves):
         :return: COST AND HARVEST AMOUNT
         """
         destination = self.get_destination(ship, direction)
-        harvest = self.data.matrix.harvest[destination.y][destination.x]
-        cost = self.data.matrix.cost[destination.y][destination.x]
-        influenced = True if self.data.matrix.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
+        harvest = self.data.matrix.halite.harvest[destination.y][destination.x]
+        cost = self.data.matrix.halite.cost[destination.y][destination.x]
+        influenced = True if self.data.matrix.locations.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
         bonus = (harvest * 2) if influenced else 0
 
         if direction == Direction.Still:
@@ -155,13 +155,13 @@ class Harvest(Moves):
         :return:
         """
         destination = self.get_destination(ship, direction)
-        safe = self.data.matrix.safe[destination.y][destination.x]
-        potential_enemy_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
+        safe = self.data.matrix.locations.safe[destination.y][destination.x]
+        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
         # if direction == Direction.Still:
-        #     occupied = 0 if self.data.matrix.occupied[destination.y][destination.x] >= -1 else -1
+        #     occupied = 0 if self.data.matrix.locatins.occupied[destination.y][destination.x] >= -1 else -1
         # else:
-        #     occupied = self.data.matrix.occupied[destination.y][destination.x]
-        occupied = 0 if self.data.matrix.occupied[destination.y][destination.x] >= -1 else -1
+        #     occupied = self.data.matrix.locations.occupied[destination.y][destination.x]
+        occupied = 0 if self.data.matrix.locations.occupied[destination.y][destination.x] >= -1 else -1
 
         c = HarvestPoints(safe, occupied, potential_enemy_collision, harvest, direction)
         points.append(c)
@@ -176,7 +176,7 @@ class Harvest(Moves):
         unsafe_num = 0
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
-            if self.data.matrix.safe[destination.y][destination.x] == -1: unsafe_num += 1
+            if self.data.matrix.locations.safe[destination.y][destination.x] == -1: unsafe_num += 1
 
         return unsafe_num == 4
 

@@ -22,8 +22,8 @@ class Deposit(Moves):
         print_heading("Moving depositing ships......")
 
         ## SHIPS JUST HIT MAX
-        for ship_id in (self.data.all_ships & self.data.ships_to_move):
-            ship = self.data.me._ships.get(ship_id)
+        for ship_id in (self.data.ships_all & self.data.ships_to_move):
+            ship = self.data.game.me._ships.get(ship_id)
 
             if ship.is_full:
                 self.populate_heap(ship)
@@ -31,7 +31,7 @@ class Deposit(Moves):
         ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
         if self.prev_data:
             for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
-                ship = self.data.me._ships.get(ship_id)
+                ship = self.data.game.me._ships.get(ship_id)
 
                 if ship and (ship.position.y, ship.position.x) not in self.data.dock_positions:
                     self.populate_heap(ship)
@@ -40,14 +40,14 @@ class Deposit(Moves):
         while self.data.ships_kicked:
             ship_kicked = self.data.ships_kicked.pop()
             logging.debug("Moving kicked ship ({}) for deposit".format(ship_kicked))
-            ship = self.data.me._ships.get(ship_kicked)
-            directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+            ship = self.data.game.me._ships.get(ship_kicked)
+            directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
             self.returning(ship, directions)  ## CANNOT ASSUME SHIP KICKED BY DEPART IS RETURNING!!!!!!!!!1
 
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
-            ship = self.data.me._ships.get(s.ship_id)
+            ship = self.data.game.me._ships.get(s.ship_id)
             self.returning(ship, s.directions)
 
 
@@ -59,8 +59,8 @@ class Deposit(Moves):
         # if ship.id not in self.heap_set:
         #     self.heap_set.add(ship.id)
         #
-        #     distance = self.data.game_map.calculate_distance(ship.position, self.data.me.shipyard.position)
-        #     directions = self.get_directions_target(ship, self.data.me.shipyard.position)
+        #     distance = self.data.game.game_map.calculate_distance(ship.position, self.data.game.me.shipyard.position)
+        #     directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
         #     num_directions = len(directions)
         #     s = FarthestShip(distance, num_directions, ship.id, directions)
         #     heapq.heappush(self.heap_dist, s)
@@ -70,7 +70,7 @@ class Deposit(Moves):
             self.heap_set.add(ship.id)
 
             curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.matrix.myDocks, self.data.init_data.matrix.distances[curr_cell])
+            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.matrix.locations.myDocks, self.data.init_data.matrix.distances[curr_cell])
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)
             num_directions = len(directions)
@@ -97,8 +97,8 @@ class Deposit(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        potential_enemy_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
-        potential_ally_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_ally_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
         points = [ DepositPoints(safe=1,
                                  dock = 0,
                                  potential_enemy_collision=potential_enemy_collision,
@@ -109,11 +109,11 @@ class Deposit(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            safe = self.data.matrix.safe[destination.y][destination.x]
-            dock = 1 if self.data.matrix.myDocks[destination.y][destination.x] else 0
-            cost = self.data.matrix.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
-            potential_ally_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
+            safe = self.data.matrix.locations.safe[destination.y][destination.x]
+            dock = 1 if self.data.matrix.locations.myDocks[destination.y][destination.x] else 0
+            cost = self.data.matrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
+            potential_ally_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
             c = DepositPoints(safe, dock, potential_enemy_collision, potential_ally_collision, cost, direction)
             points.append(c)

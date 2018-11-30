@@ -33,7 +33,7 @@ class Explore(Moves):
 
         ## MOVE REST OF THE SHIPS TO EXPLORE
         ## MOVE KICKED SHIPS FIRST
-        # ships = (self.data.all_ships & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        # ships = (self.data.ships_all & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         # for ship_id in ships:
         #     ## MOVE KICKED SHIPS FIRST (IF ANY)
         #     while self.data.ships_kicked:
@@ -48,7 +48,7 @@ class Explore(Moves):
 
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
         ## THIS SEEMS TO PERFORM WORST THAN ABOVE, WHY???
-        ships = (self.data.all_ships & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        ships = (self.data.ships_all & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.ships_kicked:
@@ -64,7 +64,7 @@ class Explore(Moves):
             s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug(s)                    ## EXPLORE SHIP OBJECT
 
-            ship = self.data.me._ships.get(s.ship_id)
+            ship = self.data.game.me._ships.get(s.ship_id)
             directions = self.get_directions_target(ship, s.destination)
             direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
             self.move_mark_unsafe(ship, direction)
@@ -74,12 +74,12 @@ class Explore(Moves):
         if ship_id not in self.heap_set:
             self.heap_set.add(ship_id)
 
-            ship = self.data.me._ships.get(ship_id)
+            ship = self.data.game.me._ships.get(ship_id)
 
             curr_cell = (ship.position.y, ship.position.x)
             seek_val = Matrix_val.TEN
             coord, min_di, val = get_coord_closest(seek_val,
-                                                   self.data.matrix.top_halite,
+                                                   self.data.matrix.halite.top_amount,
                                                    self.data.init_data.matrix.distances[curr_cell])
             destination = Position(coord[1], coord[0])
             s = ExploreShip(min_di, ship_id, curr_cell, destination)
@@ -90,7 +90,7 @@ class Explore(Moves):
         """
         SHIP IS EXPLORING, PERFORM NECESSARY STEPS
         """
-        ship = self.data.me._ships.get(ship_id)
+        ship = self.data.game.me._ships.get(ship_id)
 
         ## GET DIRECTION TO HIGHEST NEIGHBOR
         #direction = self.get_highest_harvest_move(ship)
@@ -106,7 +106,7 @@ class Explore(Moves):
         ## GET DIRECTION TO CLOSEST TOP HALITE
         curr_cell = (ship.position.y, ship.position.x)
         seek_val = Matrix_val.TEN
-        coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.top_halite, self.data.init_data.matrix.distances[curr_cell])
+        coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.halite.top_amount, self.data.init_data.matrix.distances[curr_cell])
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
         direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
@@ -127,17 +127,17 @@ class Explore(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            safe = self.data.matrix.safe[destination.y][destination.x]
-            occupied = self.data.matrix.occupied[destination.y][destination.x]
-            cost = self.data.matrix.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
+            safe = self.data.matrix.locations.safe[destination.y][destination.x]
+            occupied = self.data.matrix.locations.occupied[destination.y][destination.x]
+            cost = self.data.matrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
             c = ExplorePoints(safe, occupied, potential_enemy_collision, cost, direction)
             points.append(c)
 
-        safe = self.data.matrix.safe[ship.position.y][ship.position.x]
-        occupied = 0 if self.data.matrix.occupied[ship.position.y][ship.position.x] >= -1 else -1
-        potential_enemy_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
+        safe = self.data.matrix.locations.safe[ship.position.y][ship.position.x]
+        occupied = 0 if self.data.matrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
+        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
 
         points.append(ExplorePoints(safe=safe,
                                     occupied=occupied,

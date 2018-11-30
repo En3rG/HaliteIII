@@ -83,12 +83,12 @@ class Halite_stats():
 
         ## HARVESTING
         if ship.position == destination:
-            harvest_val = data.matrix.harvest[ship.position.y][ship.position.x]
+            harvest_val = data.matrix.halite.harvest[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_gained += harvest_val
             self.total_gained += harvest_val
 
             ## CALCULATE BONUS HALITE
-            if data.matrix.influenced[ship.position.y][ship.position.x] > Matrix_val.ONE:
+            if data.matrix.locations.influenced[ship.position.y][ship.position.x] > Matrix_val.ONE:
                 bonus_val = harvest_val * 2
 
                 self.ships_stat[ship.id].halite_bonus += bonus_val
@@ -96,7 +96,7 @@ class Halite_stats():
 
         ## MOVING, THUS BURNING HALITE
         else:
-            burned_val = data.matrix.cost[ship.position.y][ship.position.x]
+            burned_val = data.matrix.halite.cost[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_burned += burned_val
             self.total_burned += burned_val
 
