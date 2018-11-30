@@ -100,6 +100,7 @@ class Deposit(Moves):
         potential_enemy_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
         potential_ally_collision = self.data.matrix.potential_enemy_collisions[ship.position.y][ship.position.x]
         points = [ DepositPoints(safe=1,
+                                 dock = 0,
                                  potential_enemy_collision=potential_enemy_collision,
                                  potential_ally_collision=potential_ally_collision,
                                  cost=999,
@@ -109,11 +110,12 @@ class Deposit(Moves):
             destination = self.get_destination(ship, direction)
 
             safe = self.data.matrix.safe[destination.y][destination.x]
+            dock = 1 if self.data.matrix.myDocks[destination.y][destination.x] else 0
             cost = self.data.matrix.cost[destination.y][destination.x]
             potential_enemy_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
             potential_ally_collision = self.data.matrix.potential_enemy_collisions[destination.y][destination.x]
 
-            c = DepositPoints(safe, potential_enemy_collision, potential_ally_collision, cost, direction)
+            c = DepositPoints(safe, dock, potential_enemy_collision, potential_ally_collision, cost, direction)
             points.append(c)
 
         logging.debug(points)

@@ -19,7 +19,7 @@ class Section():
     SECTION IS A SQUARE MATRIX
     ACTUAL SIZE OF SECTION IS ACTUALLY (SIZE * 2 + 1) by (SIZE * 2 + 1)
 
-    ONLY USED IN GET HIGHEST HARVEST MOVE (OBSOLETE)
+    ONLY USED IN GET HIGHEST HARVEST MOVE (OBSOLETE!!!!)
 
     :param matrix: ORIGINAL MATRIX
     :param position: CENTER OF THE SECTION
@@ -47,7 +47,7 @@ class Section():
 #     """
 #     MASK A CIRCLE ON THE ARRAY
 #
-#     CURRENTLY NOT USED (DELETE LATER)
+#     CURRENTLY NOT USED (DELETE LATER!!!!!)
 #
 #     :param array: ORIGINAL ARRAY
 #     :param center: CENTER OF THE CIRCLE
@@ -83,6 +83,8 @@ class Section():
 class Sectioned():
     """
     MAP DIVIDED INTO SECTIONS
+
+    OBSOLETE????
     """
     def __init__(self, map_height, map_width):
         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
@@ -92,6 +94,8 @@ class Sectioned():
 class Depletion():
     """
     USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
+
+    OBSOLETE????
     """
     def __init__(self, map_height, map_width):
         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
@@ -197,11 +201,11 @@ class Data(abc.ABC):
 
     def populate_enemyShipyard_docks(self):
         """
-        POPULATE MATRIX WITH ENEMY_SHIPYARD.value WHERE ENEMY SHIPYARDS ARE LOCATED
+        POPULATE ENEMY SHIPYARD POSITION AND ALL DOCKS POSITION
         """
         for id, player in self.players.items():
             if id != self.my_id:
-                ## SHIPYARD
+                ## SHIPYARDS
                 enemyShipyard_position = player.shipyard.position
                 self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
 
@@ -220,9 +224,13 @@ class Data(abc.ABC):
             self.matrix.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
             self.matrix.myShipsID[ship.position.y][ship.position.x] = ship.id
             self.matrix.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
-            populate_manhattan(self.matrix.potential_ally_collisions, Matrix_val.POTENTIAL_COLLISION, ship.position,
-                          MyConstants.DIRECT_NEIGHBOR_RADIUS, cummulative=True)
+            populate_manhattan(self.matrix.potential_ally_collisions,
+                               Matrix_val.POTENTIAL_COLLISION,
+                               ship.position,
+                               MyConstants.DIRECT_NEIGHBOR_RADIUS,
+                               cummulative=True)
 
+            ## POPULATE STUCK SHIPS
             if self.matrix.cost[ship.position.y][ship.position.x] > ship.halite_amount:
                 self.matrix.stuck[ship.position.y][ship.position.x] = Matrix_val.ONE
 
@@ -282,7 +290,7 @@ class Data(abc.ABC):
 
         RECORD AVERAGE OF EACH SECTION
 
-        OBSOLETE? NO LONGER USED
+        OBSOLETE???? NO LONGER USED
         """
         for y, row in enumerate(self.matrix.sectioned.halite):
             for x, col in enumerate(row):
@@ -303,7 +311,7 @@ class Data(abc.ABC):
 
         self.matrix.sectioned.distances[curr_section][y][x] = distance
 
-        OBSOLETE? NO LONGER USED
+        OBSOLETE????? NO LONGER USED
         """
         height = (self.map_height // MyConstants.SECTION_SIZE) + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
         width = (self.map_width // MyConstants.SECTION_SIZE) + 1

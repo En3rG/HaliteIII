@@ -168,8 +168,9 @@ class DepositPoints():
 
     not occupied > cost
     """
-    def __init__(self, safe, potential_enemy_collision, potential_ally_collision, cost, direction):
+    def __init__(self, safe, dock, potential_enemy_collision, potential_ally_collision, cost, direction):
         self.safe = safe
+        self.dock = dock
         self.potential_enemy_collision = potential_enemy_collision
         self.potential_ally_collision = potential_ally_collision
         self.cost = -cost  ## NEGATIVE BECAUSE WE WANT THE LEAST COST
@@ -180,6 +181,10 @@ class DepositPoints():
             if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
+                return False
+            elif self.dock > other.dock:
+                return True
+            elif self.dock < other.dock:
                 return False
             elif self.potential_enemy_collision > other.potential_enemy_collision:
                 return True
@@ -204,6 +209,10 @@ class DepositPoints():
                 return True
             elif self.safe > other.safe:
                 return False
+            elif self.dock < other.dock:
+                return True
+            elif self.dock > other.dock:
+                return False
             elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return True
             elif self.potential_enemy_collision > other.potential_enemy_collision:
@@ -222,8 +231,9 @@ class DepositPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(self.__class__.__name__,
+        return "{} safe: {} dock: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(self.__class__.__name__,
                                                                                            self.safe,
+                                                                                           self.dock,
                                                                                            self.potential_enemy_collision,
                                                                                            self.potential_ally_collision,
                                                                                            self.cost,
