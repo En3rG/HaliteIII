@@ -162,6 +162,9 @@ class Data(abc.ABC):
         self.average_halite = 0
         self.dock_positions = set()
         self.isBuilding = False
+        self.stop_spawning = MyConstants.STOP_SPAWNING_2P if len(self.players) == 2 else MyConstants.STOP_SPAWNING_4P
+
+        logging.debug("TESTINGGGGGGG {}".format(len(self.players)))
 
         self.matrix = Matrix(self.map_height, self.map_width)
 

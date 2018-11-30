@@ -17,7 +17,7 @@ def spawn_ships(data):
 
     :param data:
     """
-    if data.game.turn_number <= constants.MAX_TURNS * MyConstants.STOP_SPAWNING \
+    if data.game.turn_number <= constants.MAX_TURNS * data.stop_spawning \
             and data.isBuilding == False \
             and data.me.halite_amount >= constants.SHIP_COST \
             and data.matrix.safe[data.game_map[data.me.shipyard].position.y][data.game_map[data.me.shipyard].position.x] != Matrix_val.UNSAFE:
