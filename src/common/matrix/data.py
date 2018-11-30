@@ -123,6 +123,7 @@ class Matrix():
         self.myShipyard = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipyard = np.zeros((map_height, map_width), dtype=np.int16)
         self.myDocks = np.zeros((map_height, map_width), dtype=np.int16)
+        self.enemyDocks = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
@@ -177,35 +178,38 @@ class Data(abc.ABC):
         self.matrix.halite = np.array(halites, dtype=np.int16)
 
 
-    def populate_myShipyard(self):
+    def populate_myShipyard_docks(self):
         """
-        POPULATE MATRIX WITH ALLY_SHIPYARD.value WHERE MY SHIPYARD IS LOCATED
+        POPULATE MY SHIPYARD POSITION AND ALL DOCKS POSITION
         """
+        ## SHIPYARD
         myShipyard_position = self.me.shipyard.position
         self.matrix.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
-
-    def populate_enemyShipyard(self):
-        """
-        POPULATE MATRIX WITH ENEMY_SHIPYARD.value WHERE ENEMY SHIPYARDS ARE LOCATED
-        """
-        for id, player in self.players.items():
-            if id != self.my_id:
-                enemyShipyard_position = player.shipyard.position
-                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
-
-
-    def populate_docks(self):
-        """
-        POPULATE SHIPYARD AND DOCKS POSITION
-        """
-        myShipyard_position = self.me.shipyard.position
+        ## DOCKS
         self.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
         self.matrix.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         for dropoff in self.me.get_dropoffs():
             self.dock_positions.add((dropoff.position.y, dropoff.position.x))
             self.matrix.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
+
+
+    def populate_enemyShipyard_docks(self):
+        """
+        POPULATE MATRIX WITH ENEMY_SHIPYARD.value WHERE ENEMY SHIPYARDS ARE LOCATED
+        """
+        for id, player in self.players.items():
+            if id != self.my_id:
+                ## SHIPYARD
+                enemyShipyard_position = player.shipyard.position
+                self.matrix.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
+
+                ## DOCKS
+                self.matrix.enemyDocks[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
+
+                for dropoff in player.get_dropoffs():
+                    self.matrix.enemyDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 
     def populate_myShips(self):
@@ -390,6 +394,16 @@ class Data(abc.ABC):
 
     def get_average_halite(self):
         self.average_halite = int(np.average(self.matrix.halite))
+
+
+    def update_dock_placement(self):
+        """
+        UPDATE DOCK PLACEMENT TO EXCLUDE ENEMY DOCKS/SHIPYARDS
+        """
+        r, c = np.where(self.matrix.enemyDocks == Matrix_val.ONE)
+        self.init_data.matrix.dock_placement[r, c] = 0
+
+
 
 
 

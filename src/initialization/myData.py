@@ -25,18 +25,19 @@ class MyData(Data):
         POPULATE ALL MATRICES
         """
         self.populate_halite()
-        self.populate_myShipyard()
-        self.populate_enemyShipyard()
+        self.populate_myShipyard_docks()
+        self.populate_enemyShipyard_docks()
         self.populate_cost()
         self.populate_harvest()
         self.populate_myShips()
-        self.populate_docks()
         self.populate_enemyShips_influenced()
 
         #self.populate_sectioned_halite()
 
         self.populate_top_halite()
         self.get_average_halite()
+
+        self.update_dock_placement()
 
 
     def count_ships_died(self, prev_data):

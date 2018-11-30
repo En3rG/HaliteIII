@@ -16,11 +16,10 @@ class MyInitData(Data):
         POPULATE ALL MATRICES
         """
         self.populate_halite()
-        self.populate_myShipyard()
-        self.populate_enemyShipyard()
+        self.populate_myShipyard_docks()
+        self.populate_enemyShipyard_docks()
         self.populate_cost()
         self.populate_harvest()
-        self.populate_docks()
 
         self.populate_cell_distances()
         self.populate_top_halite()
