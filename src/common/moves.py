@@ -233,20 +233,12 @@ class Moves(abc.ABC):
         """
         logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
         harvest = Section(self.data.matrix.harvest, ship.position, size=1)              ## SECTION OF HARVEST MATRIX
-        logging.debug("harvest: {}".format(harvest.matrix))
         leave_cost = self.data.matrix.cost[ship.position.y][ship.position.x]            ## COST TO LEAVE CURRENT CELL
         cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                         ## APPLY COST TO DIRECT NEIGHBORS
-        logging.debug("cost_matrix: {}".format(cost_matrix))
         harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF             ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
-        logging.debug("actual harvest_matrix: {}".format(harvest_matrix))
         actual_harvest = harvest_matrix - cost_matrix                                   ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-        logging.debug("actual harvest: {}".format(actual_harvest))
         safe = Section(self.data.matrix.safe, ship.position, size=1)                    ## SECTION SAFE
-        logging.debug("safe: {}".format(safe.matrix))
         safe_harvest = actual_harvest * safe.matrix                                     ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
-
-
-        logging.debug("safe_harvest: {}".format(safe_harvest))
 
         max_index = get_index_highest_val(safe_harvest)
 
