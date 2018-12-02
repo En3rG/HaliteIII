@@ -12,7 +12,6 @@ import heapq
 """
 TO DO!!!!!!!!!!!
 
-ADD HEAP TO AVOID COLLISIONS/KICKING
 
 AVOID SWARMING INTO AN AREA WHERE OTHERS HAVE NO PLACE TO GO
 
@@ -47,7 +46,7 @@ class Explore(Moves):
 
 
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
-        ## THIS SEEMS TO PERFORM WORST THAN ABOVE, WHY???
+        ## THIS SEEMS TO PERFORM WORST THAN ABOVE??
         ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -122,7 +121,6 @@ class Explore(Moves):
         :return:
         """
         points = []
-
 
         for direction in directions:
             destination = self.get_destination(ship, direction)

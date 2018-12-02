@@ -257,8 +257,57 @@ def largest_indices(matrix, n):
     """Returns the n largest indices from a numpy array."""
     flat = matrix.flatten()
     indices = np.argpartition(flat, -n)[-n:]
-    indices = indices[np.argsort(-flat[indices])]
+    indices = indices[np.argsort(-flat[indices])]  ## SORT FROM HIGHEST TO LOWEST
     return np.unravel_index(indices, matrix.shape)
+
+
+def get_n_smallest_values(matrix, n):
+    """
+    :param n:
+    :param matrix:
+    :return: n SMALLEST VALUES FROM MATRIX, AND ITS INDICES (AS NUMPY ARRAY)
+    """
+    ind = smallest_indices(matrix, n)
+    return matrix[ind], ind
+
+
+def smallest_indices(matrix, n):
+    """Returns the n smallest indices from a numpy array."""
+    flat = matrix.flatten()
+    indices = np.argpartition(flat, n)[:n]
+    return np.unravel_index(indices, matrix.shape)
+
+
+def get_n_closest_masked(value_matrix, distance_matrix, mask_val, n):
+    """
+    RETURN INDICES OF CLOSEST DISTANCE AND ITS VALUES
+    BASED ON MASKED VALUE MATRIX
+
+    :param value_matrix:
+    :param distance_matrix:
+    :param mask_val:
+    :param n:
+    :return:
+    """
+    mask = value_matrix == mask_val
+    sorted_args = np.argpartition(distance_matrix[mask], n)[:n]
+    sorted_dist = np.partition(distance_matrix[mask], n)[:n]
+    indices = np.argwhere(mask)[sorted_args]
+    return indices, sorted_dist
+
+
+def get_sorted_distance_indices(val_matrix, dist_matrix):
+    """
+    RETURN SORTED ARGS OF THE DISTANCE MATRIX, BASED ON THE MASK
+    MIGHT BE SLOW IF THE DATA SET IS LARGE (SORTING ENTIRE THING)
+    FASTER TO DO ARGPARTITION IF ONLY NEED CLOSEST N
+    """
+    mask = val_matrix == 10
+    return np.argwhere(mask)[dist_matrix[mask].argsort()]
+
+
+
+
 
 
 def get_cell_averages(map_height, map_width, matrix):

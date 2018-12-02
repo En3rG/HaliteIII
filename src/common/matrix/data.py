@@ -406,8 +406,8 @@ class Data(abc.ABC):
         """
         POPULATE TOP HALITE CELLS
         """
-        num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-        top, ind = get_n_largest_values(self.matrix.halite.amount, num_cells)
+        top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+        top, ind = get_n_largest_values(self.matrix.halite.amount, top_num_cells)
         self.matrix.halite.top_amount[ind] = 10
 
 
