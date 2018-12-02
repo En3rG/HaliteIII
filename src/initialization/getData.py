@@ -8,14 +8,9 @@ class GetData(Data):
         self.init_data = init_data
         self.command_queue = []
 
-        self.ships_all = set(self.game.me._ships.keys())         ## ALL SHIPS
-        self.ships_to_move = set(self.game.me._ships.keys())     ## SHIPS TO MOVE
-        self.ships_returning = set()                        ## SHIPS RETURNING HALITE
-        self.ships_kicked = set()
+        self.count_ships_died(prev_data)                            ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
-        self.count_ships_died(prev_data)                    ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
-
-        print_heading("All ships [{} total]: {}".format(len(self.ships_all), self.ships_all))
+        print_heading("All ships [{} total]: {}".format(len(self.mySets.ships_all), self.mySets.ships_all))
 
         self.update_matrix()
 
@@ -42,7 +37,7 @@ class GetData(Data):
 
     def count_ships_died(self, prev_data):
         if prev_data:
-            self.ships_died = prev_data.ships_all - self.ships_all
+            self.ships_died = prev_data.ships_all - self.mySets.ships_all
             self.halite_stats.record_drop(self.ships_died, prev_data)
 
 

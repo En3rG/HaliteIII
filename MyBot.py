@@ -30,8 +30,8 @@ class PrevData():
     def __init__(self, data):
         self.me = data.game.me
         self.matrix = data.matrix
-        self.ships_all = data.ships_all
-        self.ships_returning = data.ships_returning
+        self.ships_all = data.mySets.ships_all
+        self.ships_returning = data.mySets.ships_returning
 
 """ <<<Game Begin>>> """
 

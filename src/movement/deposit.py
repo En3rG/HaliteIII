@@ -22,7 +22,7 @@ class Deposit(Moves):
         print_heading("Moving depositing ships......")
 
         ## SHIPS JUST HIT MAX
-        for ship_id in (self.data.ships_all & self.data.ships_to_move):
+        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             ship = self.data.game.me._ships.get(ship_id)
 
             if ship.is_full:
@@ -30,15 +30,15 @@ class Deposit(Moves):
 
         ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
         if self.prev_data:
-            for ship_id in (self.prev_data.ships_returning & self.data.ships_to_move):
+            for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
                 ship = self.data.game.me._ships.get(ship_id)
 
-                if ship and (ship.position.y, ship.position.x) not in self.data.dock_positions:
+                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_positions:
                     self.populate_heap(ship)
 
         ## MOVE KICKED SHIPS FIRST (IF ANY)
-        while self.data.ships_kicked:
-            ship_kicked = self.data.ships_kicked.pop()
+        while self.data.mySets.ships_kicked:
+            ship_kicked = self.data.mySets.ships_kicked.pop()
             logging.debug("Moving kicked ship ({}) for deposit".format(ship_kicked))
             ship = self.data.game.me._ships.get(ship_kicked)
             directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
@@ -85,7 +85,7 @@ class Deposit(Moves):
         logging.debug("Ship id: {} is returning".format(ship.id))
         direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
         self.move_mark_unsafe(ship, direction)
-        self.data.ships_returning.add(ship.id)
+        self.data.mySets.ships_returning.add(ship.id)
 
 
     def get_points_returning(self, ship, directions):

@@ -33,31 +33,31 @@ class Explore(Moves):
 
         ## MOVE REST OF THE SHIPS TO EXPLORE
         ## MOVE KICKED SHIPS FIRST
-        # ships = (self.data.ships_all & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        # ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         # for ship_id in ships:
         #     ## MOVE KICKED SHIPS FIRST (IF ANY)
-        #     while self.data.ships_kicked:
-        #         ship_kicked = self.data.ships_kicked.pop()
+        #     while self.data.mySets.ships_kicked:
+        #         ship_kicked = self.data.mySets.ships_kicked.pop()
         #         logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
         #         self.exploreNow(ship_kicked)
         #
         #     ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-        #     if ship_id in self.data.ships_to_move:
+        #     if ship_id in self.data.mySets.ships_to_move:
         #         self.exploreNow(ship_id)
 
 
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
         ## THIS SEEMS TO PERFORM WORST THAN ABOVE, WHY???
-        ships = (self.data.ships_all & self.data.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
-            while self.data.ships_kicked:
-                ship_kicked = self.data.ships_kicked.pop()
+            while self.data.mySets.ships_kicked:
+                ship_kicked = self.data.mySets.ships_kicked.pop()
                 logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
                 self.exploreNow(ship_kicked)
 
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-            if ship_id in self.data.ships_to_move:
+            if ship_id in self.data.mySets.ships_to_move:
                 self.populate_heap(ship_id)
 
         while self.heap_dist:

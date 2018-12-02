@@ -47,7 +47,7 @@ class Moves(abc.ABC):
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
-        self.data.ships_to_move.remove(ship.id)
+        self.data.mySets.ships_to_move.remove(ship.id)
 
         self.check_kicked(ship, direction)
 
@@ -78,9 +78,9 @@ class Moves(abc.ABC):
         if occupied < -1:
             shipID_kicked = self.data.matrix.locations.myShipsID[destination.y][destination.x]
 
-            if shipID_kicked in self.data.ships_to_move:
+            if shipID_kicked in self.data.mySets.ships_to_move:
                 logging.debug("ship id {} added to ships kicked, by ship {}".format(shipID_kicked, ship.id))
-                self.data.ships_kicked.add(shipID_kicked)
+                self.data.mySets.ships_kicked.add(shipID_kicked)
             else:
                 logging.debug("ship id {} will not be added to ships kicked (moved already), by ship {}".format(shipID_kicked, ship.id))
 
@@ -92,8 +92,8 @@ class Moves(abc.ABC):
         :param ship: SHIP OBJECT
         :return: NONE
         """
-        if ship.id in self.data.ships_kicked:
-            self.data.ships_kicked.remove(ship.id)
+        if ship.id in self.data.mySets.ships_kicked:
+            self.data.mySets.ships_kicked.remove(ship.id)
 
 
     def move_occupied(self, ship, direction):
@@ -142,7 +142,7 @@ class Moves(abc.ABC):
         logging.debug("best direction: {}".format(best.direction))
 
         if best.safe == -1 and mode != MoveMode.RETREAT:
-            logging.debug("Avoiding collision for ship {}!!!!!!! ships kicked: {}".format(ship.id, self.data.ships_kicked))
+            logging.debug("Avoiding collision for ship {}!!!!!!! ships kicked: {}".format(ship.id, self.data.mySets.ships_kicked))
             #return self.get_highest_harvest_move(ship)
             return avoid_collision_direction(self, ship, directions)
 

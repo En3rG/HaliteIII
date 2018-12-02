@@ -31,7 +31,7 @@ class Stuck(Moves):
         ## THIS MIGHT BE FASTER THAN ABOVE, SINCE LOOPING THROUGH ~200 SHIPS COULD BE FASTER THAN
         ## PERFORMING MATRIX MULTIPLICATION AND LOOKING FOR THE VALUES IN A 64x64 MATRIX
         ## MOVE SHIPS THAT CANNOT MOVE YET
-        for ship_id in (self.data.ships_all & self.data.ships_to_move):
+        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             ship = self.data.game.me._ships.get(ship_id)
 
             if self.data.matrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE

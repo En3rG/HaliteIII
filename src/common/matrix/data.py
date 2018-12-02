@@ -159,27 +159,32 @@ class Matrix():
     CONTAINS ALL THE MATRICES
     """
     def __init__(self, map_height, map_width):
-
         self.halite = Halite(map_height, map_width)
-
         self.distances = {} ## ONLY FILLED IN INIT
-
         self.locations = Locations(map_height, map_width)
-
         self.sectioned = Sectioned(map_height, map_width)
-
         self.average = Average(map_height, map_width)
-
         self.depletion = Depletion(map_height, map_width)
+
+
+class MySets():
+    def __init__(self, game):
+        self.ships_all = set(game.me._ships.keys())        ## ALL SHIPS
+        self.ships_to_move = set(game.me._ships.keys())    ## SHIPS TO MOVE
+        self.ships_returning = set()                            ## SHIPS RETURNING HALITE
+        self.ships_kicked = set()
+        self.dock_positions = set()
 
 
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
+
         self.average_halite = 0
-        self.dock_positions = set()
         self.isBuilding = False
         self.stop_spawning = MyConstants.STOP_SPAWNING_2P if len(self.game.players) == 2 else MyConstants.STOP_SPAWNING_4P
+
+        self.mySets = MySets(game)
 
         self.matrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
@@ -209,11 +214,11 @@ class Data(abc.ABC):
         self.matrix.locations.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         ## DOCKS
-        self.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
+        self.mySets.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
         self.matrix.locations.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         for dropoff in self.game.me.get_dropoffs():
-            self.dock_positions.add((dropoff.position.y, dropoff.position.x))
+            self.mySets.dock_positions.add((dropoff.position.y, dropoff.position.x))
             self.matrix.locations.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 

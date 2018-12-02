@@ -21,12 +21,12 @@ class Build(Moves):
         halite_amount = self.data.game.me.halite_amount
 
         if len(ships_on_docks) >= 1:
-            ships_building = ships_on_docks & self.data.ships_to_move
+            ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
             for ship_id in ships_building:
                 ship = self.data.game.me._ships.get(ship_id)
                 self.mark_unsafe(ship.position)
-                self.data.ships_to_move.remove(ship.id)
+                self.data.mySets.ships_to_move.remove(ship.id)
 
                 self.data.isBuilding = True
 

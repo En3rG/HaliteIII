@@ -19,26 +19,26 @@ class Harvest(Moves):
     def move_ships(self):
         print_heading("Moving harvesting (now) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NOW)
-        for ship_id in (self.data.ships_all & self.data.ships_to_move):
+        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             self.harvestNow(ship_id)
 
 
         print_heading("Moving harvesting (later) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
-        ships = (self.data.ships_all & self.data.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
-            while self.data.ships_kicked:
-                ship_kicked = self.data.ships_kicked.pop()
+            while self.data.mySets.ships_kicked:
+                ship_kicked = self.data.mySets.ships_kicked.pop()
                 self.harvestLater(ship_kicked, kicked=True)
 
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-            if ship_id in self.data.ships_to_move:
+            if ship_id in self.data.mySets.ships_to_move:
                 self.harvestLater(ship_id)
 
         ## MERGE TEMP BACK TO SHIPS KICKED
         ## UNION WITH ships_to_move IN CASE SHIP MOVED
-        self.data.ships_kicked.update(self.ships_kicked_temp & self.data.ships_to_move)
+        self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
 
 
     def harvestNow(self, ship_id):
