@@ -351,14 +351,14 @@ class Data(abc.ABC):
 
         self.matrix.distances[curr_section][y][x] = distance
         """
-        height = self.game.game_map.height + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
-        width = self.game.game_map.width + 1
+        height = self.game.game_map.height
+        width = self.game.game_map.width
 
         curr_cell = (0, 0)
         base_matrix = get_distance_matrix(curr_cell, height, width)
 
-        for r in range(height):
-            for c in range(width):
+        for r in range(height + 1):
+            for c in range(width + 1):
                 curr_cell = (r, c)
                 ## THIS METHOD WILL TIME OUT (ALSO UNNECESSARY CALCULATIONS
                 ## SINCE DISTANCE MATRIX IS PRETTY SIMILAR
@@ -408,7 +408,7 @@ class Data(abc.ABC):
         """
         top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
         top, ind = get_n_largest_values(self.matrix.halite.amount, top_num_cells)
-        self.matrix.halite.top_amount[ind] = 10
+        self.matrix.halite.top_amount[ind] = Matrix_val.TEN
 
 
     def get_average_halite(self):

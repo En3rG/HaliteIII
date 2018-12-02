@@ -56,11 +56,13 @@ class ExploreShip:
     ALSO USED FOR HEAPQ PURPOSES
 
     """
-    def __init__(self, dist, id, curr_cell, destination):
+    def __init__(self, dist, id, curr_cell, destination, indices_deque, distances_deque):
         self.distance = dist
         self.ship_id = id
         self.curr_cell = curr_cell
         self.destination = destination
+        self.indices_deque = indices_deque
+        self.distances_deque = distances_deque
 
     def __gt__(self, other):
         if isinstance(other, ExploreShip):

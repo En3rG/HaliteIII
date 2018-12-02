@@ -2,19 +2,17 @@ from src.common.moves import Moves
 from src.common.values import MoveMode, MyConstants, Matrix_val
 import logging
 from src.common.print import print_heading, print_matrix
-from src.common.matrix.functions import get_position_highest_section, get_coord_closest
+from src.common.matrix.functions import get_position_highest_section, get_coord_closest, get_n_closest_masked
 from hlt.positionals import Direction
 from src.common.points import ExplorePoints, ExploreShip
 from hlt.positionals import Position
 import heapq
+from collections import deque
+import copy
 
 
 """
 TO DO!!!!!!!!!!!
-
-
-AVOID SWARMING INTO AN AREA WHERE OTHERS HAVE NO PLACE TO GO
-
 
 """
 
@@ -24,6 +22,8 @@ class Explore(Moves):
 
         self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
         self.heap_dist = []
+        self.top_halite = copy.deepcopy(self.data.matrix.halite.top_amount)
+        self.taken_destinations = set()
         self.move_ships()
 
 
@@ -59,17 +59,127 @@ class Explore(Moves):
             if ship_id in self.data.mySets.ships_to_move:
                 self.populate_heap(ship_id)
 
+
+        ## JUST GETS CLOSEST TOP AMOUNT HALITE
+        # while self.heap_dist:
+        #     s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+        #     logging.debug(s)                    ## EXPLORE SHIP OBJECT
+        #
+        #     ship = self.data.game.me._ships.get(s.ship_id)
+        #     directions = self.get_directions_target(ship, s.destination)
+        #     direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        #     self.move_mark_unsafe(ship, direction)
+
+
+        ## SAVING SORTED DISTANCES
+        ## OR JUST GETTING CLOSEST, USING TOP HALITE COPIED
         while self.heap_dist:
-            s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
-            logging.debug(s)                    ## EXPLORE SHIP OBJECT
+            s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            logging.debug(s)  ## EXPLORE SHIP OBJECT
 
             ship = self.data.game.me._ships.get(s.ship_id)
-            directions = self.get_directions_target(ship, s.destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-            self.move_mark_unsafe(ship, direction)
+
+            destination = self.get_untaken_destination(s)
+
+            if destination:
+                directions = self.get_directions_target(ship, destination)
+                direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                self.mark_taken_udpate_top_halite(destination)
+                self.move_mark_unsafe(ship, direction)
+
+
+    def get_untaken_destination(self, s):
+        ## SAVING SORTED DISTANCES
+        ## TIMING OUT (SORTING A BUNCH IS MUCH SLOWER THAN GETTING CLOSEST MAX MULTIPLE TIMES???)
+        # if (s.destination.y, s.destination.x) in self.taken_destinations:
+        #
+        #     found_good_destination = False
+        #
+        #     while s.indices_deque:
+        #         closest_ind = s.indices_deque.popleft()
+        #         closest_dist = s.distances_deque.popleft()
+        #         destination = Position(closest_ind[0], closest_ind[1])  ## INDICES ARE IN (y, x) FORMAT
+        #
+        #         if (destination.y, destination.x) not in self.taken_destinations:
+        #             found_good_destination = True
+        #             s.distance = closest_dist
+        #             s.destination = destination
+        #             heapq.heappush(self.heap_dist, s)
+        #             break
+        #
+        #     if not(found_good_destination):
+        #         ## NEED TO REPOPULATE HEAP
+        #         self.heap_set.remove(s.ship_id)
+        #         self.populate_heap(s.ship_id)
+        #
+        #     return None
+        # else:
+        #     return s.destination
+
+
+        ## RECALCULATING TOP HALITE
+        ## MUCH FASTER THAN ABOVE?
+        if (s.destination.y, s.destination.x) in self.taken_destinations:
+            self.heap_set.remove(s.ship_id)
+            self.populate_heap(s.ship_id)
+
+            return None
+        else:
+            return s.destination
+
+
+    def mark_taken_udpate_top_halite(self, destination):
+        """
+        MARKING DESTINATION TAKEN AND REMOVING DESTINATION FROM TOP HALITE, FOR FUTURE CALCULATIONS
+        """
+        self.taken_destinations.add((destination.y, destination.x))
+        self.top_halite[destination.y][destination.x] = Matrix_val.ZERO
 
 
     def populate_heap(self, ship_id):
+        ## JUST GETS CLOSEST TOP AMOUNT HALITE
+        # if ship_id not in self.heap_set:
+        #     self.heap_set.add(ship_id)
+        #
+        #     ship = self.data.game.me._ships.get(ship_id)
+        #
+        #     curr_cell = (ship.position.y, ship.position.x)
+        #     seek_val = Matrix_val.TEN
+        #     coord, min_di, val = get_coord_closest(seek_val,
+        #                                            self.data.matrix.halite.top_amount,
+        #                                            self.data.init_data.matrix.distances[curr_cell])
+        #     destination = Position(coord[1], coord[0])
+        #     s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
+        #     heapq.heappush(self.heap_dist, s)
+
+
+        ## SAVING SORTED DISTANCES
+        ## TIMING OUT
+        # if ship_id not in self.heap_set:
+        #     self.heap_set.add(ship_id)
+        #
+        #     ship = self.data.game.me._ships.get(ship_id)
+        #
+        #     curr_cell = (ship.position.y, ship.position.x)
+        #     seek_val = Matrix_val.TEN
+        #
+        #     indices, distances = get_n_closest_masked(self.top_halite,
+        #                                               self.data.init_data.matrix.distances[curr_cell],
+        #                                               seek_val,
+        #                                               15)
+        #
+        #     indices_deque = deque(indices)
+        #     distances_deque = deque(distances)
+        #
+        #     closest_ind = indices_deque.popleft()
+        #     closest_dist = distances_deque.popleft()
+        #
+        #     destination = Position(closest_ind[0], closest_ind[1]) ## INDICES ARE IN (y, x) FORMAT
+        #     s = ExploreShip(closest_dist, ship_id, curr_cell, destination, indices_deque, distances_deque)
+        #     heapq.heappush(self.heap_dist, s)
+
+
+        ## JUST GETS CLOSEST TOP AMOUNT HALITE (BASED ON TOP HALITE COPIED
         if ship_id not in self.heap_set:
             self.heap_set.add(ship_id)
 
@@ -78,10 +188,10 @@ class Explore(Moves):
             curr_cell = (ship.position.y, ship.position.x)
             seek_val = Matrix_val.TEN
             coord, min_di, val = get_coord_closest(seek_val,
-                                                   self.data.matrix.halite.top_amount,
+                                                   self.top_halite,
                                                    self.data.init_data.matrix.distances[curr_cell])
             destination = Position(coord[1], coord[0])
-            s = ExploreShip(min_di, ship_id, curr_cell, destination)
+            s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
             heapq.heappush(self.heap_dist, s)
 
 

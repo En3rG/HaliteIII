@@ -1,6 +1,7 @@
 import numpy as np
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
+import logging
 
 
 def shift_matrix(y_shift, x_shift, matrix):
@@ -289,6 +290,8 @@ def get_n_closest_masked(value_matrix, distance_matrix, mask_val, n):
     :param n:
     :return:
     """
+    logging.debug("size value matrix: {}".format(value_matrix.shape))
+    logging.debug("size distance matrix: {} ".format(distance_matrix.shape))
     mask = value_matrix == mask_val
     sorted_args = np.argpartition(distance_matrix[mask], n)[:n]
     sorted_dist = np.partition(distance_matrix[mask], n)[:n]
