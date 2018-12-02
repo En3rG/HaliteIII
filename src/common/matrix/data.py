@@ -19,8 +19,6 @@ class Section():
     SECTION IS A SQUARE MATRIX
     ACTUAL SIZE OF SECTION IS ACTUALLY (SIZE * 2 + 1) by (SIZE * 2 + 1)
 
-    ONLY USED IN GET HIGHEST HARVEST MOVE (OBSOLETE!!!!)
-
     :param matrix: ORIGINAL MATRIX
     :param position: CENTER OF THE SECTION
     :param size: SIZE OF THE SECTION TO BE EXTRACTED (FROM POSITION)
@@ -106,7 +104,7 @@ class Depletion():
         self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)
 
 
-class Average():
+class CellAverage():
     """
     USED TO GET THE AVERAGE HALITE PER CELL IN THE MAP
     BASED ON THE MANHATTAN DISTANCE DEFINED IN COMMON VALUES
@@ -163,7 +161,7 @@ class Matrix():
         self.distances = {} ## ONLY FILLED IN INIT
         self.locations = Locations(map_height, map_width)
         self.sectioned = Sectioned(map_height, map_width)
-        self.average = Average(map_height, map_width)
+        self.cell_average = CellAverage(map_height, map_width)
         self.depletion = Depletion(map_height, map_width)
 
 
@@ -373,25 +371,45 @@ class Data(abc.ABC):
 
     def populate_cell_averages(self):
         """
-        POPULATE AVERAGES
+        POPULATE AVERAGES OF EACH CELL BASED ON DISTANCE
         """
         ## THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
         for r in range(self.game.game_map.height):
             for c in range(self.game.game_map.width):
                 loc = Position(c, r) ## Position(x, y)
-                self.matrix.average.manhattan[r][c] = get_average_manhattan(self.matrix.halite.amount, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+                self.matrix.cell_average.manhattan[r][c] = get_average_manhattan(self.matrix.halite.amount,
+                                                                                 loc,
+                                                                                 MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
-        ## POPULATE WHERE TOP N PLACES ARE BASED ON self.matrix.average.manhattan
+        ## POPULATE WHERE TOP N PLACES ARE
+        ## NEED TO GET HIGHEST HALITE AMOUNT IN THAT AREA
+        ## THE HIGHEST CELL AVERAGE IS NOT ALWAYS THE HIGHEST HALITE CELL IN THAT AREA
         top_indexes = set()
-        average_manhattan = copy.deepcopy(self.matrix.average.manhattan)
-        for _ in range(MyConstants.TOP_N):  ## GET INDEXES OF TOP N
-            top_1, ind = get_n_largest_values(average_manhattan, 1)
-            loc = (ind[0][0], ind[1][0])
-            position = Position(loc[1], loc[0]) ## Position(x, y)
-            top_indexes.add(loc)
-            populate_manhattan(average_manhattan, 0, position, MyConstants.AVERAGE_MANHATTAN_DISTANCE, cummulative=False)
+        average_manhattan = copy.deepcopy(self.matrix.cell_average.manhattan)
+
+        ## GET INDEXES OF TOP N
+        ## REMOVE ITS SURROUNDING AVERAGES, SO NEXT TOP CELL WONT BE AROUND IT
+        for _ in range(MyConstants.TOP_N):
+            ## GET TOP AVERAGE LOCATION
+            value_top_ave, indx_top_ave = get_n_largest_values(average_manhattan, 1)
+            loc_top_ave = (indx_top_ave[0][0], indx_top_ave[1][0])
+            pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])                 ## Position(x, y)
+
+            ## GET TOP HALITE CLOSE TO TOP AVERAGE LOCATION
+            section_halite = Section(self.matrix.halite.amount, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+            value_top_halite, indx_top_halite_section = get_n_largest_values(section_halite.matrix, 1)
+            loc_top_halite = (loc_top_ave[0] + (indx_top_halite_section[0][0] - section_halite.center.y),
+                              loc_top_ave[1] + (indx_top_halite_section[1][0] - section_halite.center.x))
+            loc_top_halite_normalized = (loc_top_halite[0] % self.game.game_map.height, loc_top_halite[1] % self.game.game_map.width) ## CONSIDER WHEN OUT OF BOUNDS
+
+            ## COLLECT LOCATIONS
+            ## REMOVE SURROUNDING AVERAGES
+            top_indexes.add(loc_top_halite_normalized)
+            populate_manhattan(average_manhattan, 0, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE, cummulative=False)
+
+        ## POPULATE TOP N POSITIONS IN cell_average.top_N
         for ind in top_indexes:
-            self.matrix.average.top_N[ind[0]][ind[1]] = self.matrix.average.manhattan[ind[0]][ind[1]]
+            self.matrix.cell_average.top_N[ind[0]][ind[1]] = self.matrix.cell_average.manhattan[ind[0]][ind[1]]
 
 
     def populate_depletion(self):

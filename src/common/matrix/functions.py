@@ -247,7 +247,7 @@ def get_n_largest_values(matrix, n):
     """
     :param n:
     :param matrix:
-    :return: n LARGEST VALUES FROM MATRIX, AND ITS INDICES
+    :return: n LARGEST VALUES FROM MATRIX, AND ITS INDICES (AS NUMPY ARRAY)
     """
     ind = largest_indices(matrix, n)
     return matrix[ind], ind

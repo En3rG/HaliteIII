@@ -39,8 +39,8 @@ class GetInitData(Data):
         # print_matrix("top halite", self.matrix.halite.top_amount)
         # logging.debug("Halite average: {}".format(self.average_halite))
         #
-        # print_matrix("Average: manhattan", self.matrix.average.manhattan)
-        # print_matrix("Average: top N", self.matrix.average.top_N)
+        # print_matrix("Average: manhattan", self.matrix.cell_average.manhattan)
+        # print_matrix("Average: top N", self.matrix.cell_average.top_N)
         #
         # print_matrix("depletion: shipyard distances", self.matrix.depletion.shipyard_distances)
         # print_matrix("depletion: harvest_turns", self.matrix.depletion.harvest_turns)
@@ -50,17 +50,17 @@ class GetInitData(Data):
 
     def populate_dock_placement(self):
         """
-        DETERMINE WHERE TO PLACE DOCKS
+        GET HIGHEST AVERAGE HALITE MANHATTAN
         """
         shipyard = self.game.me.shipyard
-        matrix = copy.deepcopy(self.matrix.average.top_N)
+        matrix = copy.deepcopy(self.matrix.cell_average.top_N)
 
-        print_matrix("Average: top N", self.matrix.average.top_N)
+        print_matrix("Average: top N", self.matrix.cell_average.top_N)
 
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
         populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS)
 
-        print_matrix("Eliminate close to shipyard: top N", self.matrix.average.top_N)
+        print_matrix("Eliminate close to shipyard: top N", self.matrix.cell_average.top_N)
 
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         curr_cell = (shipyard.position.y, shipyard.position.x)
