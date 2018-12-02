@@ -259,3 +259,21 @@ def largest_indices(matrix, n):
     indices = np.argpartition(flat, -n)[-n:]
     indices = indices[np.argsort(-flat[indices])]
     return np.unravel_index(indices, matrix.shape)
+
+
+def get_cell_averages(map_height, map_width, matrix):
+    """
+    GET CELL AVERAGES OF MATRIX PROVIDED
+
+    :param matrix: MATRIX WHERE AVERAGES WILL BE BASED ON
+    :return: MATRIX WITH CELL AVERAGES
+    """
+    ave_matrix = np.zeros((map_height, map_width), dtype=np.int16)
+
+    for r in range(map_height):
+        for c in range(map_width):
+            loc = Position(c, r)  ## Position(x, y)
+            ave_matrix[r][c] = get_average_manhattan(matrix, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+
+    return ave_matrix
+
