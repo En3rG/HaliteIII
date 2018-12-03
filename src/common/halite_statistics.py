@@ -27,6 +27,9 @@ class Ship_stat():
              self.id, self.halite_amount, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
 
 
+
+
+
 class Halite_stats():
     """
     TRACKS HALITE STATS OF THE ENTIRE GAME
@@ -40,16 +43,17 @@ class Halite_stats():
         self.total_bonus = 0
         self.total_spent = 0
         self.total_dropped = 0
+        self.enemy_stat = {}
 
 
-    def set_halite(self, halite_amount):
-        self.halite_amount = halite_amount
+    def set_halite(self, game, data):
+        self.halite_amount = game.me.halite_amount
+        self.halite_carried = data.players_halite[game.my_id].halite_carried
 
-        ## GET TOTAL CARRIED HALITE BY ALL SHIPS
-        total_carry = 0
-        for k, ship_stat in self.ships_stat.items():
-            total_carry += ship_stat.halite_amount
-            self.halite_carried = total_carry
+        self.enemy_stat = {}
+        for id, v in data.players_halite.items():
+            if id != game.me.id:
+                self.enemy_stat[id] = {"halite amount":v.halite_amount, "halite carried":v.halite_carried}
 
 
     def __repr__(self):
@@ -57,14 +61,15 @@ class Halite_stats():
         for id, record in self.ships_stat.items():
             output += str(record)
 
-        output += "\n\nHalite: {} || Carrying: {} || Total gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}\n"\
+        output += "\n\nHalite: {} || Carrying: {} || Total gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}\n enemy_stat: {}"\
                     .format(self.halite_amount,
                             self.halite_carried,
                             self.total_gained,
                             self.total_bonus,
                             self.total_spent,
                             self.total_burned,
-                            self.total_dropped)
+                            self.total_dropped,
+                            self.enemy_stat)
 
         return output
 

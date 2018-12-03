@@ -1,6 +1,7 @@
 from src.common.print import print_heading
 from src.common.moves import Moves
 from hlt.positionals import Direction
+from src.common.halite_statistics import BuildType
 import numpy as np
 import logging
 
@@ -32,6 +33,9 @@ class Build(Moves):
 
                 if halite_amount > 4000:
                     halite_amount -= 4000
+
+                    logging.debug("Ship id: {} building dock".format(ship.id))
+                    self.data.halite_stats.record_spent(BuildType.DOCK)
 
                     self.data.command_queue.append(ship.make_dropoff())
 

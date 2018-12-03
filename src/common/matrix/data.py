@@ -136,6 +136,7 @@ class Locations():
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
+        self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
 
@@ -174,6 +175,12 @@ class MySets():
         self.dock_positions = set()
 
 
+class HaliteInfo():
+    def __init__(self):
+        self.halite_amount = 0
+        self.halite_carried = 0
+
+
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
@@ -181,6 +188,8 @@ class Data(abc.ABC):
         self.average_halite = 0
         self.isBuilding = False
         self.stop_spawning = MyConstants.STOP_SPAWNING_2P if len(self.game.players) == 2 else MyConstants.STOP_SPAWNING_4P
+
+        self.players_halite = {}
 
         self.mySets = MySets(game)
 
@@ -239,9 +248,16 @@ class Data(abc.ABC):
 
     def populate_myShips(self):
         """
-        POPULATE MATRIX WITH ALLY_SHIP.value WHERE MY SHIPS ARE LOCATED
+        POPULATE MATRIX LOCATIONS OF MY SHIP AND ITS IDs
+        GATHER HALITE INFO AS WELL
+        POPULATE POTENTIAL COLLISION MATRIX
+        POPULATE STUCK SHIPS
         """
+        self.players_halite[self.game.my_id] = HaliteInfo()
+        self.players_halite[self.game.my_id].halite_amount = self.game.me.halite_amount
+
         for ship in self.game.me.get_ships():
+            self.players_halite[self.game.my_id].halite_carried += ship.halite_amount
             self.matrix.locations.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
             self.matrix.locations.myShipsID[ship.position.y][ship.position.x] = ship.id
             self.matrix.locations.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
@@ -258,14 +274,20 @@ class Data(abc.ABC):
 
     def populate_enemyShips_influenced(self):
         """
-        POPULATE MATRIX WITH ENEMY_SHIP.value WHERE ENEMY SHIPS ARE LOCATED
+        POPULATE MATRIX LOCATION OF ENEMY SHIPS AND ITS IDs
+        GATHER HALITE INFO AS WELL
         POPULATE MATRIX WITH ENEMY INFLUENCE
         POPULATE MATRIX WITH POTENTIAL ENEMY COLLISIONS
         """
         for id, player in self.game.players.items():
             if id != self.game.me.id:
+                self.players_halite[id] = HaliteInfo()
+                self.players_halite[id].halite_amount = player.halite_amount
+
                 for ship in player.get_ships():
+                    self.players_halite[id].halite_carried += ship.halite_amount
                     self.matrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
+                    self.matrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.matrix.locations.influenced = fill_circle(self.matrix.locations.influenced,

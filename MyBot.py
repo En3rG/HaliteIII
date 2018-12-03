@@ -98,7 +98,7 @@ while True:
     prev_data = copy.deepcopy(PrevData(data))
 
     ## UPDATE HALITE AMOUNT/CARRIED
-    halite_stats.set_halite(game.me.halite_amount)
+    halite_stats.set_halite(game, data)
 
     ## PRINT HALITE STATS
     print_heading("Halite Stats: {}".format(halite_stats))
