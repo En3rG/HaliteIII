@@ -16,12 +16,14 @@ def load_hlt(filename):
 
     return data_json
 
+
 def save_json(filename, data):
     """
     TAKES DATA IN JSON FORMAT AND WRITES INTO A FILE (FILENAME)
     """
     with open(filename, 'w') as outfile:
         json.dump(data, outfile, indent=4)
+
 
 def generate_run_game_bat(data):
     """
@@ -43,11 +45,23 @@ def generate_run_game_bat(data):
     with open('../run_game.bat', 'w') as outfile:
         outfile.write(command)
 
+
 def get_moves_per_player(data):
     """
     PARSE JSON TO GET EACH PLAYERS MOVES PER TURN
     """
-    def get_moves_this_turn(player_data, command_moves_pX):
+    def get_player_names(data):
+        command_moves = {}
+
+        for player in data['players']:
+            id = player['player_id']
+            name = player['name']
+            command_moves[id] = [name]
+
+        return command_moves, len(command_moves)
+
+
+    def get_moves_this_turn(player_data, id, command_moves):
         """
         PARSES MOVES THIS TURN, ADD TO COMMAND_MOVES_PX
         """
@@ -64,7 +78,8 @@ def get_moves_per_player(data):
                 elif move.get('type') == "c": ## BUILDING DOCK
                     current_turn_commands.append("c {}".format(move.get('id')))
 
-        command_moves_pX.append(current_turn_commands)
+        command_moves[id].append(current_turn_commands)
+
 
     def save_moves_json(filename, commands):
         """
@@ -72,10 +87,8 @@ def get_moves_per_player(data):
         """
         save_json(filename, commands)
 
-    command_moves_p0 = []
-    command_moves_p1 = []
-    command_moves_p2 = []
-    command_moves_p3 = []
+
+    command_moves, num_players = get_player_names(data)
 
     for i, moves_per_turn in enumerate(data['full_frames']):
         """
@@ -93,15 +106,11 @@ def get_moves_per_player(data):
             }
         """
         print("At turn {}".format(i))
-        get_moves_this_turn(moves_per_turn['moves'].get('0'), command_moves_p0)
-        get_moves_this_turn(moves_per_turn['moves'].get('1'), command_moves_p1)
-        get_moves_this_turn(moves_per_turn['moves'].get('2'), command_moves_p2)
-        get_moves_this_turn(moves_per_turn['moves'].get('3'), command_moves_p3)
+        for id in range(num_players):
+            get_moves_this_turn(moves_per_turn['moves'].get(str(id)), id, command_moves)
 
-    save_moves_json("../moves/p0.txt", command_moves_p0)
-    save_moves_json("../moves/p1.txt", command_moves_p1)
-    save_moves_json("../moves/p2.txt", command_moves_p2)
-    save_moves_json("../moves/p3.txt", command_moves_p3)
+    for id in range(num_players):
+        save_moves_json("../moves/p{}.txt".format(id), command_moves[id])
 
 
 ## GET FILENAME OF .hlt IN CURRENT DIRECTORY

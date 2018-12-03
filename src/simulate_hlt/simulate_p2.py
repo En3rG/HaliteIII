@@ -6,11 +6,11 @@ import numpy as np
 import traceback
 import sys
 
-player_name = "p2"
+name = "p2"
 
-with open('moves/' + player_name + '.txt') as json_data:
+with open('moves/' + name + '.txt') as json_data:
     moves = json.load(json_data)
-
+    player_name = moves.pop(0)
     game = hlt.Game()
     game.ready(player_name)
     logging.info("Starting my bot!")
