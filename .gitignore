@@ -10,3 +10,11 @@ __pycache__/
 *.ipr
 *.iws
 run_game.bat
+src/simulate_hlt/hlt
+src/simulate_hlt/moves
+src/simulate_hlt/replays
+src/simulate_hlt/run_game.bat
+src/simulate_hlt/halite.exe
+src/simulate_hlt/*.log
+src/simulate_hlt/parser/parsed.txt
+src/simulate_hlt/parser/*.hlt

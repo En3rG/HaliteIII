@@ -91,6 +91,7 @@ while True:
     J = spawn_ships(data)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
+    logging.debug("command_queue: {}".format(data.command_queue))
     game.end_turn(data.command_queue)
 
     ## SAVE DATA TO PREV DATA
