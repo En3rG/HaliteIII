@@ -48,15 +48,22 @@ class MyConstants():
 
     SECTION_SIZE = 4                ## SIZE OF EACH SECTIONS
 
-    ## HARVEST
-    DONT_HARVEST_PERCENT = .12      ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
-                                    ## AT 0.15, MAKES SHIPS GO TOWARDS HIGHER HALITE AREAS FASTER (ALMOST TUNNELING)
+    ## HARVEST (TUNNELING EFFECT)
+    DONT_HARVEST_PERCENT = .105      ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
+                                    ## AT 0.15, MAKES SHIPS GO TOWARDS HIGHER HALITE AREAS FASTER
+                                    ## THE HIGHER THE NUMBER, THE MORE 'TUNNELING' IT'LL BE
+                                    ## USED TO BE:
+                                    ## V14: 0.12
+
     DONT_HARVEST_BELOW = 5          ## DONT HARVEST BELOW THIS NUMBER (USED TO BE 5 FOR V6 BELOW)
     HARVEST_AREA_PERCENT = 0.60     ## 60%, HARVEST AREA THAT IS NOT TOP 40% TO HARVEST
                                     ##   (BASED ON NUMBER OF TURNS REQUIRED TO HARVEST THE CELL)
 
     ## EXPLORING
-    TOP_N_HALITE = 0.04             ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP) USED FOR EXPLORING.  USED TO BE .10 FOR V13 BELOW
+    TOP_N_HALITE = 0.035             ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP) USED FOR EXPLORING.
+                                    ## USED TO BE:
+                                    ## V13: 0.10
+                                    ## V14: 0.04
 
     ## DOCK PLACEMENT
     AVERAGE_MANHATTAN_DISTANCE = 6  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
