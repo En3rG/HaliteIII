@@ -47,7 +47,7 @@ class Retreat(Moves):
 
     def populate_heap(self):
         """
-        GET DISTANCE FROM SHIPYARD
+        GET DISTANCE FROM SHIPYARD/DOCKS
         """
         ## ONLY BASED ON SHIPYARD POSITION
         # for ship in self.data.game.me.get_ships():
@@ -62,7 +62,9 @@ class Retreat(Moves):
         ## TAKING DOCKS INTO ACCOUNT
         for ship in self.data.game.me.get_ships():
             curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.matrix.locations.myDocks, self.data.init_data.matrix.distances[curr_cell])
+            coord, distance, value = get_coord_closest(Matrix_val.ONE,
+                                                       self.data.matrix.locations.myDocks,
+                                                       self.data.init_data.matrix.distances[curr_cell])
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)
             num_directions = len(directions)

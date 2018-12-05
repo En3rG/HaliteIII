@@ -53,7 +53,7 @@ class Deposit(Moves):
 
     def populate_heap(self, ship):
         """
-        GET DISTANCE FROM SHIPYARD
+        GET DISTANCE FROM SHIPYARD/DOCKS
         """
         ## ONLY TAKING SHIPYARD INTO ACCOUNT
         # if ship.id not in self.heap_set:

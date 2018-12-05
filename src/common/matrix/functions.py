@@ -309,10 +309,6 @@ def get_sorted_distance_indices(val_matrix, dist_matrix):
     return np.argwhere(mask)[dist_matrix[mask].argsort()]
 
 
-
-
-
-
 def get_cell_averages(map_height, map_width, matrix):
     """
     GET CELL AVERAGES OF MATRIX PROVIDED

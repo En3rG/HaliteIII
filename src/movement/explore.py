@@ -46,7 +46,6 @@ class Explore(Moves):
 
 
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
-        ## THIS SEEMS TO PERFORM WORST THAN ABOVE??
         ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -118,7 +117,7 @@ class Explore(Moves):
 
 
         ## RECALCULATING TOP HALITE
-        ## MUCH FASTER THAN ABOVE?
+        ## MUCH FASTER THAN ABOVE!
         if (s.destination.y, s.destination.x) in self.taken_destinations:
             self.heap_set.remove(s.ship_id)
             self.populate_heap(s.ship_id)
@@ -179,7 +178,7 @@ class Explore(Moves):
         #     heapq.heappush(self.heap_dist, s)
 
 
-        ## JUST GETS CLOSEST TOP AMOUNT HALITE (BASED ON TOP HALITE COPIED
+        ## JUST GETS CLOSEST TOP AMOUNT HALITE (BASED ON TOP HALITE COPIED)
         if ship_id not in self.heap_set:
             self.heap_set.add(ship_id)
 

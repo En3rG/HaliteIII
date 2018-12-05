@@ -14,12 +14,12 @@ class Build(Moves):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        matrix = self.data.matrix.locations.myShipsID * self.data.init_data.matrix.locations.dock_placement
+        matrixIDs = self.data.matrix.locations.myShipsID * self.data.init_data.matrix.locations.dock_placement
 
-        r, c = np.where(matrix != 0)
+        r, c = np.where(matrixIDs != 0)
 
         ships_on_docks = set(self.data.matrix.locations.myShipsID[r, c])
-        halite_amount = self.data.game.me.halite_amount
+        myHalite_amnt = self.data.game.me.halite_amount
 
         if len(ships_on_docks) >= 1:
             ships_building = ships_on_docks & self.data.mySets.ships_to_move
@@ -29,10 +29,10 @@ class Build(Moves):
                 self.mark_unsafe(ship.position)
                 self.data.mySets.ships_to_move.remove(ship.id)
 
-                self.data.isBuilding = True
+                self.data.isBuilding = True ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
-                if halite_amount > 4000:
-                    halite_amount -= 4000
+                if myHalite_amnt > 4000:
+                    myHalite_amnt -= 4000
 
                     logging.debug("Ship id: {} building dock".format(ship.id))
                     self.data.halite_stats.record_spent(BuildType.DOCK)

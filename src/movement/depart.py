@@ -7,6 +7,14 @@ from src.common.matrix.functions import get_coord_closest
 from src.common.points import DepartPoints
 import logging
 
+"""
+DELETE!!!!!!!!!??????????
+
+
+NOT USED CURRENTLY
+
+"""
+
 class Depart(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)

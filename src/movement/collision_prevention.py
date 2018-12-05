@@ -16,6 +16,7 @@ def avoid_collision_direction(Moves, ship, directions):
     best = max(points)
     return best.direction
 
+
 def get_points_collision(Moves, ship, directions):
     """
     GET POINTS FOR IMMINENT COLLISION PREVENTION

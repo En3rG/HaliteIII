@@ -185,9 +185,10 @@ class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
 
+        self.total_halite = 0
         self.average_halite = 0
         self.isBuilding = False
-        self.stop_spawning = MyConstants.STOP_SPAWNING_2P if len(self.game.players) == 2 else MyConstants.STOP_SPAWNING_4P
+        self.canSpawning = False
 
         self.players_halite = {}
 
@@ -210,6 +211,8 @@ class Data(abc.ABC):
         """
         halites = [ [ cell.halite_amount for cell in row ] for row in self.game.game_map._cells ]
         self.matrix.halite.amount = np.array(halites, dtype=np.int16)
+
+        self.total_halite = self.matrix.halite.amount.sum()
 
 
     def populate_myShipyard_docks(self):
@@ -443,6 +446,43 @@ class Data(abc.ABC):
         """
         r, c = np.where(self.matrix.locations.enemyDocks == Matrix_val.ONE)
         self.init_data.matrix.locations.dock_placement[r, c] = 0
+
+
+    def get_stop_spawning_val(self):
+        """
+        SET SPAWNING TO TRUE IF TURN NUMBER IS BELOW THE MAX TURN PERCENT (BASED ON MAP SIZE AND NUM PLAYERS)
+        ALSO BASED ON RATIO OF REMAINING HALITE FROM TOTAL STARTING VALUE
+        """
+
+        max_turn_percent = None
+
+        if len(self.game.players) == 2:
+            if self.game.game_map.height == 32:
+                max_turn_percent = MyConstants.STOP_SPAWNING_2P_32
+            elif self.game.game_map.height == 40:
+                max_turn_percent = MyConstants.STOP_SPAWNING_2P_40
+            elif self.game.game_map.height == 48:
+                max_turn_percent = MyConstants.STOP_SPAWNING_2P_48
+            elif self.game.game_map.height == 56:
+                max_turn_percent = MyConstants.STOP_SPAWNING_2P_56
+            elif self.game.game_map.height == 64:
+                max_turn_percent = MyConstants.STOP_SPAWNING_2P_64
+
+        else: ## 4 PLAYERS
+            if self.game.game_map.height == 32:
+                max_turn_percent = MyConstants.STOP_SPAWNING_4P_32
+            elif self.game.game_map.height == 40:
+                max_turn_percent = MyConstants.STOP_SPAWNING_4P_40
+            elif self.game.game_map.height == 48:
+                max_turn_percent = MyConstants.STOP_SPAWNING_4P_48
+            elif self.game.game_map.height == 56:
+                max_turn_percent = MyConstants.STOP_SPAWNING_4P_56
+            elif self.game.game_map.height == 64:
+                max_turn_percent = MyConstants.STOP_SPAWNING_4P_64
+
+        self.canSpawning = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+                        and (self.total_halite / self.starting_halite) > MyConstants.STOP_SPAWNING_HALITE_LEFT
+
 
 
 
