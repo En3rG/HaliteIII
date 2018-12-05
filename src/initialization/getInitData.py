@@ -38,17 +38,17 @@ class GetInitData(Data):
         self.populate_dock_placement()
 
 
-        # print_matrix("halite", self.matrix.halite.amount)
-        # print_matrix("top halite", self.matrix.halite.top_amount)
-        # logging.debug("Halite average: {}".format(self.average_halite))
+        # print_matrix("halite", self.myMatrix.halite.amount)
+        # print_matrix("top halite", self.myMatrix.halite.top_amount)
+        # logging.debug("Halite average: {}".format(self.myVars.average_halite))
         #
-        # print_matrix("Average: manhattan", self.matrix.cell_average.manhattan)
-        # print_matrix("Average: top N", self.matrix.cell_average.top_N)
+        # print_matrix("Average: manhattan", self.myMatrix.cell_average.manhattan)
+        # print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
         #
-        # print_matrix("depletion: shipyard distances", self.matrix.depletion.shipyard_distances)
-        # print_matrix("depletion: harvest_turns", self.matrix.depletion.harvest_turns)
-        # print_matrix("depletion: total turns", self.matrix.depletion.total_turns)
-        # print_matrix("depletion: harvest area", self.matrix.depletion.harvest_area)
+        # print_matrix("depletion: shipyard distances", self.myMatrix.depletion.shipyard_distances)
+        # print_matrix("depletion: harvest_turns", self.myMatrix.depletion.harvest_turns)
+        # print_matrix("depletion: total turns", self.myMatrix.depletion.total_turns)
+        # print_matrix("depletion: harvest area", self.myMatrix.depletion.harvest_area)
 
 
     def get_top_N_averages(self):
@@ -56,7 +56,7 @@ class GetInitData(Data):
         ## NEED TO GET HIGHEST HALITE AMOUNT IN THAT AREA
         ## THE HIGHEST CELL AVERAGE IS NOT ALWAYS THE HIGHEST HALITE CELL IN THAT AREA
         top_indexes = set()
-        average_manhattan = copy.deepcopy(self.matrix.cell_average.manhattan)
+        average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
 
         ## GET INDEXES OF TOP N
         ## REMOVE ITS SURROUNDING AVERAGES, SO NEXT TOP CELL WONT BE AROUND IT
@@ -72,7 +72,7 @@ class GetInitData(Data):
             pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])  ## Position(x, y)
 
             ## GET TOP HALITE CLOSE TO TOP AVERAGE LOCATION
-            section_halite = Section(self.matrix.halite.amount, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+            section_halite = Section(self.myMatrix.halite.amount, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
             value_top_halite, indx_top_halite_section = get_n_largest_values(section_halite.matrix, 1)
             loc_top_halite = (loc_top_ave[0] + (indx_top_halite_section[0][0] - section_halite.center.y),
                               loc_top_ave[1] + (indx_top_halite_section[1][0] - section_halite.center.x))
@@ -91,33 +91,33 @@ class GetInitData(Data):
 
         ## POPULATE TOP N POSITIONS IN cell_average.top_N
         for ind in top_indexes:
-            self.matrix.cell_average.top_N[ind[0]][ind[1]] = self.matrix.cell_average.manhattan[ind[0]][ind[1]]
+            self.myMatrix.cell_average.top_N[ind[0]][ind[1]] = self.myMatrix.cell_average.manhattan[ind[0]][ind[1]]
 
 
     def final_dock_placement(self):
         shipyard = self.game.me.shipyard
-        matrix = copy.deepcopy(self.matrix.cell_average.top_N)
+        matrix = copy.deepcopy(self.myMatrix.cell_average.top_N)
 
-        print_matrix("Average: top N", self.matrix.cell_average.top_N)
+        print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
 
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
         populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS)
 
-        print_matrix("Eliminate close to shipyard: top N", self.matrix.cell_average.top_N)
+        print_matrix("Eliminate close to shipyard: top N", self.myMatrix.cell_average.top_N)
 
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         curr_cell = (shipyard.position.y, shipyard.position.x)
-        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.matrix.distances[curr_cell])
+        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell])
         while val != 1:
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
             populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS)
-            self.matrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
+            self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX
-            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.matrix.distances[curr_cell])
+            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell])
 
-        print_matrix("Final dock placement", self.matrix.locations.dock_placement)
+        print_matrix("Final dock placement", self.myMatrix.locations.dock_placement)
 
 
     def populate_dock_placement(self):

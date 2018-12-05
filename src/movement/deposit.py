@@ -70,7 +70,7 @@ class Deposit(Moves):
             self.heap_set.add(ship.id)
 
             curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.matrix.locations.myDocks, self.data.init_data.matrix.distances[curr_cell])
+            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.myMatrix.locations.myDocks, self.data.init_data.myMatrix.distances[curr_cell])
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)
             num_directions = len(directions)
@@ -97,8 +97,8 @@ class Deposit(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
-        potential_ally_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_ally_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
         points = [ DepositPoints(safe=1,
                                  dock = 0,
                                  potential_enemy_collision=potential_enemy_collision,
@@ -109,11 +109,11 @@ class Deposit(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            safe = self.data.matrix.locations.safe[destination.y][destination.x]
-            dock = 1 if self.data.matrix.locations.myDocks[destination.y][destination.x] else 0
-            cost = self.data.matrix.halite.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
-            potential_ally_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            dock = 1 if self.data.myMatrix.locations.myDocks[destination.y][destination.x] else 0
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
+            potential_ally_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
             c = DepositPoints(safe, dock, potential_enemy_collision, potential_ally_collision, cost, direction)
             points.append(c)

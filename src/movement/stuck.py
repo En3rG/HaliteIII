@@ -16,7 +16,7 @@ class Stuck(Moves):
         print_heading("Moving stuck ships......")
 
         # ## USING STUCK MATRIX
-        # matrix = self.data.matrix.locations.stuck * self.data.matrix.locations.myShipsID
+        # matrix = self.data.myMatrix.locations.stuck * self.data.myMatrix.locations.myShipsID
         # ship_ids = get_values_matrix(0, matrix, Inequality.GREATERTHAN)
         #
         # for ship_id in ship_ids:
@@ -34,8 +34,8 @@ class Stuck(Moves):
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             ship = self.data.game.me._ships.get(ship_id)
 
-            #if self.data.matrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
-            if self.data.matrix.locations.stuck[ship.position.y][ship.position.x] == Matrix_val.ONE:
+            #if self.data.myMatrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
+            if self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x] == Matrix_val.ONE:
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
                 direction = Direction.Still
 
@@ -44,8 +44,8 @@ class Stuck(Moves):
 
         ## USING NP.WHERE
         ## PROBLEM IS AFTER RETREATING, STILL TRIES TO MOVE STUCK SHIP, WHICH WAS HANDLED IN RETREAT
-        # r, c = np.where(self.data.matrix.locations.stuck == Matrix_val.ONE)
-        # ship_ids = self.data.matrix.locations.myShipsID[r, c]
+        # r, c = np.where(self.data.myMatrix.locations.stuck == Matrix_val.ONE)
+        # ship_ids = self.data.myMatrix.locations.myShipsID[r, c]
         #
         # for ship_id in ship_ids:
         #     ship = self.data.game.me._ships.get(ship_id)

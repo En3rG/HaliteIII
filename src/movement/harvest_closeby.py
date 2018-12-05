@@ -59,12 +59,12 @@ class Harvest(Moves):
         """
         ## USING DONT HARVEST BELOW
         # if direction == Direction.Still and \
-        #         (self.data.matrix.halite.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
+        #         (self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x] > MyConstants.DONT_HARVEST_BELOW or self.isBlocked(ship)):
         #     return True
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
         if direction == Direction.Still and \
-                (self.data.matrix.halite.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite) or self.isBlocked(ship)):
+                (self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite) or self.isBlocked(ship)):
             return True
 
 
@@ -95,12 +95,12 @@ class Harvest(Moves):
         destination = self.get_destination(ship, direction)
 
         ## USING DONT HARVEST BELOW
-        # return (self.data.matrix.halite.harvest[destination.y][destination.x] > MyConstants.DONT_HARVEST_BELOW
-        #         and self.data.matrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+        # return (self.data.myMatrix.halite.harvest[destination.y][destination.x] > MyConstants.DONT_HARVEST_BELOW
+        #         and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
-        return (self.data.matrix.halite.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.average_halite)
-                and self.data.matrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+        return (self.data.myMatrix.halite.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite)
+                and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 
     def get_points_harvest(self, ship):
@@ -131,9 +131,9 @@ class Harvest(Moves):
         :return: COST AND HARVEST AMOUNT
         """
         destination = self.get_destination(ship, direction)
-        harvest = self.data.matrix.halite.harvest[destination.y][destination.x]
-        cost = self.data.matrix.halite.cost[destination.y][destination.x]
-        influenced = True if self.data.matrix.locations.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
+        harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
+        cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+        influenced = True if self.data.myMatrix.locations.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
         bonus = (harvest * 2) if influenced else 0
 
         if direction == Direction.Still:
@@ -154,13 +154,13 @@ class Harvest(Moves):
         :return:
         """
         destination = self.get_destination(ship, direction)
-        safe = self.data.matrix.locations.safe[destination.y][destination.x]
-        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
+        safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
         # if direction == Direction.Still:
-        #     occupied = 0 if self.data.matrix.locatins.occupied[destination.y][destination.x] >= -1 else -1
+        #     occupied = 0 if self.data.myMatrix.locatins.occupied[destination.y][destination.x] >= -1 else -1
         # else:
-        #     occupied = self.data.matrix.locations.occupied[destination.y][destination.x]
-        occupied = 0 if self.data.matrix.locations.occupied[destination.y][destination.x] >= -1 else -1
+        #     occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
+        occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
 
         c = HarvestPoints(safe, occupied, potential_enemy_collision, harvest, direction)
         points.append(c)
@@ -175,7 +175,7 @@ class Harvest(Moves):
         unsafe_num = 0
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
-            if self.data.matrix.locations.safe[destination.y][destination.x] == -1: unsafe_num += 1
+            if self.data.myMatrix.locations.safe[destination.y][destination.x] == -1: unsafe_num += 1
 
         return unsafe_num == 4
 

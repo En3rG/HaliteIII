@@ -29,11 +29,11 @@ def get_points_collision(Moves, ship, directions):
     for direction in MyConstants.DIRECTIONS:
         destination = Moves.get_destination(ship, direction)
 
-        safe = Moves.data.matrix.locations.safe[destination.y][destination.x]
-        occupied = Moves.data.matrix.locations.occupied[destination.y][destination.x]
+        safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]
+        occupied = Moves.data.myMatrix.locations.occupied[destination.y][destination.x]
         priority_direction = 1 if direction in directions_set else 0
-        cost = Moves.data.matrix.halite.cost[ship.position.y][ship.position.x]
-        harvest = Moves.data.matrix.halite.harvest[destination.y][destination.x]
+        cost = Moves.data.myMatrix.halite.cost[ship.position.y][ship.position.x]
+        harvest = Moves.data.myMatrix.halite.harvest[destination.y][destination.x]
         harvest_amnt = harvest - cost
 
         c = CollisionPoints(safe, occupied, priority_direction, harvest_amnt, direction)

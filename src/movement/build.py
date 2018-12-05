@@ -14,14 +14,14 @@ class Build(Moves):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        matrixIDs = self.data.matrix.locations.myShipsID * self.data.init_data.matrix.locations.dock_placement
+        matrixIDs = self.data.myMatrix.locations.myShipsID * self.data.init_data.myMatrix.locations.dock_placement
 
         r, c = np.where(matrixIDs != 0)
 
-        ships_on_docks = set(self.data.matrix.locations.myShipsID[r, c])
+        ships_on_docks = set(self.data.myMatrix.locations.myShipsID[r, c])
         myHalite_amnt = self.data.game.me.halite_amount
 
-        if len(ships_on_docks) >= 1 and self.data.canBuild:
+        if len(ships_on_docks) >= 1 and self.data.myVars.canBuild:
             ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
             for ship_id in ships_building:
@@ -29,7 +29,7 @@ class Build(Moves):
                 self.mark_unsafe(ship.position)
                 self.data.mySets.ships_to_move.remove(ship.id)
 
-                self.data.isBuilding = True ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                self.data.myVars.isBuilding = True ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
                 if myHalite_amnt > 4000:
                     myHalite_amnt -= 4000
@@ -39,7 +39,7 @@ class Build(Moves):
 
                     self.data.command_queue.append(ship.make_dropoff())
 
-                    self.data.init_data.matrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
+                    self.data.init_data.myMatrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
                 else:
                     self.data.command_queue.append(ship.move(Direction.Still))
 

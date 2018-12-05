@@ -63,8 +63,8 @@ class Retreat(Moves):
         for ship in self.data.game.me.get_ships():
             curr_cell = (ship.position.y, ship.position.x)
             coord, distance, value = get_coord_closest(Matrix_val.ONE,
-                                                       self.data.matrix.locations.myDocks,
-                                                       self.data.init_data.matrix.distances[curr_cell])
+                                                       self.data.myMatrix.locations.myDocks,
+                                                       self.data.init_data.myMatrix.distances[curr_cell])
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)
             num_directions = len(directions)
@@ -101,10 +101,10 @@ class Retreat(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            shipyard = self.data.matrix.locations.myDocks[destination.y][destination.x]
-            safe = self.data.matrix.locations.safe[destination.y][destination.x]
-            potential_ally_collision = self.data.matrix.locations.potential_ally_collisions[destination.y][destination.x]
-            stuck = self.data.matrix.locations.stuck[ship.position.y][ship.position.x] ## STUCK BASED ON SHIPS CURRENT POSITION
+            shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
+            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x] ## STUCK BASED ON SHIPS CURRENT POSITION
 
             c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)

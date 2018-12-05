@@ -27,7 +27,7 @@ class Depart(Moves):
         docks_position = self.get_positions_docks()
 
         for position in docks_position:
-            ship_id = self.data.matrix.locations.myShipsID[position.y][position.x]
+            ship_id = self.data.myMatrix.locations.myShipsID[position.y][position.x]
             if ship_id != 0:
                 logging.debug("Ship departing: {}".format(ship_id))
                 self.departNow(ship_id)
@@ -48,8 +48,8 @@ class Depart(Moves):
         ship = self.data.game.me._ships.get(ship_id)
         curr_cell = (ship.position.y, ship.position.x)
         seek_val = Matrix_val.TEN
-        coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.halite.top_amount,
-                                               self.data.init_data.matrix.distances[curr_cell])
+        coord, min_di, val = get_coord_closest(seek_val, self.data.myMatrix.halite.top_amount,
+                                               self.data.init_data.myMatrix.distances[curr_cell])
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
         direction = self.best_direction(ship, directions, mode=MoveMode.DEPART)
@@ -69,8 +69,8 @@ class Depart(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            safe = self.data.matrix.locations.safe[destination.y][destination.x]
-            cost = self.data.matrix.halite.cost[destination.y][destination.x]
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
 
             c = DepartPoints(safe, cost, direction)
             points.append(c)

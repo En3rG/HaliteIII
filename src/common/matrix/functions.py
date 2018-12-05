@@ -214,7 +214,7 @@ def get_position_highest_section(data):
     :param data:
     :return: POSITION
     """
-    section_coord = get_index_highest_val(data.matrix.sectioned.halite)
+    section_coord = get_index_highest_val(data.myMatrix.sectioned.halite)
     destination = convert_section_coord(section_coord)
 
     return destination

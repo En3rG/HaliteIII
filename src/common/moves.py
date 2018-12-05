@@ -43,7 +43,7 @@ class Moves(abc.ABC):
 
         self.move_occupied(ship, direction)
 
-        move_populate_manhattan(self.data.matrix.locations.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
+        move_populate_manhattan(self.data.myMatrix.locations.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
@@ -61,7 +61,7 @@ class Moves(abc.ABC):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
-        self.data.matrix.locations.safe[position.y][position.x] = Matrix_val.UNSAFE
+        self.data.myMatrix.locations.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 
     def check_kicked(self, ship, direction):
@@ -74,9 +74,9 @@ class Moves(abc.ABC):
         :return:
         """
         destination = self.get_destination(ship, direction)
-        occupied = self.data.matrix.locations.occupied[destination.y][destination.x]
+        occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
         if occupied < -1:
-            shipID_kicked = self.data.matrix.locations.myShipsID[destination.y][destination.x]
+            shipID_kicked = self.data.myMatrix.locations.myShipsID[destination.y][destination.x]
 
             if shipID_kicked in self.data.mySets.ships_to_move:
                 logging.debug("ship id {} added to ships kicked, by ship {}".format(shipID_kicked, ship.id))
@@ -104,9 +104,9 @@ class Moves(abc.ABC):
         :param direction:
         :return:
         """
-        self.data.matrix.locations.occupied[ship.position.y][ship.position.x] += Matrix_val.ONE
+        self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] += Matrix_val.ONE
         destination = self.get_destination(ship, direction)
-        self.data.matrix.locations.occupied[destination.y][destination.x] += Matrix_val.OCCUPIED
+        self.data.myMatrix.locations.occupied[destination.y][destination.x] += Matrix_val.OCCUPIED
 
 
     def best_direction(self, ship, directions=None, mode=""):
@@ -232,12 +232,12 @@ class Moves(abc.ABC):
         :return:
         """
         logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-        harvest = Section(self.data.matrix.halite.harvest, ship.position, size=1)              ## SECTION OF HARVEST MATRIX
-        leave_cost = self.data.matrix.halite.cost[ship.position.y][ship.position.x]            ## COST TO LEAVE CURRENT CELL
+        harvest = Section(self.data.myMatrix.halite.harvest, ship.position, size=1)              ## SECTION OF HARVEST MATRIX
+        leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]            ## COST TO LEAVE CURRENT CELL
         cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                         ## APPLY COST TO DIRECT NEIGHBORS
         harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF             ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
         actual_harvest = harvest_matrix - cost_matrix                                   ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-        safe = Section(self.data.locations.matrix.safe, ship.position, size=1)                    ## SECTION SAFE
+        safe = Section(self.data.myMatrix.locations.safe, ship.position, size=1)                    ## SECTION SAFE
         safe_harvest = actual_harvest * safe.matrix                                     ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
 
         max_index = get_index_highest_val(safe_harvest)

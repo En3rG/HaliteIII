@@ -22,7 +22,7 @@ class Explore(Moves):
 
         self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
         self.heap_dist = []
-        self.top_halite = copy.deepcopy(self.data.matrix.halite.top_amount)
+        self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
         self.taken_destinations = set()
         self.move_ships()
 
@@ -145,8 +145,8 @@ class Explore(Moves):
         #     curr_cell = (ship.position.y, ship.position.x)
         #     seek_val = Matrix_val.TEN
         #     coord, min_di, val = get_coord_closest(seek_val,
-        #                                            self.data.matrix.halite.top_amount,
-        #                                            self.data.init_data.matrix.distances[curr_cell])
+        #                                            self.data.myMatrix.halite.top_amount,
+        #                                            self.data.init_data.myMatrix.distances[curr_cell])
         #     destination = Position(coord[1], coord[0])
         #     s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
         #     heapq.heappush(self.heap_dist, s)
@@ -163,7 +163,7 @@ class Explore(Moves):
         #     seek_val = Matrix_val.TEN
         #
         #     indices, distances = get_n_closest_masked(self.top_halite,
-        #                                               self.data.init_data.matrix.distances[curr_cell],
+        #                                               self.data.init_data.myMatrix.distances[curr_cell],
         #                                               seek_val,
         #                                               15)
         #
@@ -188,7 +188,7 @@ class Explore(Moves):
             seek_val = Matrix_val.TEN
             coord, min_di, val = get_coord_closest(seek_val,
                                                    self.top_halite,
-                                                   self.data.init_data.matrix.distances[curr_cell])
+                                                   self.data.init_data.myMatrix.distances[curr_cell])
             destination = Position(coord[1], coord[0])
             s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
             heapq.heappush(self.heap_dist, s)
@@ -214,7 +214,7 @@ class Explore(Moves):
         ## GET DIRECTION TO CLOSEST TOP HALITE
         curr_cell = (ship.position.y, ship.position.x)
         seek_val = Matrix_val.TEN
-        coord, min_di, val = get_coord_closest(seek_val, self.data.matrix.halite.top_amount, self.data.init_data.matrix.distances[curr_cell])
+        coord, min_di, val = get_coord_closest(seek_val, self.data.myMatrix.halite.top_amount, self.data.init_data.myMatrix.distances[curr_cell])
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
         direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
@@ -234,17 +234,17 @@ class Explore(Moves):
         for direction in directions:
             destination = self.get_destination(ship, direction)
 
-            safe = self.data.matrix.locations.safe[destination.y][destination.x]
-            occupied = self.data.matrix.locations.occupied[destination.y][destination.x]
-            cost = self.data.matrix.halite.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[destination.y][destination.x]
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
             c = ExplorePoints(safe, occupied, potential_enemy_collision, cost, direction)
             points.append(c)
 
-        safe = self.data.matrix.locations.safe[ship.position.y][ship.position.x]
-        occupied = 0 if self.data.matrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
-        potential_enemy_collision = self.data.matrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
+        occupied = 0 if self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
 
         points.append(ExplorePoints(safe=safe,
                                     occupied=occupied,

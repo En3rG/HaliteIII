@@ -175,6 +175,20 @@ class MySets():
         self.dock_positions = set()
 
 
+class MyVars():
+    def __init__(self):
+        self.total_halite = 0
+        self.average_halite = 0
+        self.isBuilding = False
+        self.canBuild = False
+        self.canSpawn = False
+
+
+class MyDicts():
+    def __init__(self):
+        self.players_halite = {}
+
+
 class HaliteInfo():
     def __init__(self):
         self.halite_amount = 0
@@ -184,19 +198,10 @@ class HaliteInfo():
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
-
-        self.total_halite = 0
-        self.average_halite = 0
-        self.isBuilding = False
-        self.canBuild = False
-        self.canSpawn = False
-
-
-        self.players_halite = {}
-
+        self.myVars = MyVars()
+        self.myDicts = MyDicts()
         self.mySets = MySets(game)
-
-        self.matrix = Matrix(self.game.game_map.height, self.game.game_map.width)
+        self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
 
     @abc.abstractmethod  ## MUST BE DEFINED BY CHILD CLASS
@@ -212,9 +217,9 @@ class Data(abc.ABC):
         POPULATE MATRIX WITH HALITE VALUES
         """
         halites = [ [ cell.halite_amount for cell in row ] for row in self.game.game_map._cells ]
-        self.matrix.halite.amount = np.array(halites, dtype=np.int16)
+        self.myMatrix.halite.amount = np.array(halites, dtype=np.int16)
 
-        self.total_halite = self.matrix.halite.amount.sum()
+        self.myVars.total_halite = self.myMatrix.halite.amount.sum()
 
 
     def populate_myShipyard_docks(self):
@@ -223,15 +228,15 @@ class Data(abc.ABC):
         """
         ## SHIPYARD
         myShipyard_position = self.game.me.shipyard.position
-        self.matrix.locations.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
+        self.myMatrix.locations.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         ## DOCKS
         self.mySets.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
-        self.matrix.locations.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
+        self.myMatrix.locations.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         for dropoff in self.game.me.get_dropoffs():
             self.mySets.dock_positions.add((dropoff.position.y, dropoff.position.x))
-            self.matrix.locations.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
+            self.myMatrix.locations.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 
     def populate_enemyShipyard_docks(self):
@@ -242,13 +247,13 @@ class Data(abc.ABC):
             if id != self.game.me.id:
                 ## SHIPYARDS
                 enemyShipyard_position = player.shipyard.position
-                self.matrix.locations.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
+                self.myMatrix.locations.enemyShipyard[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
 
                 ## DOCKS
-                self.matrix.locations.enemyDocks[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
+                self.myMatrix.locations.enemyDocks[enemyShipyard_position.y][enemyShipyard_position.x] = Matrix_val.ONE
 
                 for dropoff in player.get_dropoffs():
-                    self.matrix.locations.enemyDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
+                    self.myMatrix.locations.enemyDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 
     def populate_myShips(self):
@@ -258,23 +263,23 @@ class Data(abc.ABC):
         POPULATE POTENTIAL COLLISION MATRIX
         POPULATE STUCK SHIPS
         """
-        self.players_halite[self.game.my_id] = HaliteInfo()
-        self.players_halite[self.game.my_id].halite_amount = self.game.me.halite_amount
+        self.myDicts.players_halite[self.game.my_id] = HaliteInfo()
+        self.myDicts.players_halite[self.game.my_id].halite_amount = self.game.me.halite_amount
 
         for ship in self.game.me.get_ships():
-            self.players_halite[self.game.my_id].halite_carried += ship.halite_amount
-            self.matrix.locations.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
-            self.matrix.locations.myShipsID[ship.position.y][ship.position.x] = ship.id
-            self.matrix.locations.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
-            populate_manhattan(self.matrix.locations.potential_ally_collisions,
+            self.myDicts.players_halite[self.game.my_id].halite_carried += ship.halite_amount
+            self.myMatrix.locations.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
+            self.myMatrix.locations.myShipsID[ship.position.y][ship.position.x] = ship.id
+            self.myMatrix.locations.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
+            populate_manhattan(self.myMatrix.locations.potential_ally_collisions,
                                Matrix_val.POTENTIAL_COLLISION,
                                ship.position,
                                MyConstants.DIRECT_NEIGHBOR_RADIUS,
                                cummulative=True)
 
             ## POPULATE STUCK SHIPS
-            if self.matrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:
-                self.matrix.locations.stuck[ship.position.y][ship.position.x] = Matrix_val.ONE
+            if self.myMatrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:
+                self.myMatrix.locations.stuck[ship.position.y][ship.position.x] = Matrix_val.ONE
 
 
     def populate_enemyShips_influenced(self):
@@ -286,27 +291,27 @@ class Data(abc.ABC):
         """
         for id, player in self.game.players.items():
             if id != self.game.me.id:
-                self.players_halite[id] = HaliteInfo()
-                self.players_halite[id].halite_amount = player.halite_amount
+                self.myDicts.players_halite[id] = HaliteInfo()
+                self.myDicts.players_halite[id].halite_amount = player.halite_amount
 
                 for ship in player.get_ships():
-                    self.players_halite[id].halite_carried += ship.halite_amount
-                    self.matrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
-                    self.matrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
+                    self.myDicts.players_halite[id].halite_carried += ship.halite_amount
+                    self.myMatrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
+                    self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
-                    # self.matrix.locations.influenced = fill_circle(self.matrix.locations.influenced,
+                    # self.myMatrix.locations.influenced = fill_circle(self.myMatrix.locations.influenced,
                     #                                     center=ship.position,
                     #                                     radius=constants.INSPIRATION_RADIUS,
                     #                                     value=Matrix_val.INFLUENCED.value,
                     #                                     cummulative=False, override_edges=0)
 
-                    populate_manhattan(self.matrix.locations.influenced,
+                    populate_manhattan(self.myMatrix.locations.influenced,
                                        Matrix_val.ONE,
                                        ship.position,
                                        constants.INSPIRATION_RADIUS,
                                        cummulative=True)
-                    populate_manhattan(self.matrix.locations.potential_enemy_collisions,
+                    populate_manhattan(self.myMatrix.locations.potential_enemy_collisions,
                                        Matrix_val.POTENTIAL_COLLISION,
                                        ship.position,
                                        MyConstants.DIRECT_NEIGHBOR_RADIUS,
@@ -317,9 +322,9 @@ class Data(abc.ABC):
         """
         POPULATE MATRIX COST TO LEAVE EACH CELL
         """
-        cost = self.matrix.halite.amount * 0.1
-        #self.matrix.halite.cost = np.round(cost)           ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
-        self.matrix.halite.cost = myRound(cost)
+        cost = self.myMatrix.halite.amount * 0.1
+        #self.myMatrix.halite.cost = np.round(cost)           ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
+        self.myMatrix.halite.cost = myRound(cost)
 
 
     def populate_harvest(self):
@@ -327,9 +332,9 @@ class Data(abc.ABC):
         POPULATE MATRIX HARVEST, IF WE STAY STILL IN EACH CELL FOR A SINGLE TURN
         DOES NOT CONSIDER INFLUENCE
         """
-        harvest = self.matrix.halite.amount * 0.25
-        #self.matrix.halite.harvest = np.round(harvest)     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
-        self.matrix.halite.harvest = myRound(harvest)
+        harvest = self.myMatrix.halite.amount * 0.25
+        #self.myMatrix.halite.harvest = np.round(harvest)     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
+        self.myMatrix.halite.harvest = myRound(harvest)
 
 
     def populate_sectioned_halite(self):
@@ -340,24 +345,24 @@ class Data(abc.ABC):
 
         OBSOLETE???? NO LONGER USED
         """
-        for y, row in enumerate(self.matrix.sectioned.halite):
+        for y, row in enumerate(self.myMatrix.sectioned.halite):
             for x, col in enumerate(row):
-                section = self.matrix.halite.amount[
+                section = self.myMatrix.halite.amount[
                           y * MyConstants.SECTION_SIZE:y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE,
                           x * MyConstants.SECTION_SIZE:x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE]
                 sum = section.sum()
                 average_halite = sum // (MyConstants.SECTION_SIZE * 2)
 
-                self.matrix.sectioned.halite[y][x] = average_halite
+                self.myMatrix.sectioned.halite[y][x] = average_halite
 
-        print_matrix("sectioned halite", self.matrix.sectioned.halite)
+        print_matrix("sectioned halite", self.myMatrix.sectioned.halite)
 
 
     def populate_sectioned_distances(self):
         """
         POPULATE DISTANCES OF EACH SECTIONS TO ONE ANOTHER
 
-        self.matrix.sectioned.distances[curr_section][y][x] = distance
+        self.myMatrix.sectioned.distances[curr_section][y][x] = distance
 
         OBSOLETE????? NO LONGER USED
         """
@@ -367,16 +372,16 @@ class Data(abc.ABC):
         for r in range(height):
             for c in range(width):
                 curr_section = (r, c)
-                self.matrix.sectioned.distances[curr_section] = get_distance_matrix(curr_section, height, width)
+                self.myMatrix.sectioned.distances[curr_section] = get_distance_matrix(curr_section, height, width)
 
-                #print_matrix("Distances on {}".format(curr_section), self.matrix.sectioned.distances[curr_section])
+                #print_matrix("Distances on {}".format(curr_section), self.myMatrix.sectioned.distances[curr_section])
 
 
     def populate_cell_distances(self):
         """
         POPULATE DISTANCES OF EACH CELLS TO ONE ANOTHER
 
-        self.matrix.distances[curr_section][y][x] = distance
+        self.myMatrix.distances[curr_section][y][x] = distance
         """
         height = self.game.game_map.height
         width = self.game.game_map.width
@@ -389,11 +394,11 @@ class Data(abc.ABC):
                 curr_cell = (r, c)
                 ## THIS METHOD WILL TIME OUT (ALSO UNNECESSARY CALCULATIONS
                 ## SINCE DISTANCE MATRIX IS PRETTY SIMILAR
-                # self.matrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
-                # print_matrix("Distances (1) on {}".format(curr_cell), self.matrix.distances[curr_cell])
+                # self.myMatrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
+                # print_matrix("Distances (1) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
 
-                self.matrix.distances[curr_cell] = shift_matrix(r, c, base_matrix)
-                # print_matrix("Distances (2) on {}".format(curr_cell), self.matrix.distances[curr_cell])
+                self.myMatrix.distances[curr_cell] = shift_matrix(r, c, base_matrix)
+                # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
 
 
     def populate_cell_averages(self):
@@ -404,7 +409,7 @@ class Data(abc.ABC):
         for r in range(self.game.game_map.height):
             for c in range(self.game.game_map.width):
                 loc = Position(c, r) ## Position(x, y)
-                self.matrix.cell_average.manhattan[r][c] = get_average_manhattan(self.matrix.halite.amount,
+                self.myMatrix.cell_average.manhattan[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
                                                                                  loc,
                                                                                  MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
@@ -414,19 +419,19 @@ class Data(abc.ABC):
         POPULATE
         """
         ## POPULATE NUMBER OF TURNS TO HAVE HALITE <= DONT_HARVEST_BELOW
-        self.matrix.depletion.harvest_turns =  myHarvestCounter(self.matrix.halite.amount)
+        self.myMatrix.depletion.harvest_turns =  myHarvestCounter(self.myMatrix.halite.amount)
 
         ## POPULATE SHIPYARD DISTANCES
         start_tuple = (self.game.me.shipyard.position.y, self.game.me.shipyard.position.x)
-        self.matrix.depletion.shipyard_distances = get_distance_matrix(start_tuple, self.game.game_map.height, self.game.game_map.width)
+        self.myMatrix.depletion.shipyard_distances = get_distance_matrix(start_tuple, self.game.game_map.height, self.game.game_map.width)
 
         ## POPULATE TOTAL NUMBER OF TURNS TO DEPLETE HALITE, INCLUDING TRAVELING THERE BACK AND FORTH
-        self.matrix.depletion.total_turns = myTurnCounter(self.matrix.depletion.harvest_turns, self.matrix.depletion.shipyard_distances)
+        self.myMatrix.depletion.total_turns = myTurnCounter(self.myMatrix.depletion.harvest_turns, self.myMatrix.depletion.shipyard_distances)
 
         ## POPULATE IF A GOOD HARVEST AREA
-        max_num = np.max(self.matrix.depletion.total_turns)
-        max_matrix = self.matrix.depletion.max_matrix * max_num
-        self.matrix.depletion.harvest_area = myHarvestArea(max_matrix, self.matrix.depletion.total_turns)
+        max_num = np.max(self.myMatrix.depletion.total_turns)
+        max_matrix = self.myMatrix.depletion.max_matrix * max_num
+        self.myMatrix.depletion.harvest_area = myHarvestArea(max_matrix, self.myMatrix.depletion.total_turns)
 
 
     def populate_top_halite(self):
@@ -434,22 +439,22 @@ class Data(abc.ABC):
         POPULATE TOP HALITE CELLS
         """
         top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-        top, ind = get_n_largest_values(self.matrix.halite.amount, top_num_cells)
-        self.matrix.halite.top_amount[ind] = Matrix_val.TEN
+        top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
+        self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
 
 
     def get_average_halite(self):
-        self.average_halite = int(np.average(self.matrix.halite.amount))
+        self.myVars.average_halite = int(np.average(self.myMatrix.halite.amount))
 
-        logging.debug("Average Halite: {} Average Harvest: {}".format(self.average_halite, self.average_halite * 0.25))
+        logging.debug("Average Halite: {} Average Harvest: {}".format(self.myVars.average_halite, self.myVars.average_halite * 0.25))
 
 
     def update_dock_placement(self):
         """
         UPDATE DOCK PLACEMENT TO EXCLUDE ENEMY DOCKS/SHIPYARDS
         """
-        r, c = np.where(self.matrix.locations.enemyDocks == Matrix_val.ONE)
-        self.init_data.matrix.locations.dock_placement[r, c] = 0
+        r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
+        self.init_data.myMatrix.locations.dock_placement[r, c] = 0
 
 
     def set_spawn_build_time(self):
@@ -484,12 +489,12 @@ class Data(abc.ABC):
             elif self.game.game_map.height == 64:
                 max_turn_percent = MyConstants.STOP_SPAWNING_4P_64
 
-        ratio_left = self.total_halite / self.starting_halite
+        ratio_left = self.myVars.total_halite / self.starting_halite
 
-        self.canSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+        self.myVars.canSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
                         and ratio_left > MyConstants.STOP_SPAWNING_HALITE_LEFT
 
-        self.canBuild = ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT
+        self.myVars.canBuild = ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT
 
 
 

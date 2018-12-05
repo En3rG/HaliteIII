@@ -29,7 +29,7 @@ class PrevData():
     """
     def __init__(self, data):
         self.me = data.game.me
-        self.matrix = data.matrix
+        self.matrix = data.myMatrix
         self.ships_all = data.mySets.ships_all
         self.ships_returning = data.mySets.ships_returning
 

@@ -48,10 +48,10 @@ class Halite_stats():
 
     def set_halite(self, game, data):
         self.halite_amount = game.me.halite_amount
-        self.halite_carried = data.players_halite[game.my_id].halite_carried
+        self.halite_carried = data.myDicts.players_halite[game.my_id].halite_carried
 
         self.enemy_stat = {}
-        for id, v in data.players_halite.items():
+        for id, v in data.myDicts.players_halite.items():
             if id != game.me.id:
                 self.enemy_stat[id] = {"halite amount":v.halite_amount, "halite carried":v.halite_carried}
 
@@ -88,12 +88,12 @@ class Halite_stats():
 
         ## HARVESTING
         if ship.position == destination:
-            harvest_val = data.matrix.halite.harvest[ship.position.y][ship.position.x]
+            harvest_val = data.myMatrix.halite.harvest[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_gained += harvest_val
             self.total_gained += harvest_val
 
             ## CALCULATE BONUS HALITE
-            if data.matrix.locations.influenced[ship.position.y][ship.position.x] > Matrix_val.ONE:
+            if data.myMatrix.locations.influenced[ship.position.y][ship.position.x] > Matrix_val.ONE:
                 bonus_val = harvest_val * 2
 
                 self.ships_stat[ship.id].halite_bonus += bonus_val
@@ -101,7 +101,7 @@ class Halite_stats():
 
         ## MOVING, THUS BURNING HALITE
         else:
-            burned_val = data.matrix.halite.cost[ship.position.y][ship.position.x]
+            burned_val = data.myMatrix.halite.cost[ship.position.y][ship.position.x]
             self.ships_stat[ship.id].halite_burned += burned_val
             self.total_burned += burned_val
 

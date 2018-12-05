@@ -17,10 +17,10 @@ def spawn_ships(data):
 
     :param data:
     """
-    if data.canSpawn \
-            and data.isBuilding == False \
+    if data.myVars.canSpawn \
+            and data.myVars.isBuilding == False \
             and data.game.me.halite_amount >= constants.SHIP_COST \
-            and data.matrix.locations.safe[data.game.game_map[data.game.me.shipyard].position.y][data.game.game_map[data.game.me.shipyard].position.x] != Matrix_val.UNSAFE:
+            and data.myMatrix.locations.safe[data.game.game_map[data.game.me.shipyard].position.y][data.game.game_map[data.game.me.shipyard].position.x] != Matrix_val.UNSAFE:
             # and not data.game.game_map[data.game.me.shipyard].is_occupied\ ## NOT ACCURATE? LOOKS AT CURRENT TURN BUT SPAWN HAPPENS NEXT TURN
 
         print_heading("Safe to spawn ship......")
