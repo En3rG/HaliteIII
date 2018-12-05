@@ -441,6 +441,8 @@ class Data(abc.ABC):
     def get_average_halite(self):
         self.average_halite = int(np.average(self.matrix.halite.amount))
 
+        logging.debug("Average Halite: {} Average Harvest: {}".format(self.average_halite, self.average_halite * 0.25))
+
 
     def update_dock_placement(self):
         """
