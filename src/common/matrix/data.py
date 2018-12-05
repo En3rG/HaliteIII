@@ -188,7 +188,9 @@ class Data(abc.ABC):
         self.total_halite = 0
         self.average_halite = 0
         self.isBuilding = False
-        self.canSpawning = False
+        self.canBuild = False
+        self.canSpawn = False
+
 
         self.players_halite = {}
 
@@ -448,7 +450,7 @@ class Data(abc.ABC):
         self.init_data.matrix.locations.dock_placement[r, c] = 0
 
 
-    def get_stop_spawning_val(self):
+    def set_spawn_build_time(self):
         """
         SET SPAWNING TO TRUE IF TURN NUMBER IS BELOW THE MAX TURN PERCENT (BASED ON MAP SIZE AND NUM PLAYERS)
         ALSO BASED ON RATIO OF REMAINING HALITE FROM TOTAL STARTING VALUE
@@ -480,8 +482,12 @@ class Data(abc.ABC):
             elif self.game.game_map.height == 64:
                 max_turn_percent = MyConstants.STOP_SPAWNING_4P_64
 
-        self.canSpawning = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                        and (self.total_halite / self.starting_halite) > MyConstants.STOP_SPAWNING_HALITE_LEFT
+        ratio_left = self.total_halite / self.starting_halite
+
+        self.canSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+                        and ratio_left > MyConstants.STOP_SPAWNING_HALITE_LEFT
+
+        self.canBuild = ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT
 
 
 

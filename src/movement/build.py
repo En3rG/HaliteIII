@@ -21,7 +21,7 @@ class Build(Moves):
         ships_on_docks = set(self.data.matrix.locations.myShipsID[r, c])
         myHalite_amnt = self.data.game.me.halite_amount
 
-        if len(ships_on_docks) >= 1:
+        if len(ships_on_docks) >= 1 and self.data.canBuild:
             ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
             for ship_id in ships_building:

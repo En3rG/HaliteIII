@@ -20,7 +20,7 @@ class GetData(Data):
         POPULATE ALL MATRICES
         """
         self.populate_halite()
-        self.get_stop_spawning_val()
+        self.set_spawn_build_time()
         self.populate_myShipyard_docks()
         self.populate_enemyShipyard_docks()
         self.populate_cost()
