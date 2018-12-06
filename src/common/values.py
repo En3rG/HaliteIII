@@ -48,10 +48,10 @@ class MyConstants():
 
     SECTION_SIZE = 4                ## SIZE OF EACH SECTIONS
 
-    ## HARVEST (TUNNELING EFFECT)
-    DONT_HARVEST_PERCENT = .105      ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
-                                    ## AT 0.15, MAKES SHIPS GO TOWARDS HIGHER HALITE AREAS FASTER
-                                    ## THE HIGHER THE NUMBER, THE MORE 'TUNNELING' IT'LL BE
+    ## HARVEST
+    ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
+    ## AND WILL HARVEST SMALLER AREAS LATER
+    DONT_HARVEST_PERCENT = .12      ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
                                     ## USED TO BE:
                                     ## V14: 0.12
 
@@ -60,15 +60,18 @@ class MyConstants():
                                     ##   (BASED ON NUMBER OF TURNS REQUIRED TO HARVEST THE CELL)
 
     ## EXPLORING
-    TOP_N_HALITE = 0.035             ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP) USED FOR EXPLORING.
-                                    ## USED TO BE:
+    ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
+    TOP_N_HALITE = 0.04             ## USED TO BE:
                                     ## V13: 0.10
                                     ## V14: 0.04
+
 
     ## DOCK PLACEMENT
     AVERAGE_MANHATTAN_DISTANCE = 6  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
     TOP_N = 20                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
-    MIN_DIST_BTW_DOCKS = 12         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD (12 for V7)
+    MIN_DIST_BTW_DOCKS = 12         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
+                                    ## USED TO BE:
+                                    ## V14: 12
 
 
     DIRECT_NEIGHBORS_SELF = np.array([[0, 1, 0],

@@ -244,6 +244,20 @@ def convert_section_coord(section_coord):
     return Position(x, y)
 
 
+def get_n_max_values(matrix):
+    """
+    GET n MAX VALUES
+    RETURN MULTIPLE ITEMS IF THERE ARE MULTIPLE MAX VALUES (DUPLICATES)
+
+    :param matrix:
+    :return: VALUE AND INDEX
+    """
+    max_value = matrix.max()
+    indexes = np.argwhere(matrix == max_value)
+
+    return max_value, indexes
+
+
 def get_n_largest_values(matrix, n):
     """
     :param n:

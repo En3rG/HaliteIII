@@ -24,7 +24,7 @@ class Harvest(Moves):
 
 
         print_heading("Moving harvesting (later) ships......")
-        # MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
+        ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
         ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
