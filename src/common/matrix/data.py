@@ -437,10 +437,26 @@ class Data(abc.ABC):
     def populate_top_halite(self):
         """
         POPULATE TOP HALITE CELLS
+        LIMIT TO LOCAL AREA WITHIN THE FIRST 100 MOVES
         """
         top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
         top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
         self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+
+        ## LIMITING EARLY GAME TO STAY CLOSE BY
+        ## SEEMS BETTER TO LIMIT BUILDING BASED NUMBER OF SHIPS 
+        # if self.game.turn_number < MyConstants.EARLY_GAME_TURNS:
+        #     mask = np.zeros((self.game.game_map.height, self.game.game_map.width), dtype=np.int16)
+        #     populate_manhattan(mask, 1, self.game.me.shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, cummulative=False)
+        #     top_num_cells = int(MyConstants.TOP_N_HALITE_EARLY_GAME * (4 * MyConstants.MIN_DIST_BTW_DOCKS))
+        #     matrix_halite = mask * self.myMatrix.halite.amount
+        #     top, ind = get_n_largest_values(matrix_halite, top_num_cells)
+        #     self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+        #     print_matrix("test", self.myMatrix.halite.top_amount)
+        # else:
+        #     top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+        #     top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
+        #     self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
 
 
     def get_average_halite(self):

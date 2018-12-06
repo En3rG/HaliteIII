@@ -2,8 +2,22 @@ from src.common.print import print_heading
 from src.common.moves import Moves
 from hlt.positionals import Direction
 from src.common.halite_statistics import BuildType
+from src.common.values import MyConstants
 import numpy as np
 import logging
+
+
+"""
+TO DO!!!!!111
+
+BEST TO HAVE DOCKS CLOSE TO ENEMY AND GAIN ALOT OF INFLUENCE
+
+DONT HARVEST WHERE DOCK WILL BE BUILT
+
+DONT BUILD DOCK WHEN WE HAVE SMALL NUMBER OF SHIPS
+
+
+"""
 
 class Build(Moves):
     def __init__(self, data, prev_data):
@@ -21,7 +35,7 @@ class Build(Moves):
         ships_on_docks = set(self.data.myMatrix.locations.myShipsID[r, c])
         myHalite_amnt = self.data.game.me.halite_amount
 
-        if len(ships_on_docks) >= 1 and self.data.myVars.canBuild:
+        if len(ships_on_docks) >= 1 and self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
             ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
             for ship_id in ships_building:

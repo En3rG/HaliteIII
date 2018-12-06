@@ -61,9 +61,14 @@ class MyConstants():
 
     ## EXPLORING
     ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
+    EARLY_GAME_TURNS = 80          ## TURNS CONSIDERED AT EARLY GAME
+    TOP_N_HALITE_EARLY_GAME = 0.20  ## PERCENTAGE OF TOP HALITE USED IN EARLY GAME
     TOP_N_HALITE = 0.04             ## USED TO BE:
                                     ## V13: 0.10
                                     ## V14: 0.04
+
+
+    NUM_SHIPS_BEFORE_BUILDING = 10
 
 
     ## DOCK PLACEMENT

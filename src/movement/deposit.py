@@ -9,6 +9,14 @@ from src.common.matrix.functions import get_coord_closest
 from hlt.positionals import Position
 
 
+"""
+TO DO!!!!
+
+IF DOCK IS BLOCKED, SHOULD GO AROUND OR COLLIDE WITH ENEMY
+
+
+"""
+
 class Deposit(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)

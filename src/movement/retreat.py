@@ -22,8 +22,7 @@ class Retreat(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
 
-        self.turn_number = data.game.turn_number
-        self.turns_left = constants.MAX_TURNS - self.turn_number
+        self.turns_left = constants.MAX_TURNS - data.game.turn_number
         self.heap_dist = []
         self.farthest_ship = FarthestShip(0, 0, 0, None)
 
