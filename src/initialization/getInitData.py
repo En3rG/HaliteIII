@@ -187,7 +187,11 @@ class GetInitData(Data):
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
             populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS)
-            self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
+
+            ## POPULATE DOCK PLACEMENT
+            # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
+            for i in range(0, MyConstants.DOCK_MANHATTAN + 1):
+                populate_manhattan(self.myMatrix.locations.dock_placement, Matrix_val.ONE, position, i, cummulative=True)
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX
             coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell])
