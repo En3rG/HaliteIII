@@ -1,5 +1,6 @@
 from src.common.matrix.data import Data
 from src.common.print import print_heading, print_matrix
+import logging
 
 class GetData(Data):
     def __init__(self, game, init_data, prev_data, halite_stats):
@@ -37,9 +38,22 @@ class GetData(Data):
 
 
     def count_ships_died(self, prev_data):
+        """
+        COUNT SHIPS DIED
+        WHICH SHIPS COLLIDED WITH ALLY SHIPS
+        WHICH SHIPS COLLIDED WITH ENEMY SHIPS
+        """
         if prev_data:
-            self.ships_died = prev_data.ships_all - self.mySets.ships_all
-            self.halite_stats.record_drop(self.ships_died, prev_data)
+            self.mySets.ships_died = prev_data.ships_all - self.mySets.ships_all
+            logging.debug("Ships died: {}".format(self.mySets.ships_died))
+
+            for v in prev_data.positions_taken.values():
+                if len(v) > 1: self.mySets.ships_ally_collision.update(v)
+            logging.debug("Ships collided (ally): {}".format(self.mySets.ships_ally_collision))
+
+            self.mySets.ships_enemy_collision = self.mySets.ships_died - self.mySets.ships_ally_collision
+            logging.debug("Ships collided (enemy): {}".format(self.mySets.ships_enemy_collision))
+            self.halite_stats.record_drop(self.mySets.ships_died, prev_data)
 
 
 

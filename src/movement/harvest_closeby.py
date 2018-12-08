@@ -156,10 +156,6 @@ class Harvest(Moves):
         destination = self.get_destination(ship, direction)
         safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
-        # if direction == Direction.Still:
-        #     occupied = 0 if self.data.myMatrix.locatins.occupied[destination.y][destination.x] >= -1 else -1
-        # else:
-        #     occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
         occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
 
         c = HarvestPoints(safe, occupied, potential_enemy_collision, harvest, direction)

@@ -15,9 +15,8 @@ TO DO!!!!!111
 
 BEST TO HAVE DOCKS CLOSE TO ENEMY AND GAIN ALOT OF INFLUENCE
 
-DONT HARVEST WHERE DOCK WILL BE BUILT
+DONT BUILD DOCK WHEN AREA HAS BEEN HARVESTED
 
-DONT BUILD DOCK WHEN WE HAVE SMALL NUMBER OF SHIPS
 
 
 """
@@ -48,7 +47,7 @@ class Build(Moves):
 
             for ship_id in ships_building:
                 ship = self.data.game.me._ships.get(ship_id)
-                self.mark_unsafe(ship.position)
+                self.mark_unsafe(ship, ship.position)
                 self.data.mySets.ships_to_move.remove(ship.id)
 
                 self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
@@ -109,7 +108,7 @@ class Build(Moves):
 
         :param ship:
         :param directions:
-        :return:
+        :return: POINTS
         """
         points = []
 
@@ -129,7 +128,7 @@ class Build(Moves):
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        full = -1 if ship.halite_amount == 1000 else 0
+        full = -1 if ship.halite_amount > 800 else 0  ## ALMOST FULL IS ENOUGH, DONT WANT TO STAY TO JUST GET SMALL AMOUNT
         harvest_stay = self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x]
         harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
         points.append(BuildPoints(safe=safe, full=full, harvest=harvest, direction=Direction.Still))

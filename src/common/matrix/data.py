@@ -174,7 +174,11 @@ class MySets():
         self.ships_to_move = set(game.me._ships.keys())    ## SHIPS TO MOVE
         self.ships_returning = set()                            ## SHIPS RETURNING HALITE
         self.ships_kicked = set()
+        self.ships_died = set()
+        self.ships_ally_collision = set()
+        self.ships_enemy_collision = set()
         self.dock_positions = set()
+
 
 
 class MyVars():
@@ -189,6 +193,7 @@ class MyVars():
 class MyDicts():
     def __init__(self):
         self.players_halite = {}
+        self.positions_taken = {}
 
 
 class HaliteInfo():

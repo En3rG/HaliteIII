@@ -141,22 +141,6 @@ class Explore(Moves):
 
 
     def populate_heap(self, ship_id):
-        ## JUST GETS CLOSEST TOP AMOUNT HALITE
-        # if ship_id not in self.heap_set:
-        #     self.heap_set.add(ship_id)
-        #
-        #     ship = self.data.game.me._ships.get(ship_id)
-        #
-        #     curr_cell = (ship.position.y, ship.position.x)
-        #     seek_val = Matrix_val.TEN
-        #     coord, min_di, val = get_coord_closest(seek_val,
-        #                                            self.data.myMatrix.halite.top_amount,
-        #                                            self.data.init_data.myMatrix.distances[curr_cell])
-        #     destination = Position(coord[1], coord[0])
-        #     s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
-        #     heapq.heappush(self.heap_dist, s)
-
-
         ## SAVING SORTED DISTANCES
         ## TIMING OUT
         # if ship_id not in self.heap_set:

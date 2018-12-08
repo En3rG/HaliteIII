@@ -79,6 +79,8 @@ class MyConstants():
     ## DOCK PLACEMENT
     AVERAGE_MANHATTAN_DISTANCE = 6  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
     TOP_N = 20                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
+                                    ## USED TO BE:
+                                    ## V19: 20
     MIN_DIST_BTW_DOCKS = 12         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
                                     ## USED TO BE:
                                     ## V14: 12

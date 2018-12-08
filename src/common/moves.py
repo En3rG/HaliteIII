@@ -39,7 +39,7 @@ class Moves(abc.ABC):
         """
         destination = self.get_destination(ship, direction)
 
-        self.mark_unsafe(destination)
+        self.mark_unsafe(ship, destination)
 
         self.move_occupied(ship, direction)
 
@@ -57,10 +57,11 @@ class Moves(abc.ABC):
         logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
 
 
-    def mark_unsafe(self, position):
+    def mark_unsafe(self, ship, position):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
+        self.data.myDicts.positions_taken.setdefault((position.y, position.x), set()).add(ship.id)
         self.data.myMatrix.locations.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 

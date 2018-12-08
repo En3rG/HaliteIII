@@ -32,6 +32,7 @@ class PrevData():
         self.matrix = data.myMatrix
         self.ships_all = data.mySets.ships_all
         self.ships_returning = data.mySets.ships_returning
+        self.positions_taken = data.myDicts.positions_taken
 
 """ <<<Game Begin>>> """
 
