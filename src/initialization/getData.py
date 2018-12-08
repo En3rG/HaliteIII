@@ -25,9 +25,9 @@ class GetData(Data):
         self.populate_myShipyard_docks()
         self.populate_enemyShipyard_docks()
         self.populate_cost()
-        self.populate_harvest()
         self.populate_myShips()
         self.populate_enemyShips_influenced()
+        self.populate_harvest()
 
         #self.populate_sectioned_halite()
 

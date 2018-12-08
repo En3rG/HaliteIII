@@ -6,7 +6,7 @@ from hlt import constants
 from src.common.print import print_matrix, print_heading
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myHarvestCounter, myHarvestArea, myTurnCounter
+from src.common.matrix.vectorized import myRound, myHarvestCounter, myHarvestArea, myTurnCounter, myBonusArea
 import abc
 import copy
 import sys
@@ -120,6 +120,7 @@ class Halite():
         self.top_amount = np.zeros((map_height, map_width), dtype=np.int16)
         self.cost = None
         self.harvest = None
+        self.bonus = np.zeros((map_height, map_width), dtype=np.int16)
 
 
 class Locations():
@@ -350,6 +351,7 @@ class Data(abc.ABC):
         #self.myMatrix.halite.harvest = np.round(harvest)     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
         self.myMatrix.halite.harvest = myRound(harvest)
 
+        self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
 
     def populate_sectioned_halite(self):
         """
@@ -454,9 +456,15 @@ class Data(abc.ABC):
         LIMIT TO LOCAL AREA WITHIN THE FIRST 100 MOVES
         """
         ## ORIGINAL
+        # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+        # top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
+        # self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+
+        ## BASED ON HARVEST (INCLUDING INFLUENCE)
         top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-        top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
+        top, ind = get_n_largest_values(self.myMatrix.halite.harvest + self.myMatrix.halite.bonus, top_num_cells)
         self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+
 
         ## USED WHEN THE TOP HALITE PERCENTAGE IS LOW (< 2%)
         # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
@@ -464,6 +472,7 @@ class Data(abc.ABC):
         #     top_num_cells = len(self.mySets.ships_all)
         # top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
         # self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+
 
         ## LIMITING EARLY GAME TO STAY CLOSE BY
         ## SEEMS BETTER TO LIMIT BUILDING BASED NUMBER OF SHIPS

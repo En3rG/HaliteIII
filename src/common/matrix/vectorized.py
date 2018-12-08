@@ -65,3 +65,17 @@ def harvestArea(max_x, x):
 myHarvestArea = np.vectorize(harvestArea)
 
 
+def bonusArea(harvest, influence):
+    """
+    POPULATE BONUS HARVEST
+
+    :param harvest:
+    :param influence:
+    :return:
+    """
+    if influence >= MyConstants.INFLUENCED:
+        return harvest * 2
+    else:
+        return 0
+
+myBonusArea = np.vectorize(bonusArea)
