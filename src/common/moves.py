@@ -47,7 +47,7 @@ class Moves(abc.ABC):
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
-        self.data.mySets.ships_to_move.remove(ship.id)
+        if ship.id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id) ## PREVENT POTENTIAL KEY ERROR
 
         self.check_kicked(ship, direction)
 

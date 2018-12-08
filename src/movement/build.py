@@ -31,8 +31,9 @@ class Build(Moves):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        self.building_now()
-        self.building_later()
+        if self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
+            self.building_now()
+            self.building_later()
 
 
     def building_now(self):
@@ -42,7 +43,7 @@ class Build(Moves):
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == self.dock_value)
         ships_on_docks = set(self.data.myMatrix.locations.myShipsID[r, c])
 
-        if len(ships_on_docks) >= 1 and self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
+        if len(ships_on_docks) >= 1:
             ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
             for ship_id in ships_building:
@@ -62,7 +63,10 @@ class Build(Moves):
 
                     ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
                     #self.data.init_data.myMatrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
-                    populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement, Matrix_val.ZERO, ship.position, MyConstants.DOCK_MANHATTAN)
+                    populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
+                                       Matrix_val.ZERO,
+                                       ship.position,
+                                       MyConstants.DOCK_MANHATTAN)
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
                     self.data.command_queue.append(ship.move(Direction.Still))
@@ -77,7 +81,7 @@ class Build(Moves):
             matrixIDs = set(self.data.myMatrix.locations.myShipsID[r, c])
             ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
-            if len(ships_going_dock) >= 1 and self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
+            if len(ships_going_dock) >= 1:
                 for ship_id in ships_going_dock:
                     ship = self.data.game.me._ships.get(ship_id)
 
@@ -85,7 +89,9 @@ class Build(Moves):
 
                     ## GET DOCK POSITION
                     curr_cell = (ship.position.y, ship.position.x)
-                    coord, distance, val = get_coord_closest(self.dock_value, self.data.init_data.myMatrix.locations.dock_placement, self.data.init_data.myMatrix.distances[curr_cell])
+                    coord, distance, val = get_coord_closest(self.dock_value,
+                                                             self.data.init_data.myMatrix.locations.dock_placement,
+                                                             self.data.init_data.myMatrix.distances[curr_cell])
                     dock_position = Position(coord[1], coord[0])
                     directions = self.get_directions_target(ship, dock_position)
 
