@@ -134,6 +134,10 @@ class Moves(abc.ABC):
             points = self.get_points_depart(ship, directions)
         elif mode == MoveMode.BUILDING:
             points = self.get_points_building(ship, directions)
+        elif mode == MoveMode.ATTACKING:
+            points = self.get_points_attacking(ship, directions)
+        elif mode == MoveMode.SUPPORTING:
+            points = self.get_points_supporting(ship, directions)
         else:
             raise NotImplemented
 

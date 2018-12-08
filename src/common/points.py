@@ -50,6 +50,47 @@ class FarthestShip:
         return "{} Ship id: {} distance: {}".format(self.__class__.__name__, self.ship_id, self.distance)
 
 
+class SupportShip:
+    """
+    USED TO DETERMINE SUPPORT SHIPS FOR ATTACKING
+    """
+    def __init__(self, num_support, ship_id, support_ships, directions):
+        self.num_support = num_support
+        self.ship_id = ship_id
+        self.support_ships = support_ships
+        self.directions = directions
+
+    def __gt__(self, other):
+        if isinstance(other, SupportShip):
+            if self.num_support > other.num_support:
+                return True
+            elif self.num_support < other.num_support:
+                return False
+            elif self.ship_id >= other.ship_id:
+                return True
+            elif self.ship_id < other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, SupportShip):
+            if self.num_support < other.num_support:
+                return True
+            elif self.num_support > other.num_support:
+                return False
+            elif self.ship_id <= other.ship_id:
+                return True
+            elif self.ship_id > other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} Ship id: {} num_support: {}".format(self.__class__.__name__, self.ship_id, self.num_support)
+
+
+
 class ExploreShip:
     """
     USED TO DETERMINE FARTHEST SHIP FOR EXPLORING
@@ -547,4 +588,78 @@ class BuildPoints():
             self.safe,
             self.full,
             self.harvest,
+            self.direction)
+
+
+class AttackPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR ATTACKING
+    """
+    def __init__(self, safe, direction):
+        self.safe = safe
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, AttackPoints):
+            if self.safe > other.safe:
+                return True
+            elif self.safe < other.safe:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, AttackPoints):
+            if self.safe < other.safe:
+                return True
+            elif self.safe > other.safe:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} direction: {}".format(
+            self.__class__.__name__,
+            self.safe,
+            self.direction)
+
+
+class SupportPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR SUPPORTING
+    """
+    def __init__(self, safe, direction):
+        self.safe = safe
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, SupportPoints):
+            if self.safe > other.safe:
+                return True
+            elif self.safe < other.safe:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, SupportPoints):
+            if self.safe < other.safe:
+                return True
+            elif self.safe > other.safe:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} direction: {}".format(
+            self.__class__.__name__,
+            self.safe,
             self.direction)

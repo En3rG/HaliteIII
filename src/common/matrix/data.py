@@ -140,9 +140,12 @@ class Locations():
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
+        self.shipCargo = np.zeros((map_height, map_width), dtype=np.int16)
 
-        self.engage_enemy = np.zeros((map_height, map_width), dtype=np.int16)
-        self.engage_enemy_support = np.zeros((map_height, map_width), dtype=np.int16)
+        self.engage_enemy = {}
+        for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
+            ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
+            self.engage_enemy[i] = np.zeros((map_height, map_width), dtype=np.int16)
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.stuck = np.zeros((map_height, map_width), dtype=np.int16)
@@ -185,13 +188,14 @@ class MySets():
 
 
 class MyVars():
-    def __init__(self):
+    def __init__(self, game):
         self.total_halite = 0
         self.average_halite = 0
         self.isBuilding = False
         self.canBuild = False
         self.canSpawn = False
-        self.canAttack = True ## CHANGE TO WHEN HAVE MORE SHIPS THAN ENEMY (HOW ABOUT 4 PLAYERS?)
+        self.canAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LEFT) and (len(game.players) == 2)
+
 
 
 class MyDicts():
@@ -209,7 +213,7 @@ class HaliteInfo():
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
-        self.myVars = MyVars()
+        self.myVars = MyVars(game)
         self.myDicts = MyDicts()
         self.mySets = MySets(game)
         self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
@@ -271,6 +275,7 @@ class Data(abc.ABC):
         """
         POPULATE MATRIX LOCATIONS OF MY SHIP AND ITS IDs
         GATHER HALITE INFO AS WELL
+        POPULATE SHIP CARGO
         POPULATE POTENTIAL COLLISION MATRIX
         POPULATE STUCK SHIPS
         """
@@ -282,6 +287,7 @@ class Data(abc.ABC):
             self.myMatrix.locations.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
             self.myMatrix.locations.myShipsID[ship.position.y][ship.position.x] = ship.id
             self.myMatrix.locations.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
+            self.myMatrix.locations.shipCargo[ship.position.y][ship.position.x] = ship.halite_amount
             populate_manhattan(self.myMatrix.locations.potential_ally_collisions,
                                Matrix_val.POTENTIAL_COLLISION,
                                ship.position,
@@ -297,6 +303,7 @@ class Data(abc.ABC):
         """
         POPULATE MATRIX LOCATION OF ENEMY SHIPS AND ITS IDs
         GATHER HALITE INFO AS WELL
+        POPULATE MATRIX WITH ENEMY CARGO
         POPULATE MATRIX WITH ENEMY INFLUENCE
         POPULATE MATRIX WITH POTENTIAL ENEMY COLLISIONS
         POPULATE MATRIX WITH ENGAGE ENEMY (CLOSE TO ENEMY)
@@ -310,6 +317,7 @@ class Data(abc.ABC):
                     self.myDicts.players_halite[id].halite_carried += ship.halite_amount
                     self.myMatrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
                     self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
+                    self.myMatrix.locations.shipCargo[ship.position.y][ship.position.x] = ship.halite_amount
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.myMatrix.locations.influenced = fill_circle(self.myMatrix.locations.influenced,
@@ -328,16 +336,13 @@ class Data(abc.ABC):
                                        ship.position,
                                        MyConstants.DIRECT_NEIGHBOR_RADIUS,
                                        cummulative=True)
-                    populate_manhattan(self.myMatrix.locations.engage_enemy,
-                                       Matrix_val.ONE,
-                                       ship.position,
-                                       MyConstants.ENGAGE_ENEMY_DISTANCE,
-                                       cummulative=False)
-                    populate_manhattan(self.myMatrix.locations.engage_enemy_support,
-                                       Matrix_val.ONE,
-                                       ship.position,
-                                       MyConstants.ENGAGE_ENEMY_SUPPORT_DISTANCE,
-                                       cummulative=False)
+                    for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
+                        populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
+                                           Matrix_val.ONE,
+                                           ship.position,
+                                           dist,
+                                           cummulative=False)
+
 
 
     def populate_cost(self):
@@ -462,16 +467,18 @@ class Data(abc.ABC):
         POPULATE TOP HALITE CELLS
         LIMIT TO LOCAL AREA WITHIN THE FIRST 100 MOVES
         """
-        ## ORIGINAL
-        # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-        # top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
-        # self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
 
-        ## BASED ON HARVEST (INCLUDING INFLUENCE)
-        top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-        top, ind = get_n_largest_values(self.myMatrix.halite.harvest + self.myMatrix.halite.bonus, top_num_cells)
-        self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
-
+        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_TOP_HARVEST_TURNS_LEFT:
+            ## ORIGINAL
+            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+            top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
+            self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+        else:
+            ## BASED ON HARVEST (INCLUDING INFLUENCE)
+            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+            top, ind = get_n_largest_values(self.myMatrix.halite.harvest + self.myMatrix.halite.bonus, top_num_cells)
+            self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+            
 
         ## USED WHEN THE TOP HALITE PERCENTAGE IS LOW (< 2%)
         # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
