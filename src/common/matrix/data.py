@@ -135,8 +135,10 @@ class Locations():
         ## SHIPS
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
+        self.myShipsID.fill(-1) ## CANT FIND SHIP ID 0 IF ZEROES
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
+        self.enemyShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
 
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
 

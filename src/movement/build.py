@@ -39,7 +39,6 @@ class Build(Moves):
         MOVE SHIPS BUILDING NOW
         """
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == 2)
-
         ships_on_docks = set(self.data.myMatrix.locations.myShipsID[r, c])
 
         if len(ships_on_docks) >= 1 and self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
@@ -55,8 +54,9 @@ class Build(Moves):
                 ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
                 if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[ship.position.y][ship.position.x] > 4000:
                     self.data.game.me.halite_amount -= (4000 - ship.halite_amount - self.data.myMatrix.halite.amount[ship.position.y][ship.position.x])
-                    self.data.halite_stats.record_spent(BuildType.DOCK)
 
+                    logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
+                    self.data.halite_stats.record_spent(BuildType.DOCK)
                     self.data.command_queue.append(ship.make_dropoff())
 
                     ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
