@@ -14,6 +14,7 @@ class MoveMode():
     HARVEST = "harvest"
     EXPLORE = "explore"
     DEPART = "depart"
+    BUILDING = "building"
 
 
 class Matrix_val():
@@ -72,7 +73,7 @@ class MyConstants():
     NUM_SHIPS_BEFORE_BUILDING = 10
 
 
-    DOCK_MANHATTAN = 1
+    DOCK_MANHATTAN = 1              ## 0 MEANS JUST ITSELF, 1 MEANS INCLUDING ITS DIRECT NEIGHBORS
 
 
     ## DOCK PLACEMENT

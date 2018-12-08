@@ -492,3 +492,59 @@ class CollisionPoints():
             self.priority_direction,
             self.harvest,
             self.direction)
+
+class BuildPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR BUILDING
+    """
+    def __init__(self, safe, full, harvest, direction):
+        self.safe = safe
+        self.full = full
+        self.harvest = harvest
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, BuildPoints):
+            if self.safe > other.safe:
+                return True
+            elif self.safe < other.safe:
+                return False
+            elif self.full > other.full:
+                return True
+            elif self.full < other.full:
+                return False
+            elif self.harvest > other.harvest:
+                return True
+            elif self.harvest < other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, BuildPoints):
+            if self.safe < other.safe:
+                return True
+            elif self.safe > other.safe:
+                return False
+            elif self.full < other.full:
+                return True
+            elif self.full > other.full:
+                return False
+            elif self.harvest < other.harvest:
+                return True
+            elif self.harvest > other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} safe: {} full: {} harvest: {} direction: {}".format(
+            self.__class__.__name__,
+            self.safe,
+            self.full,
+            self.harvest,
+            self.direction)

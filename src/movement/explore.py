@@ -15,6 +15,10 @@ import copy
 """
 TO DO!!!!!!!!!!!
 
+TOP HALITE DOESNT CONSIDER INFLUENCE
+
+GET HIGHEST HALITE CLOSE BY (MAYBE WITH A GIVEN DISTANCE??)
+
 """
 
 class Explore(Moves):

@@ -131,6 +131,8 @@ class Moves(abc.ABC):
             points = self.get_points_explore(ship, directions)
         elif mode == MoveMode.DEPART:
             points = self.get_points_depart(ship, directions)
+        elif mode == MoveMode.BUILDING:
+            points = self.get_points_building(ship, directions)
         else:
             raise NotImplemented
 
