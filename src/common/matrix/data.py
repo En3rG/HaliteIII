@@ -142,6 +142,7 @@ class Locations():
         self.enemyShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
 
         self.engage_enemy = np.zeros((map_height, map_width), dtype=np.int16)
+        self.engage_enemy_support = np.zeros((map_height, map_width), dtype=np.int16)
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.stuck = np.zeros((map_height, map_width), dtype=np.int16)
@@ -190,6 +191,7 @@ class MyVars():
         self.isBuilding = False
         self.canBuild = False
         self.canSpawn = False
+        self.canAttack = True ## CHANGE TO WHEN HAVE MORE SHIPS THAN ENEMY (HOW ABOUT 4 PLAYERS?)
 
 
 class MyDicts():
@@ -330,6 +332,11 @@ class Data(abc.ABC):
                                        Matrix_val.ONE,
                                        ship.position,
                                        MyConstants.ENGAGE_ENEMY_DISTANCE,
+                                       cummulative=False)
+                    populate_manhattan(self.myMatrix.locations.engage_enemy_support,
+                                       Matrix_val.ONE,
+                                       ship.position,
+                                       MyConstants.ENGAGE_ENEMY_SUPPORT_DISTANCE,
                                        cummulative=False)
 
 

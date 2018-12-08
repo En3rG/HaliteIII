@@ -268,10 +268,10 @@ class HarvestPoints():
                 return True
             elif self.occupied < other.occupied:
                 return False
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
-            #     return True
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
-            #     return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return False
             elif self.harvest > other.harvest:
                 return True
             elif self.harvest < other.harvest:
@@ -291,10 +291,10 @@ class HarvestPoints():
                 return True
             elif self.occupied > other.occupied:
                 return False
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
-            #     return True
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
-            #     return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return False
             elif self.harvest < other.harvest:
                 return True
             elif self.harvest > other.harvest:
