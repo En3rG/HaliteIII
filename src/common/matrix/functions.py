@@ -66,7 +66,7 @@ def calculate_distance(start, destination, height, width):
            min(resulting_position.y, height - resulting_position.y)
 
 
-def get_values_matrix(seek_value, matrix, condition):
+def get_indices(seek_value, matrix, condition):
     """
     GET SPECIFIC VALUES IN MATRIX PROVIDED, GIVEN INEQUALITY CONDITION
 
@@ -85,11 +85,10 @@ def get_values_matrix(seek_value, matrix, condition):
     else:
         raise NotImplemented
 
-    ## EXTRACT CORRESPONDING VALUES
-    return matrix[r, c]
+    return r, c
 
 
-def get_coord_closest(seek_val, value_matrix, distance_matrix):
+def get_coord_closest(seek_val, value_matrix, distance_matrix, condition):
     """
     GET CLOSESTS seek_val FROM MATRIX PROVIDED
 
@@ -99,7 +98,7 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix):
     :return: COORD, MIN DISTANCE, VALUE WITH MINIMUM DISTANCE
     """
     ## GET ROW, COL INDICES FOR THE CONDITION
-    r, c = np.where(value_matrix == seek_val)
+    r, c = get_indices(seek_val, value_matrix, condition)
 
     ## EXTRACT CORRESPONDING VALUES OF DISTANCES
     distances = distance_matrix[r, c]

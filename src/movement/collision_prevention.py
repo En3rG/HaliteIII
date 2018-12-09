@@ -2,6 +2,7 @@ import logging
 from hlt.positionals import Direction
 from src.common.points import CollisionPoints
 from src.common.values import MyConstants, MoveMode
+from src.common.classes import OrderedSet
 
 def avoid_collision_direction(Moves, ship, directions):
     """
@@ -23,17 +24,17 @@ def get_points_collision(Moves, ship, directions):
     """
 
     points = []
-    try: directions_set = set(directions)
-    except: directions_set = set()
+    try: directions_set = OrderedSet(directions)
+    except: directions_set = OrderedSet()
 
-    for direction in MyConstants.DIRECTIONS:
+    for direction in MyConstants.DIRECTIONS:  ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)
 
         safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]
         occupied = Moves.data.myMatrix.locations.occupied[destination.y][destination.x]
         priority_direction = 1 if direction in directions_set else 0
         cost = Moves.data.myMatrix.halite.cost[ship.position.y][ship.position.x]
-        harvest = Moves.data.myMatrix.halite.harvest[destination.y][destination.x]
+        harvest = Moves.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
         harvest_amnt = harvest - cost
 
         c = CollisionPoints(safe, occupied, priority_direction, harvest_amnt, direction)

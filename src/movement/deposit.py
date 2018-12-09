@@ -2,7 +2,7 @@ import logging
 import heapq
 from src.common.moves import Moves
 from src.common.points import FarthestShip, DepositPoints
-from src.common.values import MoveMode, Matrix_val
+from src.common.values import MoveMode, Matrix_val, Inequality
 from hlt.positionals import Direction
 from src.common.print import print_heading
 from src.common.matrix.functions import get_coord_closest
@@ -78,7 +78,10 @@ class Deposit(Moves):
             self.heap_set.add(ship.id)
 
             curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, value = get_coord_closest(Matrix_val.ONE, self.data.myMatrix.locations.myDocks, self.data.init_data.myMatrix.distances[curr_cell])
+            coord, distance, value = get_coord_closest(Matrix_val.ONE,
+                                                       self.data.myMatrix.locations.myDocks,
+                                                       self.data.init_data.myMatrix.distances[curr_cell],
+                                                       Inequality.EQUAL)
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)
             num_directions = len(directions)

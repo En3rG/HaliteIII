@@ -64,10 +64,14 @@ class Harvest(Moves):
         #     return True
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
-        if direction == Direction.Still and \
-                (self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite) or self.isBlocked(ship)):
-            return True
+        # if direction == Direction.Still and \
+        #         (self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite) or self.isBlocked(ship)):
+        #     return True
 
+        ## USING PERCENTILE
+        if direction == Direction.Still and \
+                (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] > self.data.myVars.harvest_percentile or self.isBlocked(ship)):
+            return True
 
 
     def harvestLater(self, ship_id, kicked=False):
@@ -100,7 +104,11 @@ class Harvest(Moves):
         #         and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
         ## USING PERCENTAGE BASED ON AVERAGE HALITE
-        return (self.data.myMatrix.halite.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite)
+        # return (self.data.myMatrix.halite.harvest[destination.y][destination.x] > (MyConstants.DONT_HARVEST_PERCENT * self.data.myVars.average_halite)
+        #         and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
+
+        ## USING PERCENTILE
+        return (self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x] > self.data.myVars.harvest_percentile
                 and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 
@@ -132,18 +140,14 @@ class Harvest(Moves):
         :return: COST AND HARVEST AMOUNT
         """
         destination = self.get_destination(ship, direction)
-        harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
+        harvest_with_bonus = self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
         cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-        influenced = True if self.data.myMatrix.locations.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
-        bonus = (harvest * 2) if influenced else 0
 
-        if direction == Direction.Still:
-            harvest = harvest + bonus
-        else:
+        if direction != Direction.Still:
             twoTurn_harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
-            harvest = harvest + bonus - leave_cost - twoTurn_harvest
+            harvest_with_bonus = harvest_with_bonus - leave_cost - twoTurn_harvest
 
-        return cost, harvest
+        return cost, harvest_with_bonus
 
 
     def set_points(self, ship, direction, harvest, points):

@@ -3,7 +3,7 @@ from src.common.moves import Moves
 from hlt.positionals import Position
 from hlt.positionals import Direction
 from src.common.halite_statistics import BuildType
-from src.common.values import MyConstants, Matrix_val, MoveMode
+from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import populate_manhattan, get_coord_closest
 from src.common.points import BuildPoints
 from src.common.classes import OrderedSet
@@ -90,7 +90,8 @@ class Build(Moves):
                 curr_cell = (ship.position.y, ship.position.x)
                 coord, distance, val = get_coord_closest(self.dock_value,
                                                          self.data.init_data.myMatrix.locations.dock_placement,
-                                                         self.data.init_data.myMatrix.distances[curr_cell])
+                                                         self.data.init_data.myMatrix.distances[curr_cell],
+                                                         Inequality.EQUAL)
                 dock_position = Position(coord[1], coord[0])
                 directions = self.get_directions_target(ship, dock_position)
 
@@ -123,10 +124,7 @@ class Build(Moves):
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             full = 0
             leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]
-            harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
-            influenced = True if self.data.myMatrix.locations.influenced[destination.y][destination.x] >= MyConstants.INFLUENCED else False
-            bonus = (harvest * 2) if influenced else 0
-            potential_harvest = harvest + bonus
+            potential_harvest = self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
             final_harvest = potential_harvest - leave_cost
             b = BuildPoints(safe, full, final_harvest, direction)
             points.append(b)
@@ -134,7 +132,7 @@ class Build(Moves):
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
         full = -1 if ship.halite_amount > 800 else 0  ## ALMOST FULL IS ENOUGH, DONT WANT TO STAY TO JUST GET SMALL AMOUNT
-        harvest_stay = self.data.myMatrix.halite.harvest[ship.position.y][ship.position.x]
+        harvest_stay = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
         harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
         points.append(BuildPoints(safe=safe, full=full, harvest=harvest, direction=Direction.Still))
 

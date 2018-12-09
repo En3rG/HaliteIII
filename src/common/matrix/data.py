@@ -39,6 +39,7 @@ class Section():
         return self.a[rows, :][:, cols]
 
 
+## NO LONGER USED
 # class Sectioned():
 #     """
 #     MAP DIVIDED INTO SECTIONS
@@ -50,19 +51,20 @@ class Section():
 #         self.distances = {}  ## ONLY FILLED IN INIT
 
 
-class Depletion():
-    """
-    USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
-
-    OBSOLETE????
-    """
-    def __init__(self, map_height, map_width):
-        self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
-        self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
-        self.total_turns = np.zeros((map_height, map_width), dtype=np.int16)
-        self.max_matrix = np.zeros((map_height, map_width), dtype=np.int16)
-        self.max_matrix.fill(1)
-        self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)
+## NO LONGER USED
+# class Depletion():
+#     """
+#     USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
+#
+#     OBSOLETE????
+#     """
+#     def __init__(self, map_height, map_width):
+#         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.total_turns = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.max_matrix = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.max_matrix.fill(1)
+#         self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)
 
 
 class CellAverage():
@@ -82,6 +84,7 @@ class Halite():
         self.cost = None
         self.harvest = None
         self.bonus = np.zeros((map_height, map_width), dtype=np.int16)
+        self.harvest_with_bonus = None
 
 
 class Locations():
@@ -132,7 +135,7 @@ class Matrix():
         self.locations = Locations(map_height, map_width)
         # self.sectioned = Sectioned(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
-        self.depletion = Depletion(map_height, map_width)
+        # self.depletion = Depletion(map_height, map_width)
 
 
 class MySets():
@@ -151,6 +154,8 @@ class MyVars():
     def __init__(self, game):
         self.total_halite = 0
         self.average_halite = 0
+        self.median_halite = 0
+        self.harvest_percentile = 0
         self.isBuilding = False
         self.canBuild = False
         self.canSpawn = False
@@ -323,6 +328,8 @@ class Data(abc.ABC):
 
         self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
 
+        self.myMatrix.halite.harvest_with_bonus = self.myMatrix.halite.harvest + self.myMatrix.halite.bonus
+
 
     def populate_cell_distances(self):
         """
@@ -371,12 +378,12 @@ class Data(abc.ABC):
             ## ORIGINAL
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
-            self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+            self.myMatrix.halite.top_amount[ind] = top
         else:
             ## BASED ON HARVEST (INCLUDING INFLUENCE)
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-            top, ind = get_n_largest_values(self.myMatrix.halite.harvest + self.myMatrix.halite.bonus, top_num_cells)
-            self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
+            top, ind = get_n_largest_values(self.myMatrix.halite.harvest_with_bonus, top_num_cells)
+            self.myMatrix.halite.top_amount[ind] = top
 
 
         ## USED WHEN THE TOP HALITE PERCENTAGE IS LOW (< 2%)
@@ -403,10 +410,16 @@ class Data(abc.ABC):
         #     self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
 
 
-    def get_average_halite(self):
+    def get_mean_median_halite(self):
         self.myVars.average_halite = int(np.average(self.myMatrix.halite.amount))
+        self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
+        self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_PERCENTILE))
 
-        logging.debug("Average Halite: {} Average Harvest: {}".format(self.myVars.average_halite, self.myVars.average_halite * 0.25))
+
+        logging.debug("Average Halite: {} Median Halite {} Harvest Percentile {}".
+                        format(self.myVars.average_halite,
+                        self.myVars.median_halite,
+                        self.myVars.harvest_percentile))
 
 
     def update_dock_placement(self):

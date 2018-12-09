@@ -3,7 +3,7 @@ from src.common.print import print_matrix
 from src.common.matrix.data import Section
 from src.common.matrix.functions import populate_manhattan, get_index_highest_val, get_coord_closest, \
     get_n_largest_values, get_cell_averages, get_n_max_values, calculate_distance
-from src.common.values import Matrix_val, MyConstants
+from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
 
 import logging
@@ -26,7 +26,7 @@ class GetInitData(Data):
 
         self.populate_cell_distances()
         self.populate_top_halite()
-        self.get_average_halite()
+        self.get_mean_median_halite()
 
         # self.populate_sectioned_halite()
         # self.populate_sectioned_distances()
@@ -169,7 +169,7 @@ class GetInitData(Data):
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
         curr_cell = (shipyard.position.y, shipyard.position.x)
-        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell])
+        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell], Inequality.EQUAL)
         while val != 1:
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
@@ -181,7 +181,7 @@ class GetInitData(Data):
                 populate_manhattan(self.myMatrix.locations.dock_placement, Matrix_val.ONE, position, i, cummulative=True)
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX
-            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell])
+            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell], Inequality.EQUAL)
 
         print_matrix("Final dock placement", self.myMatrix.locations.dock_placement)
 

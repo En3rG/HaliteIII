@@ -32,7 +32,7 @@ class GetData(Data):
         #self.populate_sectioned_halite()
 
         self.populate_top_halite()
-        self.get_average_halite()
+        self.get_mean_median_halite()
 
         self.update_dock_placement()
 

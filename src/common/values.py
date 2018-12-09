@@ -67,9 +67,7 @@ class MyConstants():
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
-    DONT_HARVEST_PERCENT = .12                      ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
-                                                    ## USED TO BE:
-                                                    ## V14: 0.12
+    HARVEST_PERCENTILE = 35
 
 
     ## EXPLORING
@@ -77,6 +75,7 @@ class MyConstants():
     TOP_N_HALITE = 0.04                             ## USED TO BE:
                                                     ## V13: 0.10
                                                     ## V14: 0.04
+
 
     ENABLE_TOP_HARVEST_TURNS_LEFT = 0.8             ## SWTICH TO TOP HARVEST FROM TOP HALITE (FOR EXPLORING)
 
@@ -97,6 +96,10 @@ class MyConstants():
 
 
     ## NO LONGER USED
+    # DONT_HARVEST_PERCENT = .12  ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
+    #                             ## USED TO BE:
+    #                             ## V14: 0.12
+    #
     # SECTION_SIZE = 4  ## SIZE OF EACH SECTIONS
     #
     # DONT_HARVEST_BELOW = 5  ## DONT HARVEST BELOW THIS NUMBER (USED TO BE 5 FOR V6 BELOW)

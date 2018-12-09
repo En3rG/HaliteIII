@@ -1,5 +1,5 @@
 from src.common.moves import Moves
-from src.common.values import MoveMode, MyConstants, Matrix_val
+from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 import logging
 from src.common.print import print_heading, print_matrix
 from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan
@@ -174,10 +174,11 @@ class Explore(Moves):
             ship = self.data.game.me._ships.get(ship_id)
 
             curr_cell = (ship.position.y, ship.position.x)
-            seek_val = Matrix_val.TEN
+            seek_val = Matrix_val.ZERO
             coord, min_di, val = get_coord_closest(seek_val,
                                                    self.top_halite,
-                                                   self.data.init_data.myMatrix.distances[curr_cell])
+                                                   self.data.init_data.myMatrix.distances[curr_cell],
+                                                   Inequality.GREATERTHAN)
             destination = Position(coord[1], coord[0])
             s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
             heapq.heappush(self.heap_dist, s)
@@ -203,7 +204,10 @@ class Explore(Moves):
         ## GET DIRECTION TO CLOSEST TOP HALITE
         curr_cell = (ship.position.y, ship.position.x)
         seek_val = Matrix_val.TEN
-        coord, min_di, val = get_coord_closest(seek_val, self.data.myMatrix.halite.top_amount, self.data.init_data.myMatrix.distances[curr_cell])
+        coord, min_di, val = get_coord_closest(seek_val,
+                                               self.data.myMatrix.halite.top_amount,
+                                               self.data.init_data.myMatrix.distances[curr_cell],
+                                               Inequality.GREATERTHAN)
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
         direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)

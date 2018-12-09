@@ -1,7 +1,7 @@
 from src.common.print import print_heading
 from src.common.moves import Moves
 from hlt.positionals import Position
-from src.common.values import MyConstants, Matrix_val, MoveMode
+from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import get_coord_closest
 from src.common.points import AttackPoints, SupportShip, SupportPoints
 from hlt.positionals import Direction
@@ -125,7 +125,8 @@ class Attack(Moves):
         curr_cell = (ship.position.y, ship.position.x)
         coord, distance, val = get_coord_closest(Matrix_val.ONE,
                                                  self.data.myMatrix.locations.enemyShips,
-                                                 self.data.init_data.myMatrix.distances[curr_cell])
+                                                 self.data.init_data.myMatrix.distances[curr_cell],
+                                                 Inequality.EQUAL)
         enemy_position = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, enemy_position)
 
