@@ -6,6 +6,7 @@ from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
 from src.common.matrix.vectorized import myRound, myTurnCounter, myBonusArea
+from src.common.classes import OrderedSet
 import abc
 
 
@@ -136,10 +137,10 @@ class Matrix():
 
 class MySets():
     def __init__(self, game):
-        self.ships_all = set(game.me._ships.keys())        ## ALL SHIPS
-        self.ships_to_move = set(game.me._ships.keys())    ## SHIPS TO MOVE
-        self.ships_returning = set()                            ## SHIPS RETURNING HALITE
-        self.ships_kicked = set()
+        self.ships_all = OrderedSet(game.me._ships.keys())        ## ALL SHIPS
+        self.ships_to_move = OrderedSet(game.me._ships.keys())    ## SHIPS TO MOVE
+        self.ships_returning = OrderedSet()                            ## SHIPS RETURNING HALITE
+        self.ships_kicked = OrderedSet()
         self.ships_died = set()
         self.ships_ally_collision = set()
         self.ships_enemy_collision = set()

@@ -5,6 +5,7 @@ from src.common.values import MyConstants, Matrix_val, MoveMode
 from src.common.matrix.functions import get_coord_closest
 from src.common.points import AttackPoints, SupportShip, SupportPoints
 from hlt.positionals import Direction
+from src.common.classes import OrderedSet
 import numpy as np
 import logging
 import heapq
@@ -29,7 +30,7 @@ class Attack(Moves):
         super().__init__(data, prev_data)
 
         self.heap_support = []
-        self.considered_already = set()
+        self.considered_already = OrderedSet()
         self.move_ships()
 
 
@@ -41,7 +42,7 @@ class Attack(Moves):
             for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE):  ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
                 matrix = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
                 r, c = np.where(matrix > Matrix_val.ZERO)
-                matrixIDs = set(self.data.myMatrix.locations.myShipsID[r, c])
+                matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
                 ships_attacking = matrixIDs & self.data.mySets.ships_to_move
                 self.considered_already.update(ships_attacking)
 
@@ -86,7 +87,7 @@ class Attack(Moves):
         enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
-        support_ships = set()
+        support_ships = OrderedSet()
         for support_id in potential_support:
             if support_id in self.data.mySets.ships_to_move:
                 support_ship = self.data.game.me._ships.get(support_id)
@@ -109,7 +110,7 @@ class Attack(Moves):
         :param position:
         :return: SET OF IDs
         """
-        ids = set()
+        ids = OrderedSet()
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
             id = self.data.myMatrix.locations.myShipsID[destination.y][destination.x]

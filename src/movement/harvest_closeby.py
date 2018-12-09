@@ -4,6 +4,7 @@ from src.common.moves import Moves
 from src.common.values import MyConstants, MoveMode, Matrix_val
 from src.common.print import print_heading
 from src.common.points import HarvestPoints
+from src.common.classes import OrderedSet
 
 class Harvest(Moves):
     """
@@ -12,7 +13,7 @@ class Harvest(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
 
-        self.ships_kicked_temp = set()
+        self.ships_kicked_temp = OrderedSet()
         self.move_ships()
 
 

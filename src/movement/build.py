@@ -6,6 +6,7 @@ from src.common.halite_statistics import BuildType
 from src.common.values import MyConstants, Matrix_val, MoveMode
 from src.common.matrix.functions import populate_manhattan, get_coord_closest
 from src.common.points import BuildPoints
+from src.common.classes import OrderedSet
 import numpy as np
 import logging
 
@@ -41,7 +42,7 @@ class Build(Moves):
         MOVE SHIPS BUILDING NOW (AT DOCK POSITION)
         """
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == self.dock_value)
-        ships_on_docks = set(self.data.myMatrix.locations.myShipsID[r, c])
+        ships_on_docks = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
 
         ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
@@ -77,7 +78,7 @@ class Build(Moves):
         """
         for i in range(MyConstants.DOCK_MANHATTAN, 0, -1): ## MOVES SHIPS CLOSEST TO DOCK FIRST
             r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
-            matrixIDs = set(self.data.myMatrix.locations.myShipsID[r, c])
+            matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
             ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
             for ship_id in ships_going_dock:
