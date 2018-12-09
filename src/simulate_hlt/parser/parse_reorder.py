@@ -1,13 +1,28 @@
 import zstd
 import json
 import os
+import heapq
 
 """
 PLACE REPLAY FILE IN THIS DIRECTORY
 WILL PARSE THE HLT AND GENERATE MOVES PER PLAYER TO SIMULATE GAME
+
+REORDER SINCE ENGINE ONLINE DOESNT GENERATE SAME EVENT ORDER AS LOCAL ENGINE
 """
 class Parse():
     def __init__(self):
+        """
+        WHEN SPAWNING "g" ENGINE ORDER IS:
+        LOCAL:  PLAYER 0, 1, 2, 3
+        ONLINE: PLAYER 3, 2, 0, 1
+        """
+        self.remap = {0:{}, 1:{}, 2:{}, 3:{}}       ## WILL CONTAIN MAP WHAT TO CHANGE SHIP IDs DUE TO EVENT/ORDER DIFFERENCE ONLINE AND LOCALLY
+        self.heap = []
+        ## USED TO GET WHICH PLAYER GETS THE SHIP ID FIRST, THIS IS THE LOCAL ENGINE ORDER
+        self.local_order = {0:(0, 0),
+                            1:(1, 1),
+                            2:(2, 2),
+                            3:(3, 3)}
         self.replay_filename = self.get_replay_filename()
         self.output_filename = "parsed.txt"
         self.data = self.load_hlt()
@@ -85,10 +100,30 @@ class Parse():
                 }
             """
             print("At turn {}".format(i))
-            for id in range(num_players):
-                self.get_moves_this_turn(full_frames['moves'].get(str(id)),
-                                    id,
-                                    command_moves)
+            for player_id in range(num_players):
+                self.get_moves_this_turn(full_frames['moves'].get(str(player_id)),
+                                        player_id,
+                                        command_moves)
+
+            ## BELOW IS TO GENERATE THE REMAP DICTIONARY
+            online_order = {}
+            local_order = {}
+            while self.heap:
+                for event in full_frames['events']:
+                    if event.get('type') == "spawn":
+                        ship_id = event.get('id')
+                        owner_id = event.get('owner_id')
+                        id , player_id = heapq.heappop(self.heap)
+
+                        online_order[owner_id] = ship_id
+                        local_order[player_id] = ship_id
+
+            print("online_order: {}".format(online_order))
+            print("local_order: {}".format(local_order))
+            for player_id, ship_id in online_order.items():
+                self.remap[player_id][ship_id] = local_order[player_id]
+
+            self.heap = []
 
         for id in range(num_players):
             self.save_json("../moves/p{}.txt".format(id), command_moves[id])
@@ -105,7 +140,7 @@ class Parse():
         return command_moves, len(command_moves)
 
 
-    def get_moves_this_turn(self, player_data, id, command_moves):
+    def get_moves_this_turn(self, player_data, player_id, command_moves):
         """
         PARSES MOVES THIS TURN, ADD TO COMMAND_MOVES_PX
         """
@@ -115,14 +150,18 @@ class Parse():
             for move in player_data:
                 if move.get('type') == "g": ## SPAWNING SHIP
                     current_turn_commands.append("g")
+                    ## HEAP IS USED TO GET WHICH PLAYER GETS THE NEW SHIP FIRST
+                    heapq.heappush(self.heap, self.local_order[player_id])
 
                 elif move.get('type') == "m": ## MOVING SHIP
-                    current_turn_commands.append("m {} {}".format(move.get('id'), move.get('direction')))
+                    remap_id = self.remap[player_id][move.get('id')]
+                    current_turn_commands.append("m {} {}".format(remap_id, move.get('direction')))
 
                 elif move.get('type') == "c": ## BUILDING DOCK
-                    current_turn_commands.append("c {}".format(move.get('id')))
+                    remap_id = self.remap[player_id][move.get('id')]
+                    current_turn_commands.append("c {}".format(remap_id))
 
-        command_moves[id].append(current_turn_commands)
+        command_moves[player_id].append(current_turn_commands)
 
 
 start = Parse()

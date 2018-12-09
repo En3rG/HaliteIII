@@ -11,6 +11,7 @@ name = "p3"
 with open('moves/' + name + '.txt') as json_data:
     moves = json.load(json_data)
     player_name = moves.pop(0)
+    _ = moves.pop(0)  ## EXTRA MOVE?
     game = hlt.Game()
     game.ready(player_name)
     logging.info("Starting my bot!")
