@@ -28,27 +28,14 @@ class GetInitData(Data):
         self.populate_top_halite()
         self.get_average_halite()
 
-        self.populate_sectioned_halite()
-        self.populate_sectioned_distances()
+        # self.populate_sectioned_halite()
+        # self.populate_sectioned_distances()
 
         self.populate_cell_averages()
 
-        self.populate_depletion()
+        # self.populate_depletion()
 
         self.populate_dock_placement()
-
-
-        # print_matrix("halite", self.myMatrix.halite.amount)
-        # print_matrix("top halite", self.myMatrix.halite.top_amount)
-        # logging.debug("Halite average: {}".format(self.myVars.average_halite))
-        #
-        # print_matrix("Average: manhattan", self.myMatrix.cell_average.manhattan)
-        # print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
-        #
-        # print_matrix("depletion: shipyard distances", self.myMatrix.depletion.shipyard_distances)
-        # print_matrix("depletion: harvest_turns", self.myMatrix.depletion.harvest_turns)
-        # print_matrix("depletion: total turns", self.myMatrix.depletion.total_turns)
-        # print_matrix("depletion: harvest area", self.myMatrix.depletion.harvest_area)
 
 
     def populate_dock_placement(self):

@@ -90,9 +90,9 @@ def get_moves_per_player(data):
 
     command_moves, num_players = get_player_names(data)
 
-    for i, moves_per_turn in enumerate(data['full_frames']):
+    for i, full_frames in enumerate(data['full_frames']):
         """
-        "moves": {},
+            "moves": {},
             "entities": {},
             "cells": [],
             "deposited": {
@@ -107,21 +107,24 @@ def get_moves_per_player(data):
         """
         print("At turn {}".format(i))
         for id in range(num_players):
-            get_moves_this_turn(moves_per_turn['moves'].get(str(id)), id, command_moves)
+            get_moves_this_turn(full_frames['moves'].get(str(id)),
+                                id,
+                                command_moves)
 
     for id in range(num_players):
         save_moves_json("../moves/p{}.txt".format(id), command_moves[id])
 
 
-## GET FILENAME OF .hlt IN CURRENT DIRECTORY
-for root, dirs, files in os.walk(os.getcwd()):
-    for file in files:
-        if file.endswith(".hlt"):
-            filename = file
-            break
-    break
+def get_filename():
+    ## GET FILENAME OF .hlt IN CURRENT DIRECTORY
+    for root, dirs, files in os.walk(os.getcwd()):
+        for file in files:
+            if file.endswith(".hlt"):
+                return file
 
-data = load_hlt(filename)
+
+## MAIN
+data = load_hlt(get_filename)
 get_moves_per_player(data)
 generate_run_game_bat(data)
 save_json("parsed.txt",data)

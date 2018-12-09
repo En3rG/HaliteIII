@@ -43,7 +43,7 @@ class Moves(abc.ABC):
 
         self.move_occupied(ship, direction)
 
-        move_populate_manhattan(self.data.myMatrix.locations.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_RADIUS)
+        move_populate_manhattan(self.data.myMatrix.locations.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_DISTANCE)
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
@@ -229,39 +229,40 @@ class Moves(abc.ABC):
         return Position(x, y)
 
 
-    def get_highest_harvest_move(self, ship):
-        """
-        ACTUAL HARVEST MATRIX IS THE NEIGHBORING HARVEST VALUE MINUS LEAVING CURRENT CELL
-
-        :param ship:
-        :param harvest:
-        :param cost:
-        :return:
-        """
-        logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-        harvest = Section(self.data.myMatrix.halite.harvest, ship.position, size=1)              ## SECTION OF HARVEST MATRIX
-        leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]            ## COST TO LEAVE CURRENT CELL
-        cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                         ## APPLY COST TO DIRECT NEIGHBORS
-        harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF             ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
-        actual_harvest = harvest_matrix - cost_matrix                                   ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-        safe = Section(self.data.myMatrix.locations.safe, ship.position, size=1)                    ## SECTION SAFE
-        safe_harvest = actual_harvest * safe.matrix                                     ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
-
-        max_index = get_index_highest_val(safe_harvest)
-
-        if max_index == (0, 1):
-            return Direction.North
-
-        elif max_index == (1, 2):
-            return Direction.East
-
-        elif max_index == (2, 1):
-            return Direction.South
-
-        elif max_index == (1, 0):
-            return Direction.West
-        else:
-            return Direction.Still
+    ## NO LONGER USED
+    # def get_highest_harvest_move(self, ship):
+    #     """
+    #     ACTUAL HARVEST MATRIX IS THE NEIGHBORING HARVEST VALUE MINUS LEAVING CURRENT CELL
+    #
+    #     :param ship:
+    #     :param harvest:
+    #     :param cost:
+    #     :return:
+    #     """
+    #     logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
+    #     harvest = Section(self.data.myMatrix.halite.harvest, ship.position, size=1)         ## SECTION OF HARVEST MATRIX
+    #     leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]       ## COST TO LEAVE CURRENT CELL
+    #     cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                             ## APPLY COST TO DIRECT NEIGHBORS
+    #     harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF                 ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
+    #     actual_harvest = harvest_matrix - cost_matrix                                       ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
+    #     safe = Section(self.data.myMatrix.locations.safe, ship.position, size=1)            ## SECTION SAFE
+    #     safe_harvest = actual_harvest * safe.matrix                                         ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+    #
+    #     max_index = get_index_highest_val(safe_harvest)
+    #
+    #     if max_index == (0, 1):
+    #         return Direction.North
+    #
+    #     elif max_index == (1, 2):
+    #         return Direction.East
+    #
+    #     elif max_index == (2, 1):
+    #         return Direction.South
+    #
+    #     elif max_index == (1, 0):
+    #         return Direction.West
+    #     else:
+    #         return Direction.Still
 
 
 

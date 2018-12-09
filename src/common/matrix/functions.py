@@ -205,21 +205,6 @@ def get_average_manhattan(matrix, loc, dist):
     return int(sum/num) ## FORCING TO INT FOR READABILITY (CHANGE LATER)
 
 
-def get_position_highest_section(data):
-    """
-    GET POSITION OF HIGHEST SECTION
-
-    OBSOLETE, NO LONGER USED
-
-    :param data:
-    :return: POSITION
-    """
-    section_coord = get_index_highest_val(data.myMatrix.sectioned.halite)
-    destination = convert_section_coord(section_coord)
-
-    return destination
-
-
 def get_index_highest_val(matrix):
     """
     GET INDEX OF HIGHEST VALUE IN MATRIX
@@ -228,20 +213,6 @@ def get_index_highest_val(matrix):
     :return: TUPLE (INDEX OF HIGHEST VALUE)
     """
     return np.unravel_index(np.argmax(matrix, axis=None), matrix.shape)
-
-
-def convert_section_coord(section_coord):
-    """
-    CONVERT SECTION COORD TO POSITION IN GAME MAP
-
-    :param section_coord: TUPLE
-    :return: POSITION ON GAME MAP
-    """
-    section_y, section_x = section_coord[0], section_coord[1]
-    x = section_x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
-    y = section_y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
-
-    return Position(x, y)
 
 
 def get_n_max_values(matrix):
@@ -339,3 +310,69 @@ def get_cell_averages(map_height, map_width, matrix):
 
     return ave_matrix
 
+
+## NO LONGER USED
+# def fill_circle(array, center, radius, value, cummulative=False, override_edges=None):
+#     """
+#     MASK A CIRCLE ON THE ARRAY
+#
+#     CURRENTLY NOT USED (DELETE LATER!!!!!)
+#
+#     :param array: ORIGINAL ARRAY
+#     :param center: CENTER OF THE CIRCLE
+#     :param radius: RADIUS OF THE CIRCLE
+#     :param value: VALUE TO BE PLACED IN THE CIRCLE
+#     :param cummulative: IF VALUE WILL BE ADDED TO EXISTING VALUE IN THAT INDEX
+#     :param override_edges: IF A VALUE IS GIVEN, IT WILL HELP MAKE THE CIRCLE ROUNDER
+#     :return: UPDATED ARRAY
+#     """
+#
+#     height = array.shape[0]
+#     width = array.shape[1]
+#
+#     ## y IS JUST AN ARRAY OF 1xY (ROWS)
+#     ## x IS JUST AN ARRAY OF 1xX (COLS)
+#     y, x = np.ogrid[-center.y:height - center.y, -center.x:width - center.x]
+#     ## MASKS IS A HEIGHTxWIDTH ARRAY WITH TRUE INSIDE THE CIRCLE SPECIFIED
+#
+#     if override_edges:
+#         mask = x * x + y * y <= radius * radius + radius * override_edges
+#     else:
+#         ## WHEN WANT TO BE MORE CIRCLE (DUE TO ROUNDING)
+#         mask = x * x + y * y <= radius * radius
+#
+#     if cummulative:  ## VALUE KEEPS GETTING ADDED
+#         array[mask] += value
+#     else:
+#         array[mask] = value
+#
+#     return array
+
+
+# def convert_section_coord(section_coord):
+#     """
+#     CONVERT SECTION COORD TO POSITION IN GAME MAP
+#
+#     :param section_coord: TUPLE
+#     :return: POSITION ON GAME MAP
+#     """
+#     section_y, section_x = section_coord[0], section_coord[1]
+#     x = section_x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
+#     y = section_y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE
+#
+#     return Position(x, y)
+
+
+# def get_position_highest_section(data):
+#     """
+#     GET POSITION OF HIGHEST SECTION
+#
+#     OBSOLETE, NO LONGER USED
+#
+#     :param data:
+#     :return: POSITION
+#     """
+#     section_coord = get_index_highest_val(data.myMatrix.sectioned.halite)
+#     destination = convert_section_coord(section_coord)
+#
+#     return destination

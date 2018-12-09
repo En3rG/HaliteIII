@@ -3,13 +3,10 @@ import logging
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
-from src.common.print import print_matrix, print_heading
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myHarvestCounter, myHarvestArea, myTurnCounter, myBonusArea
+from src.common.matrix.vectorized import myRound, myTurnCounter, myBonusArea
 import abc
-import copy
-import sys
 
 
 class Section():
@@ -41,52 +38,15 @@ class Section():
         return self.a[rows, :][:, cols]
 
 
-# def fill_circle(array, center, radius, value, cummulative=False, override_edges=None):
+# class Sectioned():
 #     """
-#     MASK A CIRCLE ON THE ARRAY
+#     MAP DIVIDED INTO SECTIONS
 #
-#     CURRENTLY NOT USED (DELETE LATER!!!!!)
-#
-#     :param array: ORIGINAL ARRAY
-#     :param center: CENTER OF THE CIRCLE
-#     :param radius: RADIUS OF THE CIRCLE
-#     :param value: VALUE TO BE PLACED IN THE CIRCLE
-#     :param cummulative: IF VALUE WILL BE ADDED TO EXISTING VALUE IN THAT INDEX
-#     :param override_edges: IF A VALUE IS GIVEN, IT WILL HELP MAKE THE CIRCLE ROUNDER
-#     :return: UPDATED ARRAY
+#     OBSOLETE????
 #     """
-#
-#     height = array.shape[0]
-#     width = array.shape[1]
-#
-#     ## y IS JUST AN ARRAY OF 1xY (ROWS)
-#     ## x IS JUST AN ARRAY OF 1xX (COLS)
-#     y, x = np.ogrid[-center.y:height - center.y, -center.x:width - center.x]
-#     ## MASKS IS A HEIGHTxWIDTH ARRAY WITH TRUE INSIDE THE CIRCLE SPECIFIED
-#
-#     if override_edges:
-#         mask = x * x + y * y <= radius * radius + radius * override_edges
-#     else:
-#         ## WHEN WANT TO BE MORE CIRCLE (DUE TO ROUNDING)
-#         mask = x * x + y * y <= radius * radius
-#
-#     if cummulative:  ## VALUE KEEPS GETTING ADDED
-#         array[mask] += value
-#     else:
-#         array[mask] = value
-#
-#     return array
-
-
-class Sectioned():
-    """
-    MAP DIVIDED INTO SECTIONS
-
-    OBSOLETE????
-    """
-    def __init__(self, map_height, map_width):
-        self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
-        self.distances = {}  ## ONLY FILLED IN INIT
+#     def __init__(self, map_height, map_width):
+#         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
+#         self.distances = {}  ## ONLY FILLED IN INIT
 
 
 class Depletion():
@@ -169,7 +129,7 @@ class Matrix():
         self.halite = Halite(map_height, map_width)
         self.distances = {} ## ONLY FILLED IN INIT
         self.locations = Locations(map_height, map_width)
-        self.sectioned = Sectioned(map_height, map_width)
+        # self.sectioned = Sectioned(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
         self.depletion = Depletion(map_height, map_width)
 
@@ -186,7 +146,6 @@ class MySets():
         self.dock_positions = set()
 
 
-
 class MyVars():
     def __init__(self, game):
         self.total_halite = 0
@@ -195,7 +154,6 @@ class MyVars():
         self.canBuild = False
         self.canSpawn = False
         self.canAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LEFT) and (len(game.players) == 2)
-
 
 
 class MyDicts():
@@ -291,7 +249,7 @@ class Data(abc.ABC):
             populate_manhattan(self.myMatrix.locations.potential_ally_collisions,
                                Matrix_val.POTENTIAL_COLLISION,
                                ship.position,
-                               MyConstants.DIRECT_NEIGHBOR_RADIUS,
+                               MyConstants.DIRECT_NEIGHBOR_DISTANCE,
                                cummulative=True)
 
             ## POPULATE STUCK SHIPS
@@ -334,7 +292,7 @@ class Data(abc.ABC):
                     populate_manhattan(self.myMatrix.locations.potential_enemy_collisions,
                                        Matrix_val.POTENTIAL_COLLISION,
                                        ship.position,
-                                       MyConstants.DIRECT_NEIGHBOR_RADIUS,
+                                       MyConstants.DIRECT_NEIGHBOR_DISTANCE,
                                        cummulative=True)
                     for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
                         populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
@@ -342,7 +300,6 @@ class Data(abc.ABC):
                                            ship.position,
                                            dist,
                                            cummulative=False)
-
 
 
     def populate_cost(self):
@@ -364,45 +321,6 @@ class Data(abc.ABC):
         self.myMatrix.halite.harvest = myRound(harvest)
 
         self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
-
-    def populate_sectioned_halite(self):
-        """
-        POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
-
-        RECORD AVERAGE OF EACH SECTION
-
-        OBSOLETE???? NO LONGER USED
-        """
-        for y, row in enumerate(self.myMatrix.sectioned.halite):
-            for x, col in enumerate(row):
-                section = self.myMatrix.halite.amount[
-                          y * MyConstants.SECTION_SIZE:y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE,
-                          x * MyConstants.SECTION_SIZE:x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE]
-                sum = section.sum()
-                average_halite = sum // (MyConstants.SECTION_SIZE * 2)
-
-                self.myMatrix.sectioned.halite[y][x] = average_halite
-
-        print_matrix("sectioned halite", self.myMatrix.sectioned.halite)
-
-
-    def populate_sectioned_distances(self):
-        """
-        POPULATE DISTANCES OF EACH SECTIONS TO ONE ANOTHER
-
-        self.myMatrix.sectioned.distances[curr_section][y][x] = distance
-
-        OBSOLETE????? NO LONGER USED
-        """
-        height = (self.game.game_map.height // MyConstants.SECTION_SIZE) + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
-        width = (self.game.game_map.width // MyConstants.SECTION_SIZE) + 1
-
-        for r in range(height):
-            for c in range(width):
-                curr_section = (r, c)
-                self.myMatrix.sectioned.distances[curr_section] = get_distance_matrix(curr_section, height, width)
-
-                #print_matrix("Distances on {}".format(curr_section), self.myMatrix.sectioned.distances[curr_section])
 
 
     def populate_cell_distances(self):
@@ -442,26 +360,6 @@ class Data(abc.ABC):
                                                                                  MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
 
-    def populate_depletion(self):
-        """
-        POPULATE
-        """
-        ## POPULATE NUMBER OF TURNS TO HAVE HALITE <= DONT_HARVEST_BELOW
-        self.myMatrix.depletion.harvest_turns =  myHarvestCounter(self.myMatrix.halite.amount)
-
-        ## POPULATE SHIPYARD DISTANCES
-        start_tuple = (self.game.me.shipyard.position.y, self.game.me.shipyard.position.x)
-        self.myMatrix.depletion.shipyard_distances = get_distance_matrix(start_tuple, self.game.game_map.height, self.game.game_map.width)
-
-        ## POPULATE TOTAL NUMBER OF TURNS TO DEPLETE HALITE, INCLUDING TRAVELING THERE BACK AND FORTH
-        self.myMatrix.depletion.total_turns = myTurnCounter(self.myMatrix.depletion.harvest_turns, self.myMatrix.depletion.shipyard_distances)
-
-        ## POPULATE IF A GOOD HARVEST AREA
-        max_num = np.max(self.myMatrix.depletion.total_turns)
-        max_matrix = self.myMatrix.depletion.max_matrix * max_num
-        self.myMatrix.depletion.harvest_area = myHarvestArea(max_matrix, self.myMatrix.depletion.total_turns)
-
-
     def populate_top_halite(self):
         """
         POPULATE TOP HALITE CELLS
@@ -478,7 +376,7 @@ class Data(abc.ABC):
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.harvest + self.myMatrix.halite.bonus, top_num_cells)
             self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
-            
+
 
         ## USED WHEN THE TOP HALITE PERCENTAGE IS LOW (< 2%)
         # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
@@ -559,7 +457,65 @@ class Data(abc.ABC):
                         and ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT
 
 
+    ## NO LONGER USED
+    # def populate_sectioned_halite(self):
+    #     """
+    #     POPULATE SECTIONED HALITE (MyConstants.SECTION_SIZE x MyConstants.SECTION_SIZE)
+    #
+    #     RECORD AVERAGE OF EACH SECTION
+    #
+    #     OBSOLETE???? NO LONGER USED
+    #     """
+    #     for y, row in enumerate(self.myMatrix.sectioned.halite):
+    #         for x, col in enumerate(row):
+    #             section = self.myMatrix.halite.amount[
+    #                       y * MyConstants.SECTION_SIZE:y * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE,
+    #                       x * MyConstants.SECTION_SIZE:x * MyConstants.SECTION_SIZE + MyConstants.SECTION_SIZE]
+    #             sum = section.sum()
+    #             average_halite = sum // (MyConstants.SECTION_SIZE * 2)
+    #
+    #             self.myMatrix.sectioned.halite[y][x] = average_halite
+    #
+    #     print_matrix("sectioned halite", self.myMatrix.sectioned.halite)
+    #
+    #
+    # def populate_sectioned_distances(self):
+    #     """
+    #     POPULATE DISTANCES OF EACH SECTIONS TO ONE ANOTHER
+    #
+    #     self.myMatrix.sectioned.distances[curr_section][y][x] = distance
+    #
+    #     OBSOLETE????? NO LONGER USED
+    #     """
+    #     height = (self.game.game_map.height // MyConstants.SECTION_SIZE) + 1  ## + 1 TO COUNT LAST ITEM FOR RANGE
+    #     width = (self.game.game_map.width // MyConstants.SECTION_SIZE) + 1
+    #
+    #     for r in range(height):
+    #         for c in range(width):
+    #             curr_section = (r, c)
+    #             self.myMatrix.sectioned.distances[curr_section] = get_distance_matrix(curr_section, height, width)
+    #
+    #             #print_matrix("Distances on {}".format(curr_section), self.myMatrix.sectioned.distances[curr_section])
 
+
+    # def populate_depletion(self):
+    #     """
+    #     POPULATE
+    #     """
+    #     ## POPULATE NUMBER OF TURNS TO HAVE HALITE <= DONT_HARVEST_BELOW
+    #     self.myMatrix.depletion.harvest_turns =  myHarvestCounter(self.myMatrix.halite.amount)
+    #
+    #     ## POPULATE SHIPYARD DISTANCES
+    #     start_tuple = (self.game.me.shipyard.position.y, self.game.me.shipyard.position.x)
+    #     self.myMatrix.depletion.shipyard_distances = get_distance_matrix(start_tuple, self.game.game_map.height, self.game.game_map.width)
+    #
+    #     ## POPULATE TOTAL NUMBER OF TURNS TO DEPLETE HALITE, INCLUDING TRAVELING THERE BACK AND FORTH
+    #     self.myMatrix.depletion.total_turns = myTurnCounter(self.myMatrix.depletion.harvest_turns, self.myMatrix.depletion.shipyard_distances)
+    #
+    #     ## POPULATE IF A GOOD HARVEST AREA
+    #     max_num = np.max(self.myMatrix.depletion.total_turns)
+    #     max_matrix = self.myMatrix.depletion.max_matrix * max_num
+    #     self.myMatrix.depletion.harvest_area = myHarvestArea(max_matrix, self.myMatrix.depletion.total_turns)
 
 
 

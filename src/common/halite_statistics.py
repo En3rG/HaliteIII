@@ -27,9 +27,6 @@ class Ship_stat():
              self.id, self.halite_amount, self.halite_gained, self.halite_bonus, self.halite_burned, self.halite_dropped)
 
 
-
-
-
 class Halite_stats():
     """
     TRACKS HALITE STATS OF THE ENTIRE GAME

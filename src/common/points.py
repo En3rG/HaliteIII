@@ -204,7 +204,6 @@ class RetreatPoints():
                                                                                            self.direction)
 
 
-
 class DepositPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR RETURNING/DEPOSITING
@@ -281,7 +280,6 @@ class DepositPoints():
                                                                                            self.potential_ally_collision,
                                                                                            self.cost,
                                                                                            self.direction)
-
 
 
 class HarvestPoints():
@@ -421,53 +419,6 @@ class ExplorePoints():
             self.direction)
 
 
-class DepartPoints():
-    """
-    USED TO DETERMINE BEST DIRECTION FOR DEPARTING
-    """
-    def __init__(self, safe, cost, direction):
-        self.safe = safe
-        self.cost = -cost
-        self.direction = direction
-
-    def __gt__(self, other):
-        if isinstance(other, DepartPoints):
-            if self.safe > other.safe:
-                return True
-            elif self.safe < other.safe:
-                return False
-            elif self.cost > other.cost:
-                return True
-            elif self.cost < other.cost:
-                return False
-            else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
-
-        return NotImplemented
-
-    def __lt__(self, other):
-        if isinstance(other, DepartPoints):
-            if self.safe < other.safe:
-                return True
-            elif self.safe > other.safe:
-                return False
-            elif self.cost < other.cost:
-                return True
-            elif self.cost > other.cost:
-                return False
-            else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
-
-        return NotImplemented
-
-    def __repr__(self):
-        return "{} safe: {} cost: {} direction: {}".format(
-            self.__class__.__name__,
-            self.safe,
-            self.cost,
-            self.direction)
-
-
 class CollisionPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR AVOIDING IMMINENT COLLISION
@@ -533,6 +484,7 @@ class CollisionPoints():
             self.priority_direction,
             self.harvest,
             self.direction)
+
 
 class BuildPoints():
     """
@@ -663,3 +615,51 @@ class SupportPoints():
             self.__class__.__name__,
             self.safe,
             self.direction)
+
+
+## NO LONGER USED
+# class DepartPoints():
+#     """
+#     USED TO DETERMINE BEST DIRECTION FOR DEPARTING
+#     """
+#     def __init__(self, safe, cost, direction):
+#         self.safe = safe
+#         self.cost = -cost
+#         self.direction = direction
+#
+#     def __gt__(self, other):
+#         if isinstance(other, DepartPoints):
+#             if self.safe > other.safe:
+#                 return True
+#             elif self.safe < other.safe:
+#                 return False
+#             elif self.cost > other.cost:
+#                 return True
+#             elif self.cost < other.cost:
+#                 return False
+#             else:
+#                 return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+#
+#         return NotImplemented
+#
+#     def __lt__(self, other):
+#         if isinstance(other, DepartPoints):
+#             if self.safe < other.safe:
+#                 return True
+#             elif self.safe > other.safe:
+#                 return False
+#             elif self.cost < other.cost:
+#                 return True
+#             elif self.cost > other.cost:
+#                 return False
+#             else:
+#                 return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+#
+#         return NotImplemented
+#
+#     def __repr__(self):
+#         return "{} safe: {} cost: {} direction: {}".format(
+#             self.__class__.__name__,
+#             self.safe,
+#             self.cost,
+#             self.direction)

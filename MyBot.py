@@ -10,7 +10,6 @@ from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.attack import Attack
-from src.movement.depart import Depart
 from src.movement.build import Build
 from src.common.halite_statistics import Halite_stats
 from src.common.print import print_heading
@@ -70,17 +69,11 @@ while True:
     ## BUILD DOCK
     C = Build(data, prev_data)
 
-    ## DEPART SHIPS (FROM SHIPYARD/DOCK)
-    #D = Depart(data, prev_data)
-
     ## DEPOSIT SHIPS
     E = Deposit(data, prev_data)
 
     ## ATTACK SHIPS
     F = Attack(data, prev_data)
-
-    ## HARVEST SHIPS
-    #G = Kicked(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)
