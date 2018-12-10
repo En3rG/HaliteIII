@@ -208,11 +208,12 @@ class DepositPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR RETURNING/DEPOSITING
 
-    not occupied > cost
+    COMMENTED OUT ALLY COLLISION, WITH IT IT CAUSES A TRAFFIC JAM AT THE DOCK
     """
-    def __init__(self, safe, dock, potential_enemy_collision, potential_ally_collision, cost, direction):
+    def __init__(self, safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction):
         self.safe = safe
         self.dock = dock
+        self.enemy_occupied = -enemy_occupied
         self.potential_enemy_collision = potential_enemy_collision
         self.potential_ally_collision = potential_ally_collision
         self.cost = -cost  ## NEGATIVE BECAUSE WE WANT THE LEAST COST
@@ -228,14 +229,18 @@ class DepositPoints():
                 return True
             elif self.dock < other.dock:
                 return False
+            elif self.enemy_occupied > other.enemy_occupied:
+                return True
+            elif self.enemy_occupied < other.enemy_occupied:
+                return False
             elif self.potential_enemy_collision > other.potential_enemy_collision:
                 return True
             elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return False
-            elif self.potential_ally_collision > other.potential_ally_collision:
-                return True
-            elif self.potential_ally_collision < other.potential_ally_collision:
-                return False
+            # elif self.potential_ally_collision > other.potential_ally_collision:
+            #     return True
+            # elif self.potential_ally_collision < other.potential_ally_collision:
+            #     return False
             elif self.cost > other.cost:
                 return True
             elif self.cost < other.cost:
@@ -255,14 +260,18 @@ class DepositPoints():
                 return True
             elif self.dock > other.dock:
                 return False
+            elif self.enemy_occupied < other.enemy_occupied:
+                return True
+            elif self.enemy_occupied > other.enemy_occupied:
+                return False
             elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return True
             elif self.potential_enemy_collision > other.potential_enemy_collision:
                 return False
-            elif self.potential_ally_collision < other.potential_ally_collision:
-                return True
-            elif self.potential_ally_collision > other.potential_ally_collision:
-                return False
+            # elif self.potential_ally_collision < other.potential_ally_collision:
+            #     return True
+            # elif self.potential_ally_collision > other.potential_ally_collision:
+            #     return False
             elif self.cost < other.cost:
                 return True
             elif self.cost > other.cost:
@@ -273,13 +282,15 @@ class DepositPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} dock: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(self.__class__.__name__,
-                                                                                           self.safe,
-                                                                                           self.dock,
-                                                                                           self.potential_enemy_collision,
-                                                                                           self.potential_ally_collision,
-                                                                                           self.cost,
-                                                                                           self.direction)
+        return "{} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(
+                                                                                        self.__class__.__name__,
+                                                                                        self.safe,
+                                                                                        self.dock,
+                                                                                        self.enemy_occupied,
+                                                                                        self.potential_enemy_collision,
+                                                                                        self.potential_ally_collision,
+                                                                                        self.cost,
+                                                                                        self.direction)
 
 
 class HarvestPoints():
@@ -290,9 +301,10 @@ class HarvestPoints():
     HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
 
     """
-    def __init__(self, safe, occupied, potential_enemy_collision, harvest, direction):
+    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction):
         self.safe = safe
         self.occupied = occupied
+        self.enemy_occupied = -enemy_occupied
         self.potential_enemy_collision = potential_enemy_collision
         self.harvest = harvest
         self.direction = direction
@@ -306,6 +318,10 @@ class HarvestPoints():
             elif self.occupied > other.occupied:
                 return True
             elif self.occupied < other.occupied:
+                return False
+            elif self.enemy_occupied > other.enemy_occupied:
+                return True
+            elif self.enemy_occupied < other.enemy_occupied:
                 return False
             elif self.potential_enemy_collision > other.potential_enemy_collision:
                 return True
@@ -330,6 +346,10 @@ class HarvestPoints():
                 return True
             elif self.occupied > other.occupied:
                 return False
+            elif self.enemy_occupied < other.enemy_occupied:
+                return True
+            elif self.enemy_occupied > other.enemy_occupied:
+                return False
             elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return True
             elif self.potential_enemy_collision > other.potential_enemy_collision:
@@ -344,12 +364,14 @@ class HarvestPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} occupied: {} potential_collision: {} harvest: {} direction: {}".format(self.__class__.__name__,
-                                                                                                   self.safe,
-                                                                                                   self.occupied,
-                                                                                                   self.potential_enemy_collision,
-                                                                                                   self.harvest,
-                                                                                                   self.direction)
+        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} harvest: {} direction: {}".format(
+                                                                                self.__class__.__name__,
+                                                                                self.safe,
+                                                                                self.occupied,
+                                                                                self.enemy_occupied,
+                                                                                self.potential_enemy_collision,
+                                                                                self.harvest,
+                                                                                self.direction)
 
 
 class ExplorePoints():

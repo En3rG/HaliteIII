@@ -57,6 +57,44 @@ class GetInitData(Data):
         THEN GET HIGHEST HALITE AMOUNT WITHIN THAT AREA
         BECAUSE THE HIGHEST CELL AVERAGE IS NOT ALWAYS THE HIGHEST HALITE CELL IN THAT AREA
         """
+        ## OLD WAY
+        # average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
+        #
+        # ## GET INDEXES OF TOP N
+        # ## REMOVE ITS SURROUNDING AVERAGES, SO NEXT TOP CELL WONT BE AROUND IT
+        # for _ in range(MyConstants.TOP_N):
+        #     print_matrix("average manhattan", average_manhattan)
+        #
+        #     ## GET TOP AVERAGE LOCATION
+        #     value_top_ave, indexes = get_n_max_values(average_manhattan)
+        #     indx_top_ave = self.get_closest_to_shipyard(indexes)
+        #
+        #     logging.debug("value_top_ave {}, indx_top_ave {}".format(value_top_ave, indx_top_ave))
+        #
+        #     loc_top_ave = (indx_top_ave[0], indx_top_ave[1])
+        #     pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])  ## Position(x, y)
+        #
+        #     ## GET TOP HALITE CLOSE TO TOP AVERAGE LOCATION
+        #     loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
+        #
+        #     ## POPULATE TOP N POSITIONS IN cell_average.top_N
+        #     self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
+        #
+        #     ## COLLECT LOCATIONS
+        #     ## REMOVE SURROUNDING TOP HALITE
+        #     populate_manhattan(average_manhattan,
+        #                        Matrix_val.ZERO,
+        #                        pos_top_halite_normalized,
+        #                        MyConstants.AVERAGE_MANHATTAN_DISTANCE,
+        #                        cummulative=False)
+        #
+        #     ## RECALCULATE CELL AVERAGES
+        #     average_manhattan = get_cell_averages(self.game.game_map.height, self.game.game_map.width,
+        #                                           average_manhattan)
+
+
+
+        ## NEW WAY (SHOULD BE MORE EFFICIENT AND BETTER POSITIONING)
         average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
 
         ## POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
@@ -184,13 +222,13 @@ class GetInitData(Data):
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
         populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS)
 
-        print_matrix("Eliminate close to shipyard: top N", self.myMatrix.cell_average.top_N)
+        print_matrix("Eliminate close to shipyard: top N", matrix)
 
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
         curr_cell = (shipyard.position.y, shipyard.position.x)
         coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell], Inequality.EQUAL)
-        while val != 1:
+        while val > 1:
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
             populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS)

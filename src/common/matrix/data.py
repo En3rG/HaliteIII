@@ -117,6 +117,8 @@ class Locations():
         self.safe = np.zeros((map_height, map_width), dtype=np.int16)
         self.safe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
 
+        ## OCCUPIED IS DIFFERENT FROM MYSHIPS LOCATIONS BECAUSE IT GETS UPDATED
+        ## AS THE SHIP MOVES, WHERE AS MYSHIPS IS THE STARTING LOCATIONS OF THE SHIPS
         self.occupied = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
