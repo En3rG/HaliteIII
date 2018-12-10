@@ -26,6 +26,7 @@ class Matrix_val():
     OCCUPIED = -1
     UNSAFE = -1
     POTENTIAL_COLLISION = -1
+    UNAVAILABLE = -1
 
 
 class MyConstants():

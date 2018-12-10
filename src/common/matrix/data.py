@@ -133,8 +133,10 @@ class Matrix():
         self.halite = Halite(map_height, map_width)
         self.distances = {} ## ONLY FILLED IN INIT
         self.locations = Locations(map_height, map_width)
-        # self.sectioned = Sectioned(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
+
+        ## NO LONGER USED
+        # self.sectioned = Sectioned(map_height, map_width)
         # self.depletion = Depletion(map_height, map_width)
 
 

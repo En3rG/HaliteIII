@@ -6,6 +6,14 @@ from src.common.print import print_heading
 from src.common.points import HarvestPoints
 from src.common.classes import OrderedSet
 
+
+"""
+TO DO!!!!!!!!
+
+ADD COLLISION PREVENTION
+
+"""
+
 class Harvest(Moves):
     """
     HARVEST RIGHT NOW OR NEXT TURN

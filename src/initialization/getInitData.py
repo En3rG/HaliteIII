@@ -5,13 +5,21 @@ from src.common.matrix.functions import populate_manhattan, get_index_highest_va
     get_n_largest_values, get_cell_averages, get_n_max_values, calculate_distance
 from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
-
+import numpy as np
 import logging
 import copy
+
+
+"""
+TO DO !!!
+
+"""
+
 
 class GetInitData(Data):
     def __init__(self, game):
         super().__init__(game)
+        self.unavailable_area = np.zeros((game.game_map.height, game.game_map.width), dtype=np.float16)
         self.update_matrix()
 
     def update_matrix(self):
@@ -28,14 +36,14 @@ class GetInitData(Data):
         self.populate_top_halite()
         self.get_mean_median_halite()
 
-        # self.populate_sectioned_halite()
-        # self.populate_sectioned_distances()
-
         self.populate_cell_averages()
 
-        # self.populate_depletion()
-
         self.populate_dock_placement()
+
+        ## NO LONGER USED
+        # self.populate_sectioned_halite()
+        # self.populate_sectioned_distances()
+        # self.populate_depletion()
 
 
     def populate_dock_placement(self):
@@ -46,59 +54,71 @@ class GetInitData(Data):
     def get_top_N_averages(self):
         """
         POPULATE WHERE TOP N PLACES ARE, BASED ON HIGHEST AVERAGE CELL MANHATTAN
-        THEN GET HIGHEST HALITE AMOUNT IN THAT SECTION
+        THEN GET HIGHEST HALITE AMOUNT WITHIN THAT AREA
         BECAUSE THE HIGHEST CELL AVERAGE IS NOT ALWAYS THE HIGHEST HALITE CELL IN THAT AREA
         """
         average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
 
-        ## GET INDEXES OF TOP N
-        ## REMOVE ITS SURROUNDING AVERAGES, SO NEXT TOP CELL WONT BE AROUND IT
+        ## POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
+        ## SO NO DOCK WILL BE TOO CLOSE TO SHIPYARD
+        populate_manhattan(self.unavailable_area,
+                           Matrix_val.UNAVAILABLE,
+                           self.game.me.shipyard.position,
+                           MyConstants.MIN_DIST_BTW_DOCKS,
+                           cummulative=False)
+
+        ## GET INDEXES OF TOP N AVERAGES
         for _ in range(MyConstants.TOP_N):
-            print_matrix("average manhattan", average_manhattan)
+            print_matrix("Current average manhattan", average_manhattan)
 
-            ## GET TOP AVERAGE LOCATION
-            value_top_ave, indexes = get_n_max_values(average_manhattan)
-            indx_top_ave = self.get_closest_to_shipyard(indexes)
+            keep_looking = True
+            quit = False
 
-            logging.debug("value_top_ave {}, indx_top_ave {}".format(value_top_ave, indx_top_ave))
+            while keep_looking:
+                ## GET TOP AVERAGE LOCATION
+                value_top_ave, indexes = get_n_max_values(average_manhattan)
+                index_top_ave = self.get_closest_to_shipyard(indexes)
 
-            loc_top_ave = (indx_top_ave[0], indx_top_ave[1])
-            pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])  ## Position(x, y)
+                loc_top_ave = (index_top_ave[0], index_top_ave[1])
+                pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])  ## Position(x, y)
 
-            ## GET TOP HALITE CLOSE TO TOP AVERAGE LOCATION
-            loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
+                if self.unavailable_area[pos_top_ave.y][pos_top_ave.x] != Matrix_val.UNAVAILABLE:
+                    ## SET THE SURROUNDING TO UNAVAILABLE
+                    populate_manhattan(self.unavailable_area,
+                                       Matrix_val.UNAVAILABLE,
+                                       pos_top_ave,
+                                       MyConstants.MIN_DIST_BTW_DOCKS,
+                                       cummulative=False)
 
-            ## POPULATE TOP N POSITIONS IN cell_average.top_N
-            self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
+                    ## GET TOP HALITE WITHIN THIS AREA
+                    loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
 
-            ## COLLECT LOCATIONS
-            ## REMOVE SURROUNDING TOP HALITE
-            populate_manhattan(average_manhattan,
-                               Matrix_val.ZERO,
-                               pos_top_halite_normalized,
-                               MyConstants.AVERAGE_MANHATTAN_DISTANCE,
-                               cummulative=False)
+                    ## POPULATE TOP N POSITIONS IN cell_average.top_N
+                    self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
 
-            ## RECALCULATE CELL AVERAGES
-            average_manhattan = get_cell_averages(self.game.game_map.height, self.game.game_map.width,
-                                                  average_manhattan)
+                    keep_looking = False
+
+                ## CHANGE THIS TO ZERO SO IT WONT BE TAKEN AS HIGHEST AVERAGE LATER
+                average_manhattan[pos_top_ave.y][pos_top_ave.x] = Matrix_val.ZERO
+
+                ## WHEN TOP AVERAGE IS BELOW THE TOTAL AVERAGE, WILL EXIT FOR LOOP
+                if value_top_ave < self.myVars.average_halite:
+                    quit = True
+                    break
+
+            if quit: break
 
 
     def get_closest_top_halite(self, loc_top_ave, pos_top_ave):
         """
-        GET LOCATION/POSITION OF HIGHEST HALITE IN THE SECTION
+        GET LOCATION/POSITION OF HIGHEST HALITE IN THE AREA (ITS MIDDLE IS THE POSITION GIVEN
         IF THERE ARE MULTIPLE RESULTS, NEED TO GET HIGHEST ONE CLOSE TO SHIPYARD
 
         :param loc_top_ave: LOCATION (CENTER) OF THE HIGHEST AVERAGE
         :param pos_top_ave: POSITION (CENTER) OF THE HIGHEST AVERAGE
         :return: LOCATION AND POSITION OF HIGHEST HALITE IN THIS SECTION
         """
-        logging.debug("pos_top_ave {}".format(pos_top_ave))
-
         section_halite = Section(self.myMatrix.halite.amount, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
-
-        print_matrix("section_halite:", section_halite.matrix)
-
         value_top_halite, indexes = get_n_max_values(section_halite.matrix)
 
         return self.get_loc_pos_top_halite(indexes, loc_top_ave, section_halite)
