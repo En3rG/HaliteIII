@@ -65,8 +65,8 @@ class Attack(Moves):
 
                         logging.debug("Attacking!!!! ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
 
-                        for support_id in s.support_ships:
-                            if support_id in self.data.mySets.ships_to_move: ## DONT MOVE SHIPS THAT ALREADY MOVED
+                        for support_id in sorted(s.support_ships):                      ## ADD SORTED TO HAVE SAME ORDER ONLINE
+                            if support_id in self.data.mySets.ships_to_move:            ## DONT MOVE SHIPS THAT ALREADY MOVED
                                 support_ship = self.data.game.me._ships.get(support_id)
                                 support_directions = self.get_directions_target(support_ship, first_ship.position)
                                 direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)

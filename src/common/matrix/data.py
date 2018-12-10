@@ -144,9 +144,9 @@ class Matrix():
 
 class MySets():
     def __init__(self, game):
-        self.ships_all = OrderedSet(game.me._ships.keys())        ## ALL SHIPS
-        self.ships_to_move = OrderedSet(game.me._ships.keys())    ## SHIPS TO MOVE
-        self.ships_returning = OrderedSet()                            ## SHIPS RETURNING HALITE
+        self.ships_all = OrderedSet(game.me._ships.keys())                  ## ALL SHIPS
+        self.ships_to_move = OrderedSet(sorted(game.me._ships.keys()))      ## SHIPS TO MOVE (SORTING TO MATCH ORDER ONLINE)
+        self.ships_returning = OrderedSet()                                 ## SHIPS RETURNING HALITE
         self.ships_kicked = OrderedSet()
         self.ships_died = set()
         self.ships_ally_collision = set()
