@@ -44,7 +44,8 @@ class MyConstants():
     RETREAT_EXTRA_TURNS = 5                         ## EXTRA TURNS ADDED TO FURTHEST SHIP WHEN TO START RETREATING
 
     ## BUILDING / DOCK PLACEMENT
-    STOP_BUILDING_TURNS_LEFT = 0.70
+    STOP_BUILDING_TURNS_LEFT = 0.70                 ## USED TO BE:
+                                                    ## V28: 0.70
     STOP_BUILDING_HALITE_LEFT = 0.30
     NUM_SHIPS_BEFORE_BUILDING = 10
 
@@ -62,7 +63,8 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ATTACK_TURNS_LEFT = 0.80
+    ATTACK_TURNS_LEFT = 1                           ## USED TO BE:
+                                                    ## V28: 0.80
 
 
     ## HARVEST
@@ -82,7 +84,8 @@ class MyConstants():
 
 
     ## SPAWNING
-    STOP_SPAWNING_HALITE_LEFT = 0.40
+    STOP_SPAWNING_HALITE_LEFT = 0.40                ## USED TO BE:
+                                                    ## V28: 0.40
 
     STOP_SPAWNING_2P_32_TURNS_LEFT = 0.60
     STOP_SPAWNING_2P_40_TURNS_LEFT = 0.62

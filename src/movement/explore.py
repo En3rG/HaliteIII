@@ -31,7 +31,10 @@ class Explore(Moves):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
         self.taken_destinations = set()
 
-        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## DO HARVEST + BONUS LATER
+        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
+        # self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
+                                                                                             ## MAYBE BETTER TO DO THIS ONLY TOWARDS THE END OF GAME
+
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
         self.distance_docks = self.get_distance_docks()
