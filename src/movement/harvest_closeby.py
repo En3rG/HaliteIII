@@ -10,8 +10,6 @@ from src.common.classes import OrderedSet
 """
 TO DO!!!!!!!!
 
-REMOVE HARVEST LATER?? MIGHT CAUSE SHIP TO GO DIFFERENT WAY BECAUSE ITS A HARVEST LATER CELL, EVEN THOUGH
-ITS BEST EXPLORE DESTINATION IS ON THE OTHER WAY
 
 ADD COLLISION PREVENTION
 
@@ -38,21 +36,22 @@ class Harvest(Moves):
 
         print_heading("Moving harvesting (later) ships......")
         ## COMMENTING OUT BECAUSE WE WANT TO EXPLORE INSTEAD
-        # ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
-        # ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
-        # for ship_id in ships:
-        #     ## MOVE KICKED SHIPS FIRST (IF ANY)
-        #     while self.data.mySets.ships_kicked:
-        #         ship_kicked = self.data.mySets.ships_kicked.pop()
-        #         self.harvestLater(ship_kicked, kicked=True)
-        #
-        #     ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-        #     if ship_id in self.data.mySets.ships_to_move:
-        #         self.harvestLater(ship_id)
-        #
-        # ## MERGE TEMP BACK TO SHIPS KICKED
-        # ## UNION WITH ships_to_move IN CASE SHIP MOVED
-        # self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
+        ## COMMENTING THIS OUT CAUSED A BIG DROP IN RATING
+        ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
+        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        for ship_id in ships:
+            ## MOVE KICKED SHIPS FIRST (IF ANY)
+            while self.data.mySets.ships_kicked:
+                ship_kicked = self.data.mySets.ships_kicked.pop()
+                self.harvestLater(ship_kicked, kicked=True)
+
+            ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
+            if ship_id in self.data.mySets.ships_to_move:
+                self.harvestLater(ship_id)
+
+        ## MERGE TEMP BACK TO SHIPS KICKED
+        ## UNION WITH ships_to_move IN CASE SHIP MOVED
+        self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
 
 
     def harvestNow(self, ship_id):

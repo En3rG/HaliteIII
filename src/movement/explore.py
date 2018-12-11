@@ -19,7 +19,6 @@ TO DO!!!!!!!!!!!
 
 TOP HALITE DOESNT CONSIDER INFLUENCE
 
-GET HIGHEST HALITE CLOSE BY (MAYBE WITH A GIVEN DISTANCE??)
 
 """
 
@@ -32,7 +31,7 @@ class Explore(Moves):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
         self.taken_destinations = set()
 
-        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)  ## DO HARVEST + BONUS LATER
+        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## DO HARVEST + BONUS LATER
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
         self.distance_docks = self.get_distance_docks()
