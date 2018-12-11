@@ -93,7 +93,7 @@ class SupportShip:
 
 class ExploreShip:
     """
-    USED TO DETERMINE FARTHEST SHIP FOR EXPLORING
+    USED TO DETERMINE CLOSEST SHIP FOR EXPLORING
     ALSO USED FOR HEAPQ PURPOSES
 
     """
@@ -102,8 +102,8 @@ class ExploreShip:
         self.ship_id = id
         self.curr_cell = curr_cell
         self.destination = destination
-        self.indices_deque = indices_deque
-        self.distances_deque = distances_deque
+        self.indices_deque = indices_deque      ## NO LONGER USED (TIMING OUT)
+        self.distances_deque = distances_deque  ## NO LONGER USED (TIMING OUT)
 
     def __gt__(self, other):
         if isinstance(other, ExploreShip):
@@ -133,6 +133,47 @@ class ExploreShip:
 
     def __repr__(self):
         return "{} Ship id: {} distance: {}".format(self.__class__.__name__, self.ship_id, self.distance)
+
+
+
+class ExploreShip2:
+    """
+    USED TO DETERMINE CLOSEST SHIP FOR EXPLORING WITH HIGHEST
+    HALITE HARVEST PER TURN
+    """
+    def __init__(self, ratio, id, destination):
+        self.ratio = -ratio  ## NEED HIGHEST RATIO TO BE FIRST IN HEAP
+        self.ship_id = id
+        self.destination = destination
+
+    def __gt__(self, other):
+        if isinstance(other, ExploreShip2):
+            if self.ratio > other.ratio:
+                return True
+            elif self.ratio < other.ratio:
+                return False
+            elif self.ship_id >= other.ship_id:
+                return True
+            elif self.ship_id < other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, ExploreShip2):
+            if self.ratio < other.ratio:
+                return True
+            elif self.ratio > other.ratio:
+                return False
+            elif self.ship_id <= other.ship_id:
+                return True
+            elif self.ship_id > other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} Ship id: {} ratio: {}".format(self.__class__.__name__, self.ship_id, self.ratio)
 
 
 

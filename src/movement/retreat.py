@@ -87,7 +87,7 @@ class Retreat(Moves):
             self.move_mark_unsafe(ship, direction)
 
 
-    def get_points_retreat(self, ship, directions):
+    def get_move_points_retreat(self, ship, directions):
         """
         GET POINTS FOR RETREATING
 

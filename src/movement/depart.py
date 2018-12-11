@@ -56,7 +56,7 @@
 #         self.move_mark_unsafe(ship, direction)
 #
 #
-#     def get_points_depart(self, ship, directions):
+#     def get_move_points_depart(self, ship, directions):
 #         """
 #         GET POINTS FOR DEPARTING
 #

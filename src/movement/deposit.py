@@ -57,8 +57,9 @@ class Deposit(Moves):
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
-            ship = self.data.game.me._ships.get(s.ship_id)
-            self.returning(ship, s.directions)
+            if s.ship_id in self.data.mySets.ships_to_move:    ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
+                ship = self.data.game.me._ships.get(s.ship_id)
+                self.returning(ship, s.directions)
 
 
     def populate_heap(self, ship):
@@ -101,7 +102,7 @@ class Deposit(Moves):
         self.data.mySets.ships_returning.add(ship.id)
 
 
-    def get_points_returning(self, ship, directions):
+    def get_move_points_returning(self, ship, directions):
         """
         GET POINTS FOR RETURNING
 

@@ -133,7 +133,7 @@ class Attack(Moves):
         return directions, enemy_position
 
 
-    def get_points_attacking(self, ship, directions):
+    def get_move_points_attacking(self, ship, directions):
         """
         GET POINTS FOR ATTACKING
 
@@ -160,7 +160,7 @@ class Attack(Moves):
         return points
 
 
-    def get_points_supporting(self, ship, directions):
+    def get_move_points_supporting(self, ship, directions):
         """
         GET POINTS FOR SUPPORTING
 

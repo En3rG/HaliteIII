@@ -13,12 +13,12 @@ def avoid_collision_direction(Moves, ship, directions):
     :param directions: DIRECTIONS DETERMINED BEFORE, BUT BEST ONE WILL COLLIDE
     :return: BEST DIRECTION
     """
-    points = get_points_collision(Moves, ship, directions)
+    points = get_move_points_collision(Moves, ship, directions)
     best = max(points)
     return best.direction
 
 
-def get_points_collision(Moves, ship, directions):
+def get_move_points_collision(Moves, ship, directions):
     """
     GET POINTS FOR IMMINENT COLLISION PREVENTION
     """

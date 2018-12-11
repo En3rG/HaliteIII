@@ -108,7 +108,7 @@ class Build(Moves):
                     self.move_mark_unsafe(ship, direction)
 
 
-    def get_points_building(self, ship, directions):
+    def get_move_points_building(self, ship, directions):
         """
         GET POINTS FOR BULDING
 

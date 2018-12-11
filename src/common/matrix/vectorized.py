@@ -46,6 +46,15 @@ def bonusArea(harvest, influence):
 myBonusArea = np.vectorize(bonusArea)
 
 
+def minDockDistances(*args):
+    """
+    POPULATE DISTANCES TO DOCKS/SHIPYARD GIVEN ALL DISTANCE MATRICES PER DOCKS/SHIPYARD
+    """
+    return min(args)
+
+myMinDockDistances = np.vectorize(minDockDistances)
+
+
 ## NO LONGER USED
 # def harvestArea(max_x, x):
 #     """

@@ -123,21 +123,21 @@ class Moves(abc.ABC):
         logging.debug("Ship id: {} finding best_direction".format(ship.id))
 
         if mode == MoveMode.RETREAT:
-            points = self.get_points_retreat(ship, directions)
+            points = self.get_move_points_retreat(ship, directions)
         elif mode == MoveMode.DEPOSIT:
-            points = self.get_points_returning(ship, directions)
+            points = self.get_move_points_returning(ship, directions)
         elif mode == MoveMode.HARVEST:
-            points = self.get_points_harvest(ship)
+            points = self.get_move_points_harvest(ship)
         elif mode == MoveMode.EXPLORE:
-            points = self.get_points_explore(ship, directions)
+            points = self.get_move_points_explore(ship, directions)
         elif mode == MoveMode.DEPART:
-            points = self.get_points_depart(ship, directions)
+            points = self.get_move_points_depart(ship, directions)
         elif mode == MoveMode.BUILDING:
-            points = self.get_points_building(ship, directions)
+            points = self.get_move_points_building(ship, directions)
         elif mode == MoveMode.ATTACKING:
-            points = self.get_points_attacking(ship, directions)
+            points = self.get_move_points_attacking(ship, directions)
         elif mode == MoveMode.SUPPORTING:
-            points = self.get_points_supporting(ship, directions)
+            points = self.get_move_points_supporting(ship, directions)
         else:
             raise NotImplemented
 

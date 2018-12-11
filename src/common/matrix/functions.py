@@ -1,6 +1,7 @@
 import numpy as np
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
+from src.common.print import print_matrix
 import logging
 
 
@@ -212,6 +213,23 @@ def get_index_highest_val(matrix):
     :return: TUPLE (INDEX OF HIGHEST VALUE)
     """
     return np.unravel_index(np.argmax(matrix, axis=None), matrix.shape)
+
+
+def get_coord_max_closest(value_matrix, distance_matrix):
+    """
+    GET VALUE AND INDEX OF THE HIGHEST VALUE IN THE MATRIX
+    IF THERE ARE MULTIPLE HIGHEST VALUE, RETURN THE ONE WITH LEAST DISTANCE VALUE
+    """
+    max_value = np.nanmax(value_matrix)                         ## MAX VALUE.
+                                                                ## USING NANMAX SINCE SOMETIMES THE VALUE MATRIX
+                                                                ## WILL CONTAIN A NAN (WHEN 0 DIVIDED BY SOMETHING)
+    r, c = np.where(value_matrix == max_value)                  ## INDEXES OF WHERE MAX VALUE ARE
+    distances = distance_matrix[r, c]                           ## VALUE OF DISTANCES WHERE MAX VALUES ARE LOCATED
+    min_distance = distances.min()                              ## MIN DISTANCE VALUE
+    ld_indx = np.flatnonzero(distances == min_distance)         ## INDEX OF MIN DISTANCE
+    max_idx = value_matrix[r[ld_indx], c[ld_indx]].argmax()     ## INDEX OF WHERE MAX VALUE & LEAST DISTANCE IS
+
+    return max_value, (r[ld_indx][max_idx], c[ld_indx][max_idx])
 
 
 def get_n_max_values(matrix):

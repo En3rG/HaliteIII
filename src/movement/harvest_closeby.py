@@ -120,7 +120,7 @@ class Harvest(Moves):
                 and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 
-    def get_points_harvest(self, ship):
+    def get_move_points_harvest(self, ship):
         """
         GET POINTS FOR HARVESTING
 
