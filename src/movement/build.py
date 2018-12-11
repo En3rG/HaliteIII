@@ -92,20 +92,21 @@ class Build(Moves):
                                                          self.data.init_data.myMatrix.locations.dock_placement,
                                                          self.data.init_data.myMatrix.distances[curr_cell],
                                                          Inequality.EQUAL)
-                dock_position = Position(coord[1], coord[0])
-                directions = self.get_directions_target(ship, dock_position)
+                if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
+                    dock_position = Position(coord[1], coord[0])
+                    directions = self.get_directions_target(ship, dock_position)
 
-                if i ==  MyConstants.DOCK_MANHATTAN: ## CURRENTLY RIGHT NEXT TO THE DOCK
-                    ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
-                    ## ALSO MAKE SURE ITS SAFE TO GO THERE
-                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
-                            and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
-                        self.move_mark_unsafe(ship, directions[0]) ## DIRECTION IS A LIST OF DIRECTIONS
+                    if i ==  MyConstants.DOCK_MANHATTAN: ## CURRENTLY RIGHT NEXT TO THE DOCK
+                        ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
+                        ## ALSO MAKE SURE ITS SAFE TO GO THERE
+                        if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
+                                and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
+                            self.move_mark_unsafe(ship, directions[0]) ## DIRECTION IS A LIST OF DIRECTIONS
+                        else:
+                            self.move_mark_unsafe(ship, Direction.Still)
                     else:
-                        self.move_mark_unsafe(ship, Direction.Still)
-                else:
-                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
-                    self.move_mark_unsafe(ship, direction)
+                        direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
+                        self.move_mark_unsafe(ship, direction)
 
 
     def get_move_points_building(self, ship, directions):
