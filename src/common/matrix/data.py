@@ -378,7 +378,7 @@ class Data(abc.ABC):
         LIMIT TO LOCAL AREA WITHIN THE FIRST 100 MOVES
         """
 
-        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_TOP_HARVEST_TURNS_LEFT:
+        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
             ## ORIGINAL
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)

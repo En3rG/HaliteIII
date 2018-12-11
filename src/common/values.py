@@ -63,7 +63,7 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ATTACK_TURNS_LEFT = 1                           ## USED TO BE:
+    ATTACK_TURNS_LEFT = 0.80                           ## USED TO BE:
                                                     ## V28: 0.80
 
 
@@ -80,7 +80,7 @@ class MyConstants():
                                                     ## V14: 0.04
 
 
-    ENABLE_TOP_HARVEST_TURNS_LEFT = 0.8             ## SWTICH TO TOP HARVEST FROM TOP HALITE (FOR EXPLORING)
+    ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT = 0.8             ## SWTICH TO TOP HARVEST FROM TOP HALITE (FOR EXPLORING)
 
 
     ## SPAWNING

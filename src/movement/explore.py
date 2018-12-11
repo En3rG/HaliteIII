@@ -5,6 +5,7 @@ from src.common.print import print_heading, print_matrix
 from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, get_coord_max_closest
 from src.common.matrix.vectorized import myMinDockDistances
 from hlt.positionals import Direction
+from hlt import constants
 from src.common.points import ExplorePoints, ExploreShip, ExploreShip2
 from hlt.positionals import Position
 import heapq
@@ -31,9 +32,11 @@ class Explore(Moves):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
         self.taken_destinations = set()
 
-        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
-        # self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
-                                                                                             ## MAYBE BETTER TO DO THIS ONLY TOWARDS THE END OF GAME
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
+            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
+        else:
+            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
+                                                                                               ## MAYBE BETTER TO DO THIS ONLY TOWARDS THE END OF GAME
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
