@@ -14,6 +14,9 @@ TO DO!!!!!!!!
 ADD COLLISION PREVENTION
 
 
+IF BEST IS TO STAY AND HARVEST IS 0, MUST DO SOMETHING ELSE
+
+
 """
 
 class Harvest(Moves):
@@ -82,7 +85,7 @@ class Harvest(Moves):
 
         ## USING PERCENTILE
         if direction == Direction.Still and \
-                (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] > self.data.myVars.harvest_percentile or self.isBlocked(ship)):
+                (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] >= self.data.myVars.harvest_percentile or self.isBlocked(ship)):
             return True
 
 
@@ -120,7 +123,7 @@ class Harvest(Moves):
         #         and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
         ## USING PERCENTILE
-        return (self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x] > self.data.myVars.harvest_percentile
+        return (self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x] >= self.data.myVars.harvest_percentile
                 and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
 

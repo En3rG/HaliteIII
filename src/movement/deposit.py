@@ -81,7 +81,7 @@ class Deposit(Moves):
             curr_cell = (ship.position.y, ship.position.x)
             coord, distance, value = get_coord_closest(Matrix_val.ONE,
                                                        self.data.myMatrix.locations.myDocks,
-                                                       self.data.init_data.myMatrix.distances[curr_cell],
+                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                        Inequality.EQUAL)
             position = Position(coord[1], coord[0])
             directions = self.get_directions_target(ship, position)

@@ -126,7 +126,7 @@ class Attack(Moves):
         curr_cell = (ship.position.y, ship.position.x)
         coord, distance, val = get_coord_closest(Matrix_val.ONE,
                                                  self.data.myMatrix.locations.enemyShips,
-                                                 self.data.init_data.myMatrix.distances[curr_cell],
+                                                 self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                  Inequality.EQUAL)
         enemy_position = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, enemy_position)

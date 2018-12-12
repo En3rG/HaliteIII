@@ -63,7 +63,7 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING
+    ALLOW_ATTACK_TURNS = 0.85                       ## 0 MEANS NEVER ATTACKING
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
@@ -72,7 +72,8 @@ class MyConstants():
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
-    HARVEST_PERCENTILE = 35
+    HARVEST_ABOVE_PERCENTILE = 25                   ## USED TO BE:
+                                                    ## V28: 35
 
 
     ## EXPLORING
@@ -94,7 +95,7 @@ class MyConstants():
     ALLOW_SPAWNING_2P_40_TURNS = 0.62
     ALLOW_SPAWNING_2P_48_TURNS = 0.64
     ALLOW_SPAWNING_2P_56_TURNS = 0.66
-    ALLOW_SPAWNING_2P_64_TURNS = 0.65
+    ALLOW_SPAWNING_2P_64_TURNS = 0.68
     ALLOW_SPAWNING_4P_32_TURNS = 0.40
     ALLOW_SPAWNING_4P_40_TURNS = 0.45
     ALLOW_SPAWNING_4P_48_TURNS = 0.50

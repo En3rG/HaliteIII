@@ -5,8 +5,10 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myBonusArea
+from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
 from src.common.classes import OrderedSet
+from src.common.print import print_matrix
+import copy
 import abc
 
 
@@ -128,13 +130,23 @@ class Locations():
         self.dock_placement = np.zeros((map_height, map_width), dtype=np.int16)
 
 
+
+class Distances():
+    """
+    CONTAINS DISTANCES MATRIXES
+    """
+    def __init__(self, map_height, map_width):
+        self.cell = {}              ## ONLY FILLED IN INIT
+        self.closest_dock = None
+
+
 class Matrix():
     """
     CONTAINS ALL THE MATRICES
     """
     def __init__(self, map_height, map_width):
         self.halite = Halite(map_height, map_width)
-        self.distances = {} ## ONLY FILLED IN INIT
+        self.distances = Distances(map_height, map_width)
         self.locations = Locations(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
 
@@ -223,6 +235,25 @@ class Data(abc.ABC):
         for dropoff in self.game.me.get_dropoffs():
             self.mySets.dock_coords.add((dropoff.position.y, dropoff.position.x))
             self.myMatrix.locations.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
+
+        ## POPULATE CLOSSEST DOCKS
+        self.populate_distance_docks()
+
+
+    def populate_distance_docks(self):
+        """
+        POPULATE DISTANCE MATRIX TO ALL DOCKS
+        RETURNS DISTANCES OF EACH CELLS TO DOCKS (BEST SCENARIO, BASED ON CLOSEST DOCK)
+        """
+        if getattr(self, 'init_data', None): ## IF THIS IS NONE, ITS AT GETINITDATA
+            distance_matrixes = []
+
+            ## GATHER EACH OF THE DOCK DISTANCES MATRIX
+            for dock_coord in self.mySets.dock_coords:
+                distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
+
+            self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)  ## COMBINE AND GET LEAST DISTANCE
+            return
 
 
     def populate_enemyShipyard_docks(self):
@@ -342,7 +373,7 @@ class Data(abc.ABC):
         """
         POPULATE DISTANCES OF EACH CELLS TO ONE ANOTHER
 
-        self.myMatrix.distances[curr_section][y][x] = distance
+        self.myMatrix.distances.cell[curr_section][y][x] = distance
         """
         height = self.game.game_map.height
         width = self.game.game_map.width
@@ -355,11 +386,11 @@ class Data(abc.ABC):
                 curr_cell = (r, c)
                 ## THIS METHOD WILL TIME OUT (ALSO UNNECESSARY CALCULATIONS
                 ## SINCE DISTANCE MATRIX IS PRETTY SIMILAR
-                # self.myMatrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
-                # print_matrix("Distances (1) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
+                # self.myMatrix.distances.cell[curr_cell] = get_distance_matrix(curr_cell, height, width)
+                # print_matrix("Distances (1) on {}".format(curr_cell), self.myMatrix.distances.cell[curr_cell])
 
-                self.myMatrix.distances[curr_cell] = shift_matrix(r, c, base_matrix) ## SHIFTING/ROLLING SO NO RECALCULATION NEEDED
-                # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
+                self.myMatrix.distances.cell[curr_cell] = shift_matrix(r, c, base_matrix) ## SHIFTING/ROLLING SO NO RECALCULATION NEEDED
+                # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances.cell[curr_cell])
 
 
     def populate_cell_averages(self):
@@ -382,15 +413,15 @@ class Data(abc.ABC):
         """
         ## NO LONGER USED
         ## NOW JUST USING RATIO (HARVEST PER TURN)
-        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
-            ## ORIGINAL
-            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
-            top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
-            self.myMatrix.halite.top_amount[ind] = top
-        else:
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             ## BASED ON HARVEST (INCLUDING INFLUENCE)
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.harvest_with_bonus, top_num_cells)
+            self.myMatrix.halite.top_amount[ind] = top
+        else:
+            ## ORIGINAL
+            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+            top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
             self.myMatrix.halite.top_amount[ind] = top
 
 
@@ -423,10 +454,11 @@ class Data(abc.ABC):
         self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
 
         ## HARVEST PERCENTILE USED FOR HARVEST LATER (WHETHER ITS A GOOD HARVEST OR NOT)
-        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE:
-            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_PERCENTILE))
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE:
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_ABOVE_PERCENTILE))
         else:
-            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_PERCENTILE))
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_ABOVE_PERCENTILE))
+
 
         logging.debug("Average Halite: {} Median Halite {} Harvest Percentile {}".
                         format(self.myVars.average_halite,

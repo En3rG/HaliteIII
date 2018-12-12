@@ -227,7 +227,7 @@ class GetInitData(Data):
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
         curr_cell = (shipyard.position.y, shipyard.position.x)
-        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell], Inequality.EQUAL)
+        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
         while val > 1:
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
@@ -239,7 +239,7 @@ class GetInitData(Data):
                 populate_manhattan(self.myMatrix.locations.dock_placement, Matrix_val.ONE, position, i, cummulative=True)
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX
-            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances[curr_cell], Inequality.EQUAL)
+            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
 
         print_matrix("Final dock placement", self.myMatrix.locations.dock_placement)
 

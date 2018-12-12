@@ -19,6 +19,9 @@ BEST TO HAVE DOCKS CLOSE TO ENEMY AND GAIN ALOT OF INFLUENCE
 DONT BUILD DOCK WHEN AREA HAS BEEN HARVESTED
 
 
+ADD BUILD DOCK WHEN CLOSE ENOUGH TO DOCK PLACEMENT AND FULL, BUILD RATHER THAN GO HOME
+
+
 
 """
 
@@ -90,7 +93,7 @@ class Build(Moves):
                 curr_cell = (ship.position.y, ship.position.x)
                 coord, distance, val = get_coord_closest(self.dock_value,
                                                          self.data.init_data.myMatrix.locations.dock_placement,
-                                                         self.data.init_data.myMatrix.distances[curr_cell],
+                                                         self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                          Inequality.EQUAL)
                 if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
                     dock_position = Position(coord[1], coord[0])
