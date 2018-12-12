@@ -5,7 +5,7 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myTurnCounter, myBonusArea
+from src.common.matrix.vectorized import myRound, myBonusArea
 from src.common.classes import OrderedSet
 import abc
 
@@ -71,6 +71,7 @@ class CellAverage():
     """
     USED TO GET THE AVERAGE HALITE PER CELL IN THE MAP
     BASED ON THE MANHATTAN DISTANCE DEFINED IN COMMON VALUES
+    USED FOR DOCK PLACEMENT
     """
     def __init__(self, map_height, map_width):
         self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)
@@ -151,19 +152,21 @@ class MySets():
         self.ships_died = set()
         self.ships_ally_collision = set()
         self.ships_enemy_collision = set()
-        self.dock_positions = set()
+        self.dock_coords = set()
 
 
 class MyVars():
-    def __init__(self, game):
+    def __init__(self, data, game):
         self.total_halite = 0
         self.average_halite = 0
         self.median_halite = 0
         self.harvest_percentile = 0
         self.isBuilding = False
-        self.canBuild = False
-        self.canSpawn = False
-        self.canAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LEFT) and (len(game.players) == 2)
+        self.allowBuild = False
+        self.allowSpawn = False
+        self.allowAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_ATTACK_TURNS) \
+                           and (len(game.players) == 2) \
+                           and len(data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING
 
 
 class MyDicts():
@@ -181,9 +184,9 @@ class HaliteInfo():
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
-        self.myVars = MyVars(game)
-        self.myDicts = MyDicts()
         self.mySets = MySets(game)
+        self.myVars = MyVars(self, game)
+        self.myDicts = MyDicts()
         self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
 
@@ -214,11 +217,11 @@ class Data(abc.ABC):
         self.myMatrix.locations.myShipyard[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         ## DOCKS
-        self.mySets.dock_positions.add((myShipyard_position.y, myShipyard_position.x))
+        self.mySets.dock_coords.add((myShipyard_position.y, myShipyard_position.x))
         self.myMatrix.locations.myDocks[myShipyard_position.y][myShipyard_position.x] = Matrix_val.ONE
 
         for dropoff in self.game.me.get_dropoffs():
-            self.mySets.dock_positions.add((dropoff.position.y, dropoff.position.x))
+            self.mySets.dock_coords.add((dropoff.position.y, dropoff.position.x))
             self.myMatrix.locations.myDocks[dropoff.position.y][dropoff.position.x] = Matrix_val.ONE
 
 
@@ -318,7 +321,7 @@ class Data(abc.ABC):
         """
         cost = self.myMatrix.halite.amount * 0.1
         #self.myMatrix.halite.cost = np.round(cost)           ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
-        self.myMatrix.halite.cost = myRound(cost)
+        self.myMatrix.halite.cost = myRound(cost)             ## THUS MAKING MY OWN SO IT WILL ROUND UP FOR XX.5
 
 
     def populate_harvest(self):
@@ -355,13 +358,14 @@ class Data(abc.ABC):
                 # self.myMatrix.distances[curr_cell] = get_distance_matrix(curr_cell, height, width)
                 # print_matrix("Distances (1) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
 
-                self.myMatrix.distances[curr_cell] = shift_matrix(r, c, base_matrix)
+                self.myMatrix.distances[curr_cell] = shift_matrix(r, c, base_matrix) ## SHIFTING/ROLLING SO NO RECALCULATION NEEDED
                 # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances[curr_cell])
 
 
     def populate_cell_averages(self):
         """
         POPULATE AVERAGES OF EACH CELL BASED ON DISTANCE
+        USED FOR DETERMINING DOCK PLACEMENT
         """
         ## THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
         for r in range(self.game.game_map.height):
@@ -375,10 +379,10 @@ class Data(abc.ABC):
     def populate_top_halite(self):
         """
         POPULATE TOP HALITE CELLS
-        LIMIT TO LOCAL AREA WITHIN THE FIRST 100 MOVES
         """
-
-        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
+        ## NO LONGER USED
+        ## NOW JUST USING RATIO (HARVEST PER TURN)
+        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             ## ORIGINAL
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
@@ -418,7 +422,8 @@ class Data(abc.ABC):
         self.myVars.average_halite = int(np.average(self.myMatrix.halite.amount))
         self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
 
-        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
+        ## HARVEST PERCENTILE USED FOR HARVEST LATER (WHETHER ITS A GOOD HARVEST OR NOT)
+        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_PERCENTILE))
         else:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_PERCENTILE))
@@ -432,6 +437,7 @@ class Data(abc.ABC):
     def update_dock_placement(self):
         """
         UPDATE DOCK PLACEMENT TO EXCLUDE ENEMY DOCKS/SHIPYARDS
+        REMEMBER, DOCK PLACEMENT IS ONLY CALCULATED IN INIT_DATA
         """
         r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
         self.init_data.myMatrix.locations.dock_placement[r, c] = 0
@@ -447,35 +453,36 @@ class Data(abc.ABC):
 
         if len(self.game.players) == 2:
             if self.game.game_map.height == 32:
-                max_turn_percent = MyConstants.STOP_SPAWNING_2P_32_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
             elif self.game.game_map.height == 40:
-                max_turn_percent = MyConstants.STOP_SPAWNING_2P_40_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
             elif self.game.game_map.height == 48:
-                max_turn_percent = MyConstants.STOP_SPAWNING_2P_48_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
             elif self.game.game_map.height == 56:
-                max_turn_percent = MyConstants.STOP_SPAWNING_2P_56_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
             elif self.game.game_map.height == 64:
-                max_turn_percent = MyConstants.STOP_SPAWNING_2P_64_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
 
         else: ## 4 PLAYERS
             if self.game.game_map.height == 32:
-                max_turn_percent = MyConstants.STOP_SPAWNING_4P_32_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
             elif self.game.game_map.height == 40:
-                max_turn_percent = MyConstants.STOP_SPAWNING_4P_40_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
             elif self.game.game_map.height == 48:
-                max_turn_percent = MyConstants.STOP_SPAWNING_4P_48_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
             elif self.game.game_map.height == 56:
-                max_turn_percent = MyConstants.STOP_SPAWNING_4P_56_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
             elif self.game.game_map.height == 64:
-                max_turn_percent = MyConstants.STOP_SPAWNING_4P_64_TURNS_LEFT
+                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
 
         ratio_left = self.myVars.total_halite / self.starting_halite
 
-        self.myVars.canSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                        and ratio_left > MyConstants.STOP_SPAWNING_HALITE_LEFT
+        self.myVars.allowSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+                                and ratio_left > MyConstants.STOP_SPAWNING_HALITE_LEFT
 
-        self.myVars.canBuild = self.game.turn_number <= constants.MAX_TURNS * MyConstants.STOP_BUILDING_TURNS_LEFT \
-                        and ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT
+        self.myVars.allowBuild = self.game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_BUILDING_TURNS \
+                                and ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT \
+                                and len(self.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING
 
 
     ## NO LONGER USED

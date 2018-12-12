@@ -9,10 +9,10 @@ def shift_matrix(y_shift, x_shift, matrix):
     """
     SHIFT (ROLL) MATRIX GIVEN X & Y
 
-    :param x_shift:
-    :param y_shift:
-    :param matrix:
-    :return:
+    :param x_shift: AMOUNT TO SHIFT IN X DIRECTION
+    :param y_shift: AMOUNT TO SHIFT IN Y DIRECTION
+    :param matrix: MATRIX TO BE SHIFTED
+    :return: UPDATED MATRIX
     """
     return np.roll(np.roll(matrix, shift=x_shift, axis=1), shift=y_shift, axis=0)
 
@@ -23,7 +23,7 @@ def get_distance_matrix(start_tuple, height, width):
 
     WARNING!!! THIS TIMES OUT WHEN USED ON A 64x64 MAP (WHEN USED PER CELL DISTANCE CALCULATION)
 
-    OBSOLETE, NO LONGER USED
+    NOW JUST USED ONCE AS THE BASE, THEN USE SHIFT MATRIX
 
     :param start_tuple: START IN TUPLE
     :param height: HEIGHT OF THE MAP
@@ -76,7 +76,6 @@ def get_indices(seek_value, matrix, condition):
     :param condition:
     :return: LIST OF VALUES
     """
-
     if condition == Inequality.EQUAL:
         r, c = np.where(matrix == seek_value)
     elif condition == Inequality.GREATERTHAN:

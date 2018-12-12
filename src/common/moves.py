@@ -14,7 +14,7 @@ from src.common.print import print_matrix
 
 class Moves(abc.ABC):
     """
-    BASE CLASS USED FOR MOVEMENT LIKE RETREAT AND SHIPS
+    BASE CLASS USED FOR MOVEMENT (RETREAT, DEPOSIT, HARVEST, EXPLORE, ETC)
     """
     def __init__(self, data, prev_data):
         self.data = data
@@ -61,7 +61,9 @@ class Moves(abc.ABC):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
-        self.data.myDicts.positions_taken.setdefault((position.y, position.x), set()).add(ship.id)
+        self.data.myDicts.positions_taken.setdefault((position.y, position.x), set()).add(ship.id) ## KEY AS COORD, VALUE SHIP ID
+                                                                                                   ## USED TO DETERMINE ALLY COLLISIONS
+                                                                                                   ## IF MULTIPLE SHIP IDs WENT HERE
         self.data.myMatrix.locations.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 

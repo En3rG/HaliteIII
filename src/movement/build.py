@@ -32,7 +32,7 @@ class Build(Moves):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        if self.data.myVars.canBuild and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING:
+        if self.data.myVars.allowBuild:
             self.building_now()
             self.building_later()
 

@@ -38,7 +38,7 @@ class Attack(Moves):
         print_heading("Moving attack ships......")
 
         ## MOVE SHIPS CLOSEST TO ENEMY FIRST (WITH ITS SUPPORT SHIP)
-        if self.data.myVars.canAttack and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING:
+        if self.data.myVars.allowAttack:
             for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE):  ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
                 matrix = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
                 r, c = np.where(matrix > Matrix_val.ZERO)
@@ -117,6 +117,7 @@ class Attack(Moves):
             if id > Matrix_val.ZERO: ids.add(id)
 
         return ids
+
 
     def get_enemy(self, ship):
         """

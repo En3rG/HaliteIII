@@ -32,7 +32,7 @@ class Explore(Moves):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
         self.taken_destinations = set()
 
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
@@ -282,7 +282,7 @@ class Explore(Moves):
         RETURNS DISTANCES OF EACH CELLS TO DOCKS (BEST SCENARIO)
         """
         distance_matrixes = []
-        for dock_coord in self.data.mySets.dock_positions:
+        for dock_coord in self.data.mySets.dock_coords:
             distance_matrixes.append(copy.deepcopy(self.data.init_data.myMatrix.distances[dock_coord]))
 
         return myMinDockDistances(*distance_matrixes)

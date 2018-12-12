@@ -18,18 +18,6 @@ def rounder(x):
 myRound = np.vectorize(rounder)
 
 
-def turnCounter(harvestTurns, distance):
-    """
-    :param harvestTurns:
-    :param distance:
-    :return: TOTAL NUMBER OF TURNS TO DEPLETE HALITE TO BELOW DONT HARVEST POINT
-             PLUS TOTAL TIME TO GET TO/FROM SHIPYARD
-    """
-    return distance + harvestTurns + distance
-
-myTurnCounter = np.vectorize(turnCounter)
-
-
 def bonusArea(harvest, influence):
     """
     POPULATE BONUS HARVEST
@@ -89,3 +77,15 @@ myMinDockDistances = np.vectorize(minDockDistances)
 #     return counter
 #
 # myHarvestCounter = np.vectorize(harvestCounter)
+
+
+# def turnCounter(harvestTurns, distance):
+#     """
+#     :param harvestTurns:
+#     :param distance:
+#     :return: TOTAL NUMBER OF TURNS TO DEPLETE HALITE TO BELOW DONT HARVEST POINT
+#              PLUS TOTAL TIME TO GET TO/FROM SHIPYARD
+#     """
+#     return distance + harvestTurns + distance
+#
+# myTurnCounter = np.vectorize(turnCounter)
