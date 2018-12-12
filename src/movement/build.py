@@ -29,7 +29,9 @@ class Build(Moves):
     def __init__(self, data, prev_data):
         super().__init__(data, prev_data)
 
+        self.ships_building_towards_dock = {} ## KEY AS DOCK COORD, VALUES ARE SHIP IDs GOING THERE
         self.move_ships()
+
 
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
@@ -99,15 +101,20 @@ class Build(Moves):
             directions = self.get_directions_target(ship, dock_position)
 
             if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
-                self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                self.ships_building_towards_dock.setdefault(coord, set())
+                if len(self.ships_building_towards_dock[coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
+                    self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
-                ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
-                ## ALSO MAKE SURE ITS SAFE TO GO THERE
-                if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
-                        and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
-                    self.move_mark_unsafe(ship, directions[0]) ## DIRECTION IS A LIST OF DIRECTIONS
-                else:
-                    self.move_mark_unsafe(ship, Direction.Still)
+                    ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
+                    ## ALSO MAKE SURE ITS SAFE TO GO THERE
+                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
+                            and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
+                        self.move_mark_unsafe(ship, directions[0]) ## DIRECTION IS A LIST OF DIRECTIONS
+                    else:
+                        self.move_mark_unsafe(ship, Direction.Still)
+
+                    ## SHIP COUNTER PER DOCK
+                    self.ships_building_towards_dock[coord].add(ship.id)
 
 
     def go_towards_building(self):
@@ -132,14 +139,25 @@ class Build(Moves):
                                                                  Inequality.EQUAL)
 
                         if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
-                            dock_position = Position(coord[1], coord[0])
-                            directions = self.get_directions_target(ship, dock_position)
+                            self.ships_building_towards_dock.setdefault(coord, set())
+                            if len(self.ships_building_towards_dock[coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
+                                dock_position = Position(coord[1], coord[0])
+                                directions = self.get_directions_target(ship, dock_position)
 
-                            if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
-                                # self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
-                                self.data.mySets.ships_building.add(ship_id)
-                                direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
-                                self.move_mark_unsafe(ship, direction)
+                                if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
+                                    # self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                                    self.data.mySets.ships_building.add(ship_id)
+                                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
+                                    self.move_mark_unsafe(ship, direction)
+
+                                    ## SHIP COUNTER PER DOCK
+                                    self.ships_building_towards_dock[coord].add(ship.id)
+
+    def withinLimit_ships(self):
+        """
+        CHECK IF SHIPS BUILDING IS WITHIN PERCENT LIMIT
+        """
+        return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
 
 
     def get_move_points_building(self, ship, directions):
