@@ -31,7 +31,7 @@ class Harvest(Moves):
         print_heading("Moving harvesting (now) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NOW)
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
-            self.harvestNow(ship_id)
+            self.check_harvestNow(ship_id)
 
 
         print_heading("Moving harvesting (later) ships......")
@@ -43,18 +43,18 @@ class Harvest(Moves):
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.mySets.ships_kicked:
                 ship_kicked = self.data.mySets.ships_kicked.pop()
-                self.harvestLater(ship_kicked, kicked=True)
+                self.check_harvestLater(ship_kicked, kicked=True)
 
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
             if ship_id in self.data.mySets.ships_to_move:
-                self.harvestLater(ship_id)
+                self.check_harvestLater(ship_id)
 
         ## MERGE TEMP BACK TO SHIPS KICKED
         ## UNION WITH ships_to_move IN CASE SHIP MOVED
         self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
 
 
-    def harvestNow(self, ship_id):
+    def check_harvestNow(self, ship_id):
         """
         CHECK IF SHIP WILL HARVEST NOW, IF SO, MOVE IT
         """
@@ -62,11 +62,11 @@ class Harvest(Moves):
 
         # direction = self.get_highest_harvest_move(ship)
         direction = self.best_direction(ship, mode=MoveMode.HARVEST)
-        if self.isHarvesting(direction, ship):
+        if self.isHarvestingNow(direction, ship):
             self.move_mark_unsafe(ship, direction)
 
 
-    def isHarvesting(self, direction, ship):
+    def isHarvestingNow(self, direction, ship):
         """
         CHECK IF SHIP IS HARVESTING NOW
         """
@@ -86,7 +86,7 @@ class Harvest(Moves):
             return True
 
 
-    def harvestLater(self, ship_id, kicked=False):
+    def check_harvestLater(self, ship_id, kicked=False):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
         """
@@ -94,14 +94,14 @@ class Harvest(Moves):
 
         # direction = self.get_highest_harvest_move(ship)
         direction = self.best_direction(ship, mode=MoveMode.HARVEST)
-        if self.isGoodHarvest(ship, direction):
+        if self.isHarvestingLater(ship, direction):
             self.move_mark_unsafe(ship, direction)
 
         elif kicked: ## IF NOT A GOOD HARVEST AND KICKED, ADD TO TEMP TO BE MOVED LATER FOR EXPLORE
             self.ships_kicked_temp.add(ship_id)
 
 
-    def isGoodHarvest(self, ship, direction):
+    def isHarvestingLater(self, ship, direction):
         """
         CHECKS IF THE DESTINATION HAVE A POTENTIAL HARVEST ABOVE THE THRESHOLD
 

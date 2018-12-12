@@ -14,8 +14,6 @@ TO DO!!!!
 
 IF DOCK IS BLOCKED, SHOULD GO AROUND OR COLLIDE WITH ENEMY
 
-ADD COLLISION PREVENTION TO ENEMY
-
 
 """
 
@@ -43,7 +41,7 @@ class Deposit(Moves):
             for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
                 ship = self.data.game.me._ships.get(ship_id)
 
-                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:
+                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords: ## SHIP ALREADY IN DOCK
                     self.populate_heap(ship)
 
         ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -52,14 +50,14 @@ class Deposit(Moves):
             logging.debug("Moving kicked ship ({}) for deposit".format(ship_kicked))
             ship = self.data.game.me._ships.get(ship_kicked)
             directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
-            self.returning(ship, directions)  ## CANNOT ASSUME SHIP KICKED BY DEPART IS RETURNING!!!!!!!!!1
+            self.depositNow(ship, directions)  ## CANNOT ASSUME SHIP KICKED BY DEPART IS RETURNING!!!!!!!!!1
 
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
             if s.ship_id in self.data.mySets.ships_to_move:    ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
                 ship = self.data.game.me._ships.get(s.ship_id)
-                self.returning(ship, s.directions)
+                self.depositNow(ship, s.directions)
 
 
     def populate_heap(self, ship):
@@ -92,7 +90,7 @@ class Deposit(Moves):
             heapq.heappush(self.heap_dist, s)
 
 
-    def returning(self, ship, directions):
+    def depositNow(self, ship, directions):
         """
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
         """

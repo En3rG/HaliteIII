@@ -41,7 +41,7 @@ class Retreat(Moves):
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turns_left))
 
         if self.farthest_ship.distance + MyConstants.RETREAT_EXTRA_TURNS > self.turns_left:
-            self.retreat_ships()
+            self.move_ships()
 
 
     def populate_heap(self):
@@ -73,7 +73,7 @@ class Retreat(Moves):
             heapq.heappush(self.heap_dist, s)
 
 
-    def retreat_ships(self):
+    def move_ships(self):
         """
         MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD/DOCKS
         """

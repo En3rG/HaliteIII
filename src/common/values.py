@@ -63,7 +63,7 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ALLOW_ATTACK_TURNS = 0.00                       ## 0 MEANS NEVER ATTACKING
+    ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 

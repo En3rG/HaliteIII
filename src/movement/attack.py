@@ -57,13 +57,13 @@ class Attack(Moves):
                     first_ship = self.data.game.me._ships.get(s.ship_id)
                     direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
-                    ## NO NEED TO MOVE, IF STAYING STILL
+                    if direction != Direction.Still:
+                    ## IF STAYING STILL, NO NEED TO MOVE
                     ## FIRST SHIP WILL JUST HARVEST/EXPLORE
                     ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
-                    if direction != Direction.Still:
                         self.move_mark_unsafe(first_ship, direction)
 
-                        logging.debug("Attacking!!!! ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
+                        logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
 
                         for support_id in sorted(s.support_ships):                      ## ADD SORTED TO HAVE SAME ORDER ONLINE
                             if support_id in self.data.mySets.ships_to_move:            ## DONT MOVE SHIPS THAT ALREADY MOVED

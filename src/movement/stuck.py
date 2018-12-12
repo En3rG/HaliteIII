@@ -18,12 +18,9 @@ class Stuck(Moves):
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             ship = self.data.game.me._ships.get(ship_id)
 
-            #if self.data.myMatrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:  ## NOT ENOUGH TO LEAVE
             if self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x] == Matrix_val.ONE:
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
-                direction = Direction.Still
-
-                self.move_mark_unsafe(ship, direction)
+                self.move_mark_unsafe(ship, Direction.Still)
 
 
         ## USING NP.WHERE

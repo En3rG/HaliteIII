@@ -8,7 +8,7 @@ def avoid_collision_direction(Moves, ship, directions):
     """
     GET BEST DIRECTION FOR KICKED SHIP
 
-    :param Moves: MOVES OBJECT, TO ACCESS data AND OTHER MOVES FUNCTIONS
+    :param Moves: Moves OBJECT, TO ACCESS data AND OTHER MOVES FUNCTIONS
     :param ship: SHIP OBJECT
     :param directions: DIRECTIONS DETERMINED BEFORE, BUT BEST ONE WILL COLLIDE
     :return: BEST DIRECTION
@@ -21,8 +21,12 @@ def avoid_collision_direction(Moves, ship, directions):
 def get_move_points_collision(Moves, ship, directions):
     """
     GET POINTS FOR IMMINENT COLLISION PREVENTION
-    """
 
+    :param Moves:
+    :param ship:
+    :param directions: DIRECTIONS SHIP WAS ORIGINALLY GOING
+    :return:
+    """
     points = []
     try: directions_set = OrderedSet(directions)
     except: directions_set = OrderedSet()
