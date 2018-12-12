@@ -63,8 +63,10 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ALLOW_ATTACK_TURNS = 0.80                       ## USED TO BE:
+    ALLOW_ATTACK_TURNS = 0.00                       ## 0 MEANS NEVER ATTACKING
+                                                    ## USED TO BE:
                                                     ## V28: 0.80
+
 
 
     ## HARVEST
@@ -80,8 +82,10 @@ class MyConstants():
                                                     ## V14: 0.04
 
 
-    EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.8      ## SWITCH TO HARVEST+BONUS FOR EXPLORING & HARVEST CLOSEBY
-    HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.8
+    EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 1.00    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+                                                    ## 1 MEANS NEVER WILL USE IT
+    HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.00    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
+                                                    ## 0 MEANS ALWAYS WILL USE IT
 
     ## SPAWNING
     STOP_SPAWNING_HALITE_LEFT = 0.40                ## USED TO BE:
