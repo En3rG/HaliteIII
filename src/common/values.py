@@ -49,7 +49,9 @@ class MyConstants():
     STOP_BUILDING_HALITE_LEFT = 0.30
     NUM_SHIPS_BEFORE_BUILDING = 10
 
-    DOCK_MANHATTAN = 1                              ## 0 MEANS JUST ITSELF, 1 MEANS INCLUDING ITS DIRECT NEIGHBORS
+    DOCK_MANHATTAN = 7                              ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
+                                                    ## USED TO BE:
+                                                    ## V28: 2
     AVERAGE_MANHATTAN_DISTANCE = 6                  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
     TOP_N = 20                                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
                                                     ## USED TO BE:
@@ -63,7 +65,7 @@ class MyConstants():
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
-    ALLOW_ATTACK_TURNS = 0.85                       ## 0 MEANS NEVER ATTACKING
+    ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
@@ -72,7 +74,7 @@ class MyConstants():
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
-    HARVEST_ABOVE_PERCENTILE = 25                   ## USED TO BE:
+    HARVEST_ABOVE_PERCENTILE = 35                   ## USED TO BE:
                                                     ## V28: 35
 
 

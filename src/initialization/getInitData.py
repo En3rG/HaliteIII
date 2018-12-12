@@ -235,7 +235,7 @@ class GetInitData(Data):
 
             ## POPULATE DOCK PLACEMENT
             # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
-            for i in range(0, MyConstants.DOCK_MANHATTAN + 1):
+            for i in range(0, MyConstants.DOCK_MANHATTAN):
                 populate_manhattan(self.myMatrix.locations.dock_placement, Matrix_val.ONE, position, i, cummulative=True)
 
             ## GET COORD OF HIGHEST VALUE IN MATRIX

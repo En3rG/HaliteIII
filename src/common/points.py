@@ -553,10 +553,9 @@ class BuildPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR BUILDING
     """
-    def __init__(self, safe, full, harvest, direction):
+    def __init__(self, safe, cost, direction):
         self.safe = safe
-        self.full = full
-        self.harvest = harvest
+        self.cost = -cost
         self.direction = direction
 
     def __gt__(self, other):
@@ -565,13 +564,9 @@ class BuildPoints():
                 return True
             elif self.safe < other.safe:
                 return False
-            elif self.full > other.full:
+            elif self.cost > other.cost:
                 return True
-            elif self.full < other.full:
-                return False
-            elif self.harvest > other.harvest:
-                return True
-            elif self.harvest < other.harvest:
+            elif self.cost < other.cost:
                 return False
             else:
                 return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
@@ -584,13 +579,9 @@ class BuildPoints():
                 return True
             elif self.safe > other.safe:
                 return False
-            elif self.full < other.full:
+            elif self.cost < other.cost:
                 return True
-            elif self.full > other.full:
-                return False
-            elif self.harvest < other.harvest:
-                return True
-            elif self.harvest > other.harvest:
+            elif self.cost > other.cost:
                 return False
             else:
                 return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
@@ -598,11 +589,10 @@ class BuildPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} full: {} harvest: {} direction: {}".format(
+        return "{} safe: {} cost: {} direction: {}".format(
             self.__class__.__name__,
             self.safe,
-            self.full,
-            self.harvest,
+            self.cost,
             self.direction)
 
 
