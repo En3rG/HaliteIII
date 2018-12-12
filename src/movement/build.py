@@ -123,10 +123,10 @@ class Build(Moves):
                 for ship_id in ships_going_dock:
                     ship = self.data.game.me._ships.get(ship_id)
 
-                    if ship.halite_amount > 1000 or ship_id in self.prev_data.ships_returning:
+                    if ship.halite_amount == 1000 or ship_id in self.prev_data.ships_building:
                         ## GET DOCK POSITION
                         curr_cell = (ship.position.y, ship.position.x)
-                        coord, distance, val = get_coord_closest(self.MyConstants.DOCK_MANHATTAN,
+                        coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
                                                                  self.data.init_data.myMatrix.locations.dock_placement,
                                                                  self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                                  Inequality.EQUAL)
@@ -137,6 +137,7 @@ class Build(Moves):
 
                             if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
                                 # self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                                self.data.mySets.ships_building.add(ship_id)
                                 direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
                                 self.move_mark_unsafe(ship, direction)
 
@@ -162,7 +163,7 @@ class Build(Moves):
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(BuildPoints(safe=safe, cost=0, direction=Direction.Still))
+        points.append(BuildPoints(safe=safe, cost=999, direction=Direction.Still))
 
         logging.debug(points)
 

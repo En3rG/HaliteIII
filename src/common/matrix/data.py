@@ -164,6 +164,7 @@ class MySets():
         self.ships_died = set()
         self.ships_ally_collision = set()
         self.ships_enemy_collision = set()
+        self.ships_building = set()
         self.dock_coords = set()
 
 

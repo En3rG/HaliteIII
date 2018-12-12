@@ -98,12 +98,7 @@ class GetInitData(Data):
         average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
 
         ## POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
-        ## SO NO DOCK WILL BE TOO CLOSE TO SHIPYARD
-        populate_manhattan(self.unavailable_area,
-                           Matrix_val.UNAVAILABLE,
-                           self.game.me.shipyard.position,
-                           MyConstants.MIN_DIST_BTW_DOCKS,
-                           cummulative=False)
+        self.populate_shipyards_unavailable()
 
         ## GET INDEXES OF TOP N AVERAGES
         for _ in range(MyConstants.TOP_N):
@@ -145,6 +140,29 @@ class GetInitData(Data):
                     break
 
             if quit: break
+
+
+    def populate_shipyards_unavailable(self):
+        """
+        POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
+        SO NO DOCK WILL BE TOO CLOSE TO SHIPYARD
+        """
+        ## POPULATE AROUND MY SHIPYARD
+        populate_manhattan(self.unavailable_area,
+                           Matrix_val.UNAVAILABLE,
+                           self.game.me.shipyard.position,
+                           MyConstants.MIN_DIST_BTW_DOCKS,
+                           cummulative=False)
+
+        ## POPULATE AROUND ENEMY SHIPYARD
+        for id, player in self.game.players.items():
+            if id != self.game.me.id:
+                populate_manhattan(self.unavailable_area,
+                                   Matrix_val.UNAVAILABLE,
+                                   player.shipyard.position,
+                                   MyConstants.MIN_DIST_BTW_DOCKS,
+                                   cummulative=False)
+
 
 
     def get_closest_top_halite(self, loc_top_ave, pos_top_ave):

@@ -64,12 +64,6 @@ class Explore(Moves):
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
         ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
-            ## MOVE KICKED SHIPS FIRST (IF ANY)
-            while self.data.mySets.ships_kicked:
-                ship_kicked = self.data.mySets.ships_kicked.pop()
-                logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
-                self.exploreNow(ship_kicked)
-
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
             if ship_id in self.data.mySets.ships_to_move:
                 self.populate_heap(ship_id)
@@ -87,18 +81,26 @@ class Explore(Moves):
 
 
         while self.heap_dist:
+            ## MOVE KICKED SHIPS FIRST (IF ANY)
+            while self.data.mySets.ships_kicked:
+                ship_kicked = self.data.mySets.ships_kicked.pop()
+                if ship_kicked in self.data.mySets.ships_to_move:
+                    logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
+                    self.exploreNow(ship_kicked)
+
             s = heapq.heappop(self.heap_dist)                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug(s)                                        ## EXPLORE SHIP OBJECT
 
-            ship = self.data.game.me._ships.get(s.ship_id)
+            if s.ship_id in self.data.mySets.ships_to_move:
+                ship = self.data.game.me._ships.get(s.ship_id)
 
-            destination = self.get_untaken_destination(s)
+                destination = self.get_untaken_destination(s)
 
-            if destination:
-                directions = self.get_directions_target(ship, destination)
-                direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-                self.mark_taken_udpate_top_halite(destination)
-                self.move_mark_unsafe(ship, direction)
+                if destination:
+                    directions = self.get_directions_target(ship, destination)
+                    direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                    self.mark_taken_udpate_top_halite(destination)
+                    self.move_mark_unsafe(ship, direction)
 
 
     def exploreNow(self, ship_id):
