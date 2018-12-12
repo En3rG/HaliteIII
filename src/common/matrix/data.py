@@ -417,8 +417,11 @@ class Data(abc.ABC):
     def get_mean_median_halite(self):
         self.myVars.average_halite = int(np.average(self.myMatrix.halite.amount))
         self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
-        self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_PERCENTILE))
 
+        if self.game.turn_number <= constants.MAX_TURNS * MyConstants.ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT:
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_PERCENTILE))
+        else:
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_PERCENTILE))
 
         logging.debug("Average Halite: {} Median Halite {} Harvest Percentile {}".
                         format(self.myVars.average_halite,

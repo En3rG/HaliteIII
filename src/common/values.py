@@ -80,7 +80,7 @@ class MyConstants():
                                                     ## V14: 0.04
 
 
-    ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT = 0.8             ## SWTICH TO TOP HARVEST FROM TOP HALITE (FOR EXPLORING)
+    ENABLE_HARVEST_WITH_BONUS_TURNS_LEFT = 0.8      ## SWITCH TO HARVEST+BONUS FOR EXPLORING & HARVEST CLOSEBY
 
 
     ## SPAWNING
