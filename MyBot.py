@@ -12,6 +12,7 @@ from src.movement.retreat import Retreat
 from src.movement.attack import Attack
 from src.movement.harass import Harass
 from src.movement.build import Build
+from src.movement.earlygame import EarlyGame
 from src.common.halite_statistics import Halite_stats
 from src.common.print import print_heading
 import copy
@@ -61,6 +62,8 @@ while True:
 
     ## EXTRACT GAME DATA
     data = GetData(game, init_data, prev_data, halite_stats)
+
+    a = EarlyGame(data, prev_data)
 
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)

@@ -160,29 +160,4 @@ class Build(Moves):
         return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
 
 
-    def get_move_points_building(self, ship, directions):
-        """
-        GET POINTS FOR BULDING
-        GET DIRECTION WITH LEAST COST
 
-        :param ship:
-        :param directions:
-        :return: POINTS
-        """
-        points = []
-
-        for direction in directions:
-            ## POINTS FOR MOVING
-            destination = self.get_destination(ship, direction)
-            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
-            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            b = BuildPoints(safe, cost, direction)
-            points.append(b)
-
-        ## POINTS FOR STAYING
-        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(BuildPoints(safe=safe, cost=999, direction=Direction.Still))
-
-        logging.debug(points)
-
-        return points

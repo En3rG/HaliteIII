@@ -5,7 +5,7 @@ from src.common.print import print_heading, print_matrix
 from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, get_coord_max_closest
 from hlt.positionals import Direction
 from hlt import constants
-from src.common.points import ExplorePoints, ExploreShip, ExploreShip2
+from src.common.points import ExploreShip, ExploreShip2
 from hlt.positionals import Position
 import heapq
 from collections import deque
@@ -274,37 +274,3 @@ class Explore(Moves):
         return harvest_per_turn_ratio_matrix
 
 
-    def get_move_points_explore(self, ship, directions):
-        """
-        GET POINTS FOR MOVING EXPLORING SHIPS
-
-        :param ship:
-        :param directions: DIRECTIONS TO CONSIDER
-        :return:
-        """
-        points = []
-
-        for direction in directions:
-            destination = self.get_destination(ship, direction)
-
-            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
-            occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
-            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
-
-            c = ExplorePoints(safe, occupied, potential_enemy_collision, cost, direction)
-            points.append(c)
-
-        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        occupied = 0 if self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
-        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
-
-        points.append(ExplorePoints(safe=safe,
-                                    occupied=occupied,
-                                    potential_enemy_collision=potential_enemy_collision,
-                                    cost=999,
-                                    direction=Direction.Still))
-
-        logging.debug(points)
-
-        return points

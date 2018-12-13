@@ -8,8 +8,10 @@ from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.matrix.functions import move_populate_manhattan, get_index_highest_val
 from src.common.matrix.data import Section
 from src.movement.collision_prevention import avoid_collision_direction
-from src.common.points import HarvestPoints
+from src.common.points import HarvestPoints, ExplorePoints, SupportPoints, AttackPoints, BuildPoints, DepositPoints, \
+                            RetreatPoints, CollisionPoints
 from src.common.print import print_matrix
+from src.common.classes import OrderedSet
 
 
 class Moves(abc.ABC):
@@ -229,6 +231,277 @@ class Moves(abc.ABC):
         x = new_pos.x % self.data.game.game_map.width
         y = new_pos.y % self.data.game.game_map.height
         return Position(x, y)
+
+
+    def get_move_points_explore(self, ship, directions):
+        """
+        GET POINTS FOR MOVING EXPLORING SHIPS
+
+        :param ship:
+        :param directions: DIRECTIONS TO CONSIDER
+        :return:
+        """
+        points = []
+
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][
+                destination.x]
+
+            c = ExplorePoints(safe, occupied, potential_enemy_collision, cost, direction)
+            points.append(c)
+
+        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
+        occupied = 0 if self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][
+            ship.position.x]
+
+        points.append(ExplorePoints(safe=safe,
+                                    occupied=occupied,
+                                    potential_enemy_collision=potential_enemy_collision,
+                                    cost=999,
+                                    direction=Direction.Still))
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_move_points_attacking(self, ship, directions):
+        """
+        GET POINTS FOR ATTACKING
+
+        :param ship:
+        :param directions:
+        :return: POINTS
+        """
+        points = []
+
+        for direction in directions:
+            ## POINTS FOR MOVING
+            destination = self.get_destination(ship, direction)
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+
+            a = AttackPoints(safe, direction)
+            points.append(a)
+
+        ## POINTS FOR STAYING
+        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
+        points.append(AttackPoints(safe=safe, direction=Direction.Still))
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_move_points_supporting(self, ship, directions):
+        """
+        GET POINTS FOR SUPPORTING
+
+        :param ship:
+        :param directions:
+        :return: POINTS
+        """
+        points = []
+
+        for direction in directions:
+            ## POINTS FOR MOVING
+            destination = self.get_destination(ship, direction)
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+
+            s = SupportPoints(safe, direction)
+            points.append(s)
+
+        ## POINTS FOR STAYING
+        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
+        points.append(SupportPoints(safe=safe, direction=Direction.Still))
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_move_points_building(self, ship, directions):
+        """
+        GET POINTS FOR BULDING
+        GET DIRECTION WITH LEAST COST
+
+        :param ship:
+        :param directions:
+        :return: POINTS
+        """
+        points = []
+
+        for direction in directions:
+            ## POINTS FOR MOVING
+            destination = self.get_destination(ship, direction)
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            b = BuildPoints(safe, cost, direction)
+            points.append(b)
+
+        ## POINTS FOR STAYING
+        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
+        points.append(BuildPoints(safe=safe, cost=999, direction=Direction.Still))
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_move_points_returning(self, ship, directions):
+        """
+        GET POINTS FOR RETURNING
+
+        :param ship:
+        :param directions: CLEAN POSSIBLE DIRECTIONS
+        :return:
+        """
+        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[ship.position.y][ship.position.x]
+        points = [DepositPoints(safe=1,
+                                dock=0,
+                                enemy_occupied=0,
+                                potential_enemy_collision=potential_enemy_collision,
+                                potential_ally_collision=potential_ally_collision,
+                                cost=999,
+                                direction=Direction.Still)]
+
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            dock = 1 if self.data.myMatrix.locations.myDocks[destination.y][destination.x] else 0
+            enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
+            cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
+            potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
+
+            c = DepositPoints(safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction)
+            points.append(c)
+
+        logging.debug(points)
+        return points
+
+
+    def get_move_points_harvest(self, ship):
+        """
+        GET POINTS FOR HARVESTING
+
+        :param ship:
+        :param directions: DIRECTIONS TO CONSIDER
+        :return:
+        """
+        points = []
+        leave_cost, harvest_stay = self.get_harvest(ship, Direction.Still)
+        self.set_harvestPoints(ship, Direction.Still, harvest_stay, points)
+
+        for direction in MyConstants.DIRECTIONS:
+            cost, harvest = self.get_harvest(ship, direction, leave_cost, harvest_stay)
+            self.set_harvestPoints(ship, direction, harvest, points)
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_harvest(self, ship, direction, leave_cost=None, harvest_stay=None):
+        """
+        HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
+
+        :return: COST AND HARVEST AMOUNT
+        """
+        destination = self.get_destination(ship, direction)
+        harvest_with_bonus = self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
+        cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+
+        if direction != Direction.Still:
+            twoTurn_harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
+            harvest_with_bonus = harvest_with_bonus - leave_cost - twoTurn_harvest
+
+        return cost, harvest_with_bonus
+
+
+    def set_harvestPoints(self, ship, direction, harvest, points):
+        """
+        GATHER POINTS WITH DIRECTION PROVIDED
+
+        :param direction:
+        :param harvest:
+        :return:
+        """
+        destination = self.get_destination(ship, direction)
+        safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][
+            destination.x]
+        occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
+        enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
+
+        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction)
+        points.append(c)
+
+
+    def get_move_points_retreat(self, ship, directions):
+        """
+        GET POINTS FOR RETREATING
+
+        :param ship:
+        :param directions: CLEAN POSSIBLE DIRECTIONS
+        :return:
+        """
+        ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
+        points = [RetreatPoints(shipyard=0, safe=1, stuck=0, potential_ally_collision=-999, direction=Direction.Still)]
+
+        for direction in directions:
+            destination = self.get_destination(ship, direction)
+
+            shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
+            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
+
+            c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
+            points.append(c)
+
+        logging.debug(points)
+
+        return points
+
+    def get_move_points_collision(self, ship, directions):
+        """
+        GET POINTS FOR IMMINENT COLLISION PREVENTION
+
+        :param ship:
+        :param directions: DIRECTIONS SHIP WAS ORIGINALLY GOING
+        :return:
+        """
+        points = []
+        try:
+            directions_set = OrderedSet(directions)
+        except:
+            directions_set = OrderedSet()
+
+        for direction in MyConstants.DIRECTIONS:  ## HAS NO STILL (KICKED, NEED TO MOVE)
+            destination = self.get_destination(ship, direction)
+
+            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
+            priority_direction = 1 if direction in directions_set else 0
+            cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]
+            harvest = self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
+            harvest_amnt = harvest - cost
+
+            c = CollisionPoints(safe, occupied, priority_direction, harvest_amnt, direction)
+            points.append(c)
+
+        logging.debug(points)
+
+        return points
 
 
     ## NO LONGER USED

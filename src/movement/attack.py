@@ -3,7 +3,7 @@ from src.common.moves import Moves
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import get_coord_closest
-from src.common.points import AttackPoints, SupportShip, SupportPoints
+from src.common.points import SupportShip
 from hlt.positionals import Direction
 from src.common.classes import OrderedSet
 import numpy as np
@@ -134,55 +134,3 @@ class Attack(Moves):
         return directions, enemy_position
 
 
-    def get_move_points_attacking(self, ship, directions):
-        """
-        GET POINTS FOR ATTACKING
-
-        :param ship:
-        :param directions:
-        :return: POINTS
-        """
-        points = []
-
-        for direction in directions:
-            ## POINTS FOR MOVING
-            destination = self.get_destination(ship, direction)
-            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
-
-            a = AttackPoints(safe, direction)
-            points.append(a)
-
-        ## POINTS FOR STAYING
-        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(AttackPoints(safe=safe, direction=Direction.Still))
-
-        logging.debug(points)
-
-        return points
-
-
-    def get_move_points_supporting(self, ship, directions):
-        """
-        GET POINTS FOR SUPPORTING
-
-        :param ship:
-        :param directions:
-        :return: POINTS
-        """
-        points = []
-
-        for direction in directions:
-            ## POINTS FOR MOVING
-            destination = self.get_destination(ship, direction)
-            safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
-
-            s = SupportPoints(safe, direction)
-            points.append(s)
-
-        ## POINTS FOR STAYING
-        safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(SupportPoints(safe=safe, direction=Direction.Still))
-
-        logging.debug(points)
-
-        return points

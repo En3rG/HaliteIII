@@ -102,8 +102,6 @@ class GetInitData(Data):
 
         ## GET INDEXES OF TOP N AVERAGES
         for _ in range(MyConstants.TOP_N):
-            print_matrix("Current average manhattan", average_manhattan)
-
             keep_looking = True
             quit = False
 
