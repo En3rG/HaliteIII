@@ -669,6 +669,55 @@ class SupportPoints():
             self.safe,
             self.direction)
 
+class StartPoints():
+    """
+    USED TO DETERMINE BEST DIRECTION FOR START GAME
+    """
+
+    def __init__(self, safe, hasShip, harvest, direction):
+        self.safe = safe        ## NEED FOR BEST DIRECTION (IGNORING)
+        self.hasShip = -hasShip
+        self.harvest = harvest
+        self.direction = direction
+
+    def __gt__(self, other):
+        if isinstance(other, StartPoints):
+            if self.hasShip > other.hasShip:
+                return True
+            elif self.hasShip < other.hasShip:
+                return False
+            elif self.harvest > other.harvest:
+                return True
+            elif self.harvest < other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, StartPoints):
+            if self.hasShip < other.hasShip:
+                return True
+            elif self.hasShip > other.hasShip:
+                return False
+            elif self.harvest < other.harvest:
+                return True
+            elif self.harvest > other.harvest:
+                return False
+            else:
+                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} hasShip: {} harvest: {} direction: {}".format(
+            self.__class__.__name__,
+            self.hasShip,
+            self.harvest,
+            self.direction)
+
+
 
 ## NO LONGER USED
 # class DepartPoints():

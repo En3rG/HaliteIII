@@ -140,6 +140,10 @@ class Moves(abc.ABC):
             points = self.get_move_points_attacking(ship, directions)
         elif mode == MoveMode.SUPPORTING:
             points = self.get_move_points_supporting(ship, directions)
+        elif mode == MoveMode.MAXSTART:
+            points = self.get_move_points_maxstart(ship)
+        elif mode == MoveMode.MINSTART:
+            points = self.get_move_points_minstart(ship)
         else:
             raise NotImplemented
 

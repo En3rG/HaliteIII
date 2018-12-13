@@ -17,6 +17,8 @@ class MoveMode():
     BUILDING = "building"
     ATTACKING = "attacking"
     SUPPORTING = "supporting"
+    MAXSTART = "maxstart"
+    MINSTART = "minstart"
 
 
 class Matrix_val():
