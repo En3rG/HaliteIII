@@ -141,7 +141,61 @@ class Harvest(Moves):
         return unsafe_num == 4
 
 
+    def get_move_points_harvest(self, ship):
+        """
+        GET POINTS FOR HARVESTING
 
+        :param ship:
+        :param directions: DIRECTIONS TO CONSIDER
+        :return:
+        """
+        points = []
+        leave_cost, harvest_stay = self.get_harvest(ship, Direction.Still)
+        self.set_harvestPoints(ship, Direction.Still, harvest_stay, points)
+
+        for direction in MyConstants.DIRECTIONS:
+            cost, harvest = self.get_harvest(ship, direction, leave_cost, harvest_stay)
+            self.set_harvestPoints(ship, direction, harvest, points)
+
+        logging.debug(points)
+
+        return points
+
+
+    def get_harvest(self, ship, direction, leave_cost=None, harvest_stay=None):
+        """
+        HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
+
+        :return: COST AND HARVEST AMOUNT
+        """
+        destination = self.get_destination(ship, direction)
+        harvest_with_bonus = self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
+        cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+
+        if direction != Direction.Still:
+            twoTurn_harvest = harvest_stay + harvest_stay * 0.75  ## SECOND HARVEST IS 0.75 OF FIRST HARVEST
+            harvest_with_bonus = harvest_with_bonus - leave_cost - twoTurn_harvest
+
+        return cost, harvest_with_bonus
+
+
+    def set_harvestPoints(self, ship, direction, harvest, points):
+        """
+        GATHER POINTS WITH DIRECTION PROVIDED
+
+        :param direction:
+        :param harvest:
+        :return:
+        """
+        destination = self.get_destination(ship, direction)
+        safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][
+            destination.x]
+        occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
+        enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
+
+        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction)
+        points.append(c)
 
 
 
