@@ -65,7 +65,7 @@ class Build(Moves):
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
                 self.data.halite_stats.record_spent(BuildType.DOCK)
                 command = ship.make_dropoff()
-                self.data.commands.set_ships_move(ship.id, command, [])
+                self.data.commands.set_ships_move(ship.id, command, ship.position, [])
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
@@ -78,7 +78,7 @@ class Build(Moves):
             else:
                 ## NOT ENOUGH HALITE YET, STAY STILL
                 command = ship.move(Direction.Still)
-                self.data.commands.set_ships_move(ship.id, command, [])
+                self.data.commands.set_ships_move(ship.id, command, ship.position, [])
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
@@ -103,10 +103,10 @@ class Build(Moves):
                                                      self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                      Inequality.EQUAL)
 
-            dock_position = Position(coord[1], coord[0])
-            directions = self.get_directions_target(ship, dock_position)
-
             if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
+                dock_position = Position(coord[1], coord[0])
+                directions = self.get_directions_target(ship, dock_position)
+
                 self.ships_building_towards_dock.setdefault(coord, set())
                 if len(self.ships_building_towards_dock[coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
                     self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL

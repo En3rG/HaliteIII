@@ -64,11 +64,13 @@ class Start(Moves):
             destination = self.get_destination(ship, direction)
 
             hasShip = self.data.myMatrix.locations.myShips[destination.y][destination.x]
+            canMove = 0 if self.data.myMatrix.locations.stuck[destination.y][destination.x] == 1 else 1
             harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
 
-            c = StartPoints(safe=0, hasShip=hasShip, harvest=-harvest, direction=direction) ## FLIP HARVEST
+            c = StartPoints(safe=0, hasShip=hasShip, harvest=harvest, direction=direction, canMove=canMove) ## FLIP HARVEST
             points.append(c)
 
         logging.debug(points)
 
         return points
+

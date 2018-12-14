@@ -96,6 +96,7 @@ class ExploreShip:
     USED TO DETERMINE CLOSEST SHIP FOR EXPLORING
     ALSO USED FOR HEAPQ PURPOSES
 
+    NO LONGER USED, USING EXPLORE2 NOW!!!!
     """
     def __init__(self, dist, id, curr_cell, destination, indices_deque, distances_deque):
         self.distance = dist
@@ -674,9 +675,10 @@ class StartPoints():
     USED TO DETERMINE BEST DIRECTION FOR START GAME
     """
 
-    def __init__(self, safe, hasShip, harvest, direction):
+    def __init__(self, safe, hasShip, harvest, direction, canMove=1):
         self.safe = safe        ## NEED FOR BEST DIRECTION (IGNORING)
         self.hasShip = -hasShip
+        self.canMove = canMove
         self.harvest = harvest
         self.direction = direction
 
@@ -685,6 +687,10 @@ class StartPoints():
             if self.hasShip > other.hasShip:
                 return True
             elif self.hasShip < other.hasShip:
+                return False
+            elif self.canMove > other.canMove:
+                return True
+            elif self.canMove < other.canMove:
                 return False
             elif self.harvest > other.harvest:
                 return True
@@ -701,6 +707,10 @@ class StartPoints():
                 return True
             elif self.hasShip > other.hasShip:
                 return False
+            elif self.canMove < other.canMove:
+                return True
+            elif self.canMove > other.canMove:
+                return False
             elif self.harvest < other.harvest:
                 return True
             elif self.harvest > other.harvest:
@@ -711,9 +721,10 @@ class StartPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} hasShip: {} harvest: {} direction: {}".format(
+        return "{} hasShip: {} canMove: {} harvest: {} direction: {}".format(
             self.__class__.__name__,
             self.hasShip,
+            self.canMove,
             self.harvest,
             self.direction)
 

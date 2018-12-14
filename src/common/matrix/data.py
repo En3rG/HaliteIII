@@ -195,14 +195,16 @@ class HaliteInfo():
 
 
 class Action():
-    def __init__(self, command, points):
+    def __init__(self, command, destination, points):
         self.command = command
+        self.destination = destination
         self.points = points
 
     def __repr__(self):
-        return "{} command: {} points: {}".format(
+        return "{} command: {} destination: {} points: {}".format(
             self.__class__.__name__,
             self.command,
+            self.destination,
             self.points)
 
 
@@ -218,8 +220,8 @@ class Commands():
         """
         return [ v.command for k, v in self.ships_moves.items() ]
 
-    def set_ships_move(self, ship_id, command, points):
-        self.ships_moves.setdefault(ship_id, Action(command, points))
+    def set_ships_move(self, ship_id, command, destination, points):
+        self.ships_moves.setdefault(ship_id, Action(command, destination, points))
 
     def set_coords_taken(self, coord, ship_id):
         self.coords_taken.setdefault(coord, set()).add(ship_id)

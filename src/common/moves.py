@@ -55,7 +55,7 @@ class Moves(abc.ABC):
 
         command = ship.move(direction)
 		
-        self.data.commands.set_ships_move(ship.id, command, points)
+        self.data.commands.set_ships_move(ship.id, command, destination, points)
         self.data.commands.set_coords_taken((destination.y, destination.x), ship.id)
 
         self.data.command_queue.append(command)
