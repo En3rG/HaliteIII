@@ -64,9 +64,9 @@ class Harvest(Moves):
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, mode=MoveMode.HARVEST)
+        direction, points = self.best_direction(ship, mode=MoveMode.HARVEST)
         if self.isHarvestingNow(direction, ship):
-            self.move_mark_unsafe(ship, direction)
+            self.move_mark_unsafe(ship, direction, points)
 
 
     def isHarvestingNow(self, direction, ship):
@@ -96,9 +96,9 @@ class Harvest(Moves):
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, mode=MoveMode.HARVEST)
+        direction, points = self.best_direction(ship, mode=MoveMode.HARVEST)
         if self.isHarvestingLater(ship, direction):
-            self.move_mark_unsafe(ship, direction)
+            self.move_mark_unsafe(ship, direction, points)
 
         elif kicked: ## IF NOT A GOOD HARVEST AND KICKED, ADD TO TEMP TO BE MOVED LATER FOR EXPLORE
             self.ships_kicked_temp.add(ship_id)

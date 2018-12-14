@@ -93,8 +93,10 @@ while True:
     J = spawn_ships(data)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
-    logging.debug("command_queue: {}".format(data.command_queue))
-    game.end_turn(data.command_queue)
+    logging.debug("Ships moves: {}".format(data.commands.ships_moves))
+    logging.debug("Coords Taken by: {}".format(data.commands.coords_taken))
+    logging.debug("command_queue: {}".format(data.commands.get_command_queue()))
+    game.end_turn(data.commands.get_command_queue())
 
     ## SAVE DATA TO PREV DATA
     #prev_data = copy.deepcopy(data)  ## TAKES 300ms, AND COPYING A LOT OF UNNECESSARY STUFF

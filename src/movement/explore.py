@@ -98,9 +98,9 @@ class Explore(Moves):
 
                 if destination:
                     directions = self.get_directions_target(ship, destination)
-                    direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                    direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
                     self.mark_taken_udpate_top_halite(destination)
-                    self.move_mark_unsafe(ship, direction)
+                    self.move_mark_unsafe(ship, direction, points)
 
 
     def exploreNow(self, ship_id):
@@ -140,8 +140,8 @@ class Explore(Moves):
         max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
         destination = Position(coord[1], coord[0])
         directions = self.get_directions_target(ship, destination)
-        direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-        self.move_mark_unsafe(ship, direction)
+        direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        self.move_mark_unsafe(ship, direction, points)
 
 
     def get_untaken_destination(self, s):

@@ -20,7 +20,7 @@ class Stuck(Moves):
 
             if self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x] == Matrix_val.ONE:
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
-                self.move_mark_unsafe(ship, Direction.Still)
+                self.move_mark_unsafe(ship, Direction.Still, [])
 
 
         ## USING NP.WHERE

@@ -15,7 +15,7 @@ def avoid_collision_direction(Moves, ship, directions):
     """
     points = get_move_points_collision(Moves, ship, directions)
     best = max(points)
-    return best.direction
+    return best.direction, sorted(points, reverse=True)
 
 
 def get_move_points_collision(Moves, ship, directions):

@@ -194,9 +194,41 @@ class HaliteInfo():
         self.halite_carried = 0
 
 
+class Action():
+    def __init__(self, command, points):
+        self.command = command
+        self.points = points
+
+    def __repr__(self):
+        return "{} command: {} points: {}".format(
+            self.__class__.__name__,
+            self.command,
+            self.points)
+
+
+class Commands():
+    def __init__(self):
+        self.command_queue = None
+        self.ships_moves = {}
+        self.coords_taken = {}
+
+    def get_command_queue(self):
+        """
+        SET/RETURN COMMAND QUEUE
+        """
+        return [ v.command for k, v in self.ships_moves.items() ]
+
+    def set_ships_move(self, ship_id, command, points):
+        self.ships_moves.setdefault(ship_id, Action(command, points))
+
+    def set_coords_taken(self, coord, ship_id):
+        self.coords_taken.setdefault(coord, set()).add(ship_id)
+
+
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
+        self.commands = Commands()
         self.mySets = MySets(game)
         self.myVars = MyVars(self, game)
         self.myDicts = MyDicts()

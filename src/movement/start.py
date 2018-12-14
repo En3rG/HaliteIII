@@ -24,13 +24,13 @@ class Start(Moves):
             if self.data.game.turn_number == 6:
                 new_ship_id = list(sorted(self.data.mySets.ships_all))[-1]
                 ship = self.data.game.me._ships.get(new_ship_id)
-                direction = self.best_direction(ship, mode=MoveMode.MINSTART)
-                self.move_mark_unsafe(ship, direction)
+                direction, points = self.best_direction(ship, mode=MoveMode.MINSTART)
+                self.move_mark_unsafe(ship, direction, points)
             elif len(self.data.mySets.ships_all) >= 1:
                 out_ship_id = list(sorted(self.data.mySets.ships_all))[-1]
                 ship = self.data.game.me._ships.get(out_ship_id)
-                direction = self.best_direction(ship, mode=MoveMode.MAXSTART)
-                self.move_mark_unsafe(ship, direction)
+                direction, points = self.best_direction(ship, mode=MoveMode.MAXSTART)
+                self.move_mark_unsafe(ship, direction, points)
 
 
     def get_move_points_maxstart(self, ship):

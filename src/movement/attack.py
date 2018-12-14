@@ -55,13 +55,13 @@ class Attack(Moves):
                     logging.debug(s)
 
                     first_ship = self.data.game.me._ships.get(s.ship_id)
-                    direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
+                    direction, points = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
                     if direction != Direction.Still:
                     ## IF STAYING STILL, NO NEED TO MOVE
                     ## FIRST SHIP WILL JUST HARVEST/EXPLORE
                     ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
-                        self.move_mark_unsafe(first_ship, direction)
+                        self.move_mark_unsafe(first_ship, direction, points)
 
                         logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
 
@@ -69,8 +69,8 @@ class Attack(Moves):
                             if support_id in self.data.mySets.ships_to_move:            ## DONT MOVE SHIPS THAT ALREADY MOVED
                                 support_ship = self.data.game.me._ships.get(support_id)
                                 support_directions = self.get_directions_target(support_ship, first_ship.position)
-                                direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
-                                self.move_mark_unsafe(support_ship, direction)
+                                direction, points = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
+                                self.move_mark_unsafe(support_ship, direction, points)
 
 
     def populate_heap(self, ship_id):

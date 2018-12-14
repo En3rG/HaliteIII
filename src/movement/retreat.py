@@ -82,9 +82,9 @@ class Retreat(Moves):
             logging.debug(s)                    ## FARTHEST SHIP OBJECT
 
             ship = self.data.game.me.get_ship(s.ship_id)
-            direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
+            direction, points = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
 
-            self.move_mark_unsafe(ship, direction)
+            self.move_mark_unsafe(ship, direction, points)
 
 
     def get_move_points_retreat(self, ship, directions):

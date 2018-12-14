@@ -52,8 +52,8 @@ class Deposit(Moves):
                 ship_kicked = self.data.mySets.ships_kicked.pop()
                 logging.debug("Moving kicked ship ({}) by a depositing ship".format(ship_kicked))
                 ship = self.data.game.me._ships.get(ship_kicked)
-                direction = avoid_collision_direction(self, ship, directions=None)
-                self.move_mark_unsafe(ship, direction)
+                direction, points = avoid_collision_direction(self, ship, directions=None)
+                self.move_mark_unsafe(ship, direction, points)
 
             s = heapq.heappop(self.heap_dist)
             if s.ship_id in self.data.mySets.ships_to_move:    ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
@@ -96,8 +96,8 @@ class Deposit(Moves):
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
         """
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
-        self.move_mark_unsafe(ship, direction)
+        direction, points = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
+        self.move_mark_unsafe(ship, direction, points)
         self.data.mySets.ships_returning.add(ship.id)
 
 

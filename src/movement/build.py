@@ -64,7 +64,10 @@ class Build(Moves):
 
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
                 self.data.halite_stats.record_spent(BuildType.DOCK)
-                self.data.command_queue.append(ship.make_dropoff())
+                command = ship.make_dropoff()
+                self.data.commands.set_ships_move(ship.id, command, [])
+                self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
+                self.data.command_queue.append(command)
 
                 ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
                 #self.data.init_data.myMatrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
@@ -74,7 +77,10 @@ class Build(Moves):
                                    MyConstants.DOCK_MANHATTAN)
             else:
                 ## NOT ENOUGH HALITE YET, STAY STILL
-                self.data.command_queue.append(ship.move(Direction.Still))
+                command = ship.move(Direction.Still)
+                self.data.commands.set_ships_move(ship.id, command, [])
+                self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
+                self.data.command_queue.append(command)
 
 
     def building_later(self):
@@ -109,9 +115,9 @@ class Build(Moves):
                     ## ALSO MAKE SURE ITS SAFE TO GO THERE
                     if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
                             and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
-                        self.move_mark_unsafe(ship, directions[0]) ## DIRECTION IS A LIST OF DIRECTIONS
+                        self.move_mark_unsafe(ship, directions[0], []) ## DIRECTION IS A LIST OF DIRECTIONS
                     else:
-                        self.move_mark_unsafe(ship, Direction.Still)
+                        self.move_mark_unsafe(ship, Direction.Still, [])
 
                     ## SHIP COUNTER PER DOCK
                     self.ships_building_towards_dock[coord].add(ship.id)
@@ -147,8 +153,8 @@ class Build(Moves):
                                 if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
                                     # self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
                                     self.data.mySets.ships_building.add(ship_id)
-                                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
-                                    self.move_mark_unsafe(ship, direction)
+                                    direction, points = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
+                                    self.move_mark_unsafe(ship, direction, points)
 
                                     ## SHIP COUNTER PER DOCK
                                     self.ships_building_towards_dock[coord].add(ship.id)
