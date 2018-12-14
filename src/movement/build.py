@@ -65,7 +65,7 @@ class Build(Moves):
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
                 self.data.halite_stats.record_spent(BuildType.DOCK)
                 command = ship.make_dropoff()
-                self.data.commands.set_ships_move(ship.id, command, ship.position, [])
+                self.data.commands.set_ships_move(ship.id, command, None, ship.position, [])
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
@@ -77,8 +77,9 @@ class Build(Moves):
                                    MyConstants.DOCK_MANHATTAN)
             else:
                 ## NOT ENOUGH HALITE YET, STAY STILL
-                command = ship.move(Direction.Still)
-                self.data.commands.set_ships_move(ship.id, command, ship.position, [])
+                direction = Direction.Still
+                command = ship.move(direction)
+                self.data.commands.set_ships_move(ship.id, command, direction, ship.position, [])
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 

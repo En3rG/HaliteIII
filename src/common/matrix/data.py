@@ -8,6 +8,7 @@ from src.common.matrix.functions import populate_manhattan, get_n_largest_values
 from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
 from src.common.classes import OrderedSet
 from src.common.print import print_matrix
+from src.movement.optimizer import optimize_moves
 import copy
 import abc
 
@@ -195,21 +196,24 @@ class HaliteInfo():
 
 
 class Action():
-    def __init__(self, command, destination, points):
+    def __init__(self, command, direction, destination, points):
         self.command = command
+        self.direction = direction
         self.destination = destination
         self.points = points
 
     def __repr__(self):
-        return "{} command: {} destination: {} points: {}".format(
+        return "{} command: {} direction: {} destination: {} points: {}".format(
             self.__class__.__name__,
             self.command,
+            self.direction,
             self.destination,
             self.points)
 
 
 class Commands():
-    def __init__(self):
+    def __init__(self, data):
+        self.data = data
         self.command_queue = None
         self.ships_moves = {}
         self.coords_taken = {}
@@ -218,10 +222,12 @@ class Commands():
         """
         SET/RETURN COMMAND QUEUE
         """
-        return [ v.command for k, v in self.ships_moves.items() ]
+        optimize_moves(self)
 
-    def set_ships_move(self, ship_id, command, destination, points):
-        self.ships_moves.setdefault(ship_id, Action(command, destination, points))
+        return [ action.command for ship_id, action in self.ships_moves.items() ]
+
+    def set_ships_move(self, ship_id, command, direction, destination, points):
+        self.ships_moves.setdefault(ship_id, Action(command, direction, destination, points))
 
     def set_coords_taken(self, coord, ship_id):
         self.coords_taken.setdefault(coord, set()).add(ship_id)
@@ -230,7 +236,7 @@ class Commands():
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
-        self.commands = Commands()
+        self.commands = Commands(self)
         self.mySets = MySets(game)
         self.myVars = MyVars(self, game)
         self.myDicts = MyDicts()

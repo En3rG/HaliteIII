@@ -26,6 +26,6 @@ def spawn_ships(data):
         print_heading("Safe to spawn ship......")
         data.halite_stats.record_spent(BuildType.SHIP)
         command = data.game.me.shipyard.spawn()
-        data.commands.set_ships_move(-1, command, data.game.me.shipyard.position, [])
+        data.commands.set_ships_move(-1, command, None, data.game.me.shipyard.position, [])
         data.commands.set_coords_taken((data.game.me.shipyard.position.y, data.game.me.shipyard.position.x), -1)
         data.command_queue.append(command)

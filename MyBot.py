@@ -95,7 +95,6 @@ while True:
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
     logging.debug("Ships moves: {}".format(data.commands.ships_moves))
     logging.debug("Coords Taken by: {}".format(data.commands.coords_taken))
-    logging.debug("command_queue: {}".format(data.commands.get_command_queue()))
     game.end_turn(data.commands.get_command_queue())
 
     ## SAVE DATA TO PREV DATA
