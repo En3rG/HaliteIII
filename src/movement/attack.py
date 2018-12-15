@@ -40,10 +40,10 @@ class Attack(Moves):
         ## MOVE SHIPS CLOSEST TO ENEMY FIRST (WITH ITS SUPPORT SHIP)
         if self.data.myVars.allowAttack:
             for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE):  ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
-                matrix = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
-                r, c = np.where(matrix > Matrix_val.ZERO)
-                matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
-                ships_attacking = matrixIDs & self.data.mySets.ships_to_move
+                matrixIDs = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
+                r, c = np.where(matrixIDs > Matrix_val.ZERO)
+                ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
+                ships_attacking = ships_engaging & self.data.mySets.ships_to_move
                 self.considered_already.update(ships_attacking)
 
                 self.heap_support = [] ## RESET PER ITERATION
@@ -91,12 +91,15 @@ class Attack(Moves):
         for support_id in potential_support:
             if support_id in self.data.mySets.ships_to_move:
                 support_ship = self.data.game.me._ships.get(support_id)
-                if support_ship.halite_amount < enemy_halite * (MyConstants.ATTACK_ENEMY_HALITE_RATIO * MyConstants.ATTACK_ENEMY_HALITE_RATIO):
+                potental_harvest = (my_halite + enemy_halite) * 0.25  ## POTENTIAL HARVEST
+                real_gain = support_ship.halite_amount + potental_harvest % 1000  ## CAN ONLY GET MAX 1000
+                if real_gain > my_halite * 1.20:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
                     support_ships.add(support_id)
 
         num_support = len(support_ships)
 
-        if my_halite < enemy_halite * MyConstants.ATTACK_ENEMY_HALITE_RATIO and num_support >= 1:
+        #if my_halite < enemy_halite * MyConstants.ATTACK_ENEMY_HALITE_RATIO and num_support >= 1:
+        if num_support >= 1:  ## ATTACK EVEN WHEN HAS HIGH CARGO
             s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy)
             logging.debug(s)
             heapq.heappush(self.heap_support, s)

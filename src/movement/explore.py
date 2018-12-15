@@ -40,6 +40,7 @@ class Explore(Moves):
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
 
+
         self.move_ships()
 
 
@@ -196,6 +197,11 @@ class Explore(Moves):
         ## BY ONLY TAKING OUT ONE CELL, CAUSES A TRAFFIC JAM
         ## WHEN A BIG BULK OF TOP RATIO IS ALL TOGETHER (SAY 30 CELLS)
         ## THEN 30 SHIPS WILL BE SENT TO HERE (CAUSING BIG TRAFFIC JAM)
+        # populate_manhattan(self.taken_matrix,
+        #                    Matrix_val.ZERO,
+        #                    destination,
+        #                    MyConstants.DIRECT_NEIGHBOR_DISTANCE,
+        #                    cummulative=False)
 
 
     def populate_heap(self, ship_id):
