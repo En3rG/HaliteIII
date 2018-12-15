@@ -285,6 +285,9 @@ class Explore(Moves):
         points = []
 
         for direction in directions:
+        #for direction in MyConstants.DIRECTIONS:
+            priority_direction = 1 if direction in directions else 0
+
             destination = self.get_destination(ship, direction)
 
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
@@ -293,7 +296,7 @@ class Explore(Moves):
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][
                 destination.x]
 
-            c = ExplorePoints(safe, occupied, potential_enemy_collision, cost, direction)
+            c = ExplorePoints(priority_direction, safe, occupied, potential_enemy_collision, cost, direction)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
@@ -301,7 +304,8 @@ class Explore(Moves):
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][
             ship.position.x]
 
-        points.append(ExplorePoints(safe=safe,
+        points.append(ExplorePoints(priority_direction=1,
+                                    safe=safe,
                                     occupied=occupied,
                                     potential_enemy_collision=potential_enemy_collision,
                                     cost=999,

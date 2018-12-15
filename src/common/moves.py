@@ -54,7 +54,7 @@ class Moves(abc.ABC):
         self.remove_kicked(ship)
 
         command = ship.move(direction)
-		
+
         self.data.commands.set_ships_move(ship.id, command, direction, destination, points)
         self.data.commands.set_coords_taken((destination.y, destination.x), ship.id)
 

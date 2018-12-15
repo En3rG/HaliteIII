@@ -63,7 +63,7 @@ while True:
     ## EXTRACT GAME DATA
     data = GetData(game, init_data, prev_data, halite_stats)
 
-    a = Start(data, prev_data)
+    #a = Start(data, prev_data)
 
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)
@@ -93,8 +93,8 @@ while True:
     J = spawn_ships(data)
 
     ## SEND MOVES BACK TO GAME ENVIRONMENT, ENDING THIS TURN.
-    logging.debug("Ships moves: {}".format(data.commands.ships_moves))
-    logging.debug("Coords Taken by: {}".format(data.commands.coords_taken))
+    #logging.debug("Ships moves: {}".format(data.commands.ships_moves))
+    #logging.debug("Coords Taken by: {}".format(data.commands.coords_taken))
     game.end_turn(data.commands.get_command_queue())
 
     ## SAVE DATA TO PREV DATA

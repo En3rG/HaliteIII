@@ -2,7 +2,7 @@ import logging
 import heapq
 from src.common.moves import Moves
 from src.common.points import FarthestShip, DepositPoints
-from src.common.values import MoveMode, Matrix_val, Inequality
+from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
 from hlt.positionals import Direction
 from src.common.print import print_heading
 from src.common.matrix.functions import get_coord_closest
@@ -112,7 +112,8 @@ class Deposit(Moves):
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
         potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[ship.position.y][ship.position.x]
-        points = [DepositPoints(safe=1,
+        points = [DepositPoints(priority_direction=1,
+                                safe=1,
                                 dock=0,
                                 enemy_occupied=0,
                                 potential_enemy_collision=potential_enemy_collision,
@@ -121,6 +122,9 @@ class Deposit(Moves):
                                 direction=Direction.Still)]
 
         for direction in directions:
+        #for direction in MyConstants.DIRECTIONS:
+            priority_direction = 1 if direction in directions else 0
+
             destination = self.get_destination(ship, direction)
 
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
@@ -130,7 +134,13 @@ class Deposit(Moves):
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
             potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
 
-            c = DepositPoints(safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost,
+            c = DepositPoints(priority_direction,
+                              safe,
+                              dock,
+                              enemy_occupied,
+                              potential_enemy_collision,
+                              potential_ally_collision,
+                              cost,
                               direction)
             points.append(c)
 

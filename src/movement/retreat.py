@@ -96,18 +96,21 @@ class Retreat(Moves):
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [RetreatPoints(shipyard=0, safe=1, stuck=0, potential_ally_collision=-999, direction=Direction.Still)]
+        points = [RetreatPoints(priority_direction=1, shipyard=0, safe=1, stuck=0, potential_ally_collision=-999, direction=Direction.Still)]
 
         for direction in directions:
+        #for direction in MyConstants.DIRECTIONS:
+
+            priority_direction = 1 if direction in directions else 0
+
             destination = self.get_destination(ship, direction)
 
             shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
-            stuck = self.data.myMatrix.locations.stuck[ship.position.y][
-                ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
+            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
 
-            c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
+            c = RetreatPoints(priority_direction, shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)
 
         logging.debug(points)

@@ -31,6 +31,7 @@ class Parse():
         self.data = self.load_hlt()
         self.get_moves_per_player()
         self.generate_run_game_bat()
+        self.save_json(self.output_filename, self.data)
 
 
     def get_replay_filename(self):

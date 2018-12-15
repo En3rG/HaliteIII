@@ -65,7 +65,7 @@ class Build(Moves):
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
                 self.data.halite_stats.record_spent(BuildType.DOCK)
                 command = ship.make_dropoff()
-                self.data.commands.set_ships_move(ship.id, command, None, ship.position, [])
+                self.data.commands.set_ships_move(ship.id, command, None, ship.position, None)
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
@@ -79,7 +79,7 @@ class Build(Moves):
                 ## NOT ENOUGH HALITE YET, STAY STILL
                 direction = Direction.Still
                 command = ship.move(direction)
-                self.data.commands.set_ships_move(ship.id, command, direction, ship.position, [])
+                self.data.commands.set_ships_move(ship.id, command, direction, ship.position, None)
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
@@ -179,16 +179,18 @@ class Build(Moves):
         points = []
 
         for direction in directions:
+        #for direction in MyConstants.DIRECTIONS:
             ## POINTS FOR MOVING
+            priority_direction = 1 if direction in directions else 0
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            b = BuildPoints(safe, cost, direction)
+            b = BuildPoints(priority_direction, safe, cost, direction)
             points.append(b)
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(BuildPoints(safe=safe, cost=999, direction=Direction.Still))
+        points.append(BuildPoints(priority_direction=1, safe=safe, cost=999, direction=Direction.Still))
 
         logging.debug(points)
 
