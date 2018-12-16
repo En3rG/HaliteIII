@@ -1,10 +1,10 @@
 from src.common.print import print_heading
-from src.common.moves import Moves
+from src.common.move.moves import Moves
 
 
 class Support(Moves):
     def __init__(self, data, prev_data):
-        super().__init__(data, prev_data)
+        Moves.__init__(self, data, prev_data)
 
         self.move_ships()
 

@@ -1,13 +1,13 @@
 import logging
 from hlt.positionals import Direction
-from src.common.moves import Moves
+from src.common.move.moves import Moves
 from src.common.print import print_heading, print_matrix
 from src.common.values import Inequality, Matrix_val
 import numpy as np
 
 class Stuck(Moves):
     def __init__(self, data, prev_data):
-        super().__init__(data, prev_data)
+        Moves.__init__(self, data, prev_data)
 
         self.move_ships()
 

@@ -1,9 +1,9 @@
 
 from src.common.print import print_heading
-from src.common.moves import Moves
+from src.common.move.moves import Moves
+from src.common.move.starts import Starts
 from src.common.values import MoveMode, MyConstants
-from src.common.points import StartPoints
-import logging
+
 
 """
 TO DO!!!!!!!!!!!
@@ -11,9 +11,9 @@ TO DO!!!!!!!!!!!
 
 """
 
-class Start(Moves):
+class Start(Moves, Starts):
     def __init__(self, data, prev_data):
-        super().__init__(data, prev_data)
+        Moves.__init__(self, data, prev_data)
 
         self.move_ships()
 
@@ -33,44 +33,5 @@ class Start(Moves):
                 self.move_mark_unsafe(ship, direction, points)
 
 
-    def get_move_points_maxstart(self, ship):
-        """
-        GET POINTS FOR MOVING FIRST 4 SHIPS
-        GET HIGHEST FREE HARVEST
-        """
-        points = []
 
-        for direction in MyConstants.DIRECTIONS:
-            destination = self.get_destination(ship, direction)
-
-            hasShip = self.data.myMatrix.locations.myShips[destination.y][destination.x]
-            harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
-
-            c = StartPoints(safe=0, hasShip=hasShip, harvest=harvest, direction=direction)
-            points.append(c)
-
-        logging.debug(points)
-
-        return points
-
-
-    def get_move_points_minstart(self, ship):
-        """
-        GET MOVE FOR FIFTH SHIP.  WILL KICK SHIP
-        """
-        points = []
-
-        for direction in MyConstants.DIRECTIONS:
-            destination = self.get_destination(ship, direction)
-
-            hasShip = self.data.myMatrix.locations.myShips[destination.y][destination.x]
-            canMove = 0 if self.data.myMatrix.locations.stuck[destination.y][destination.x] == 1 else 1
-            harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
-
-            c = StartPoints(safe=0, hasShip=hasShip, harvest=harvest, direction=direction, canMove=canMove) ## FLIP HARVEST
-            points.append(c)
-
-        logging.debug(points)
-
-        return points
 
