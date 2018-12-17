@@ -3,6 +3,7 @@ from src.common.move.explores import Explores
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 import logging
 from src.common.print import print_heading, print_matrix
+from src.common.move.harvests import Harvests
 from hlt import constants
 import heapq
 import copy
@@ -13,12 +14,13 @@ import numpy as np
 """
 TO DO!!!!!!!!!!!
 
-TOP HALITE DOESNT CONSIDER INFLUENCE
+SHOULD NOT HARVEST WHEN THERE IS A MUCH BIGGER HALITE CLOSE BY
+WHEN EXPLORE TARGET RATIO IS MORE THAN 3X THAN RATIO OF CURRENT HARVEST, DO NOT HARVEST NOW/LATER
 
 
 """
 
-class Explore(Moves, Explores):
+class Explore(Moves, Explores, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
@@ -94,12 +96,41 @@ class Explore(Moves, Explores):
             if s.ship_id in self.data.mySets.ships_to_move:
                 ship = self.data.game.me._ships.get(s.ship_id)
 
-                destination = self.get_untaken_destination(s)
+                explore_destination = self.isDestination_untaken(s)
 
-                if destination:
-                    directions = self.get_directions_target(ship, destination)
-                    direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-                    self.mark_taken_udpate_top_halite(destination)
-                    self.move_mark_unsafe(ship, direction, points)
+                if explore_destination:
+
+                    canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
+                    if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
+
+                    if s.ship_id in self.data.mySets.ships_to_move:
+                        directions = self.get_directions_target(ship, explore_destination)
+                        explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+
+                        if canHarvest:
+                            harvest_destination = self.get_destination(ship, harvest_direction)
+                            harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
+
+                            if -s.ratio > harvest_ratio * 3:
+                                destination = explore_destination
+                                direction = explore_direction
+                            else:
+                                destination = harvest_destination
+                                direction = harvest_direction
+
+                        else:
+                            destination = explore_destination
+                            direction = explore_direction
+
+                        self.mark_taken_udpate_top_halite(destination)
+                        self.move_mark_unsafe(ship, direction, points)
+
+
+
+
+
+
+
+
 
 

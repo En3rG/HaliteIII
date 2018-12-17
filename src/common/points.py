@@ -142,10 +142,11 @@ class ExploreShip2:
     USED TO DETERMINE CLOSEST SHIP FOR EXPLORING WITH HIGHEST
     HALITE HARVEST PER TURN
     """
-    def __init__(self, ratio, id, destination):
+    def __init__(self, ratio, id, destination, matrix_ratio):
         self.ratio = -ratio  ## NEED HIGHEST RATIO TO BE FIRST IN HEAP
         self.ship_id = id
         self.destination = destination
+        self.matrix_ratio = matrix_ratio
 
     def __gt__(self, other):
         if isinstance(other, ExploreShip2):

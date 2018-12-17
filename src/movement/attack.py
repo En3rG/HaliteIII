@@ -4,6 +4,7 @@ from src.common.move.attacks import Attacks
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from hlt.positionals import Direction
 from src.common.classes import OrderedSet
+from src.common.move.harvests import Harvests
 import numpy as np
 import logging
 import heapq
@@ -23,7 +24,7 @@ TRY TO NOT INFLUENCE ENEMY IF POSSIBLE
 """
 
 
-class Attack(Moves, Attacks):
+class Attack(Moves, Attacks, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 

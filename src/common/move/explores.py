@@ -6,10 +6,10 @@ from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 import heapq
 import numpy as np
 import logging
-from src.common.move.harvests import Harvests
+from src.common.print import print_matrix
 from collections import deque
 
-class Explores(Harvests):
+class Explores():
     def exploreNow(self, ship_id):
         """
         SHIP IS EXPLORING, PERFORM NECESSARY STEPS
@@ -40,21 +40,37 @@ class Explores(Harvests):
         # self.move_mark_unsafe(ship, direction)
 
 
-        if ship_id in self.data.mySets.ships_to_move: self.check_harvestNow(ship_id)
-        if ship_id in self.data.mySets.ships_to_move: self.check_harvestLater(ship_id, MyConstants.DIRECTIONS)
+        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
+        if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
 
-        if ship_id in self.data.mySets.ships_to_move:
-            ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
-            curr_cell = (ship.position.y, ship.position.x)
-            distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
-            matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
-            max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
-            destination = Position(coord[1], coord[0])
-            directions = self.get_directions_target(ship, destination)
-            direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-            self.move_mark_unsafe(ship, direction, points)
+        ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
+        curr_cell = (ship.position.y, ship.position.x)
+        distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
+        matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
+        max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
+        explore_destination = Position(coord[1], coord[0])
+        directions = self.get_directions_target(ship, explore_destination)
+        explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
-    def get_untaken_destination(self, s):
+        if canHarvest:
+            harvest_destination = self.get_destination(ship, harvest_direction)
+            harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
+
+            if max_ratio > harvest_ratio * 3:
+                destination = explore_destination
+                direction = explore_direction
+            else:
+                destination = harvest_destination
+                direction = harvest_direction
+
+        else:
+            destination = explore_destination
+            direction = explore_direction
+
+        self.mark_taken_udpate_top_halite(destination)
+        self.move_mark_unsafe(ship, direction, points)
+
+    def isDestination_untaken(self, s):
         ## SAVING SORTED DISTANCES
         ## TIMING OUT (SORTING A BUNCH IS MUCH SLOWER THAN GETTING CLOSEST MAX MULTIPLE TIMES???)
         # if (s.destination.y, s.destination.x) in self.taken_destinations:
@@ -161,32 +177,27 @@ class Explores(Harvests):
 
             ship = self.data.game.me._ships.get(ship_id)
 
-            if ship_id in self.data.mySets.ships_to_move: self.check_harvestNow(ship_id)
-            if ship_id in self.data.mySets.ships_to_move: self.check_harvestLater(ship_id, MyConstants.DIRECTIONS)
+            curr_cell = (ship.position.y, ship.position.x)
+            distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
+            matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
+            max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
+            destination = Position(coord[1], coord[0])
 
-            if ship_id in self.data.mySets.ships_to_move:
-                curr_cell = (ship.position.y, ship.position.x)
-                distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
-                matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
-                max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
-                destination = Position(coord[1], coord[0])
-
-                s = ExploreShip2(max_ratio, ship_id, destination)
-                heapq.heappush(self.heap_dist, s)
+            s = ExploreShip2(max_ratio, ship_id, destination, matrix_highest_ratio)
+            heapq.heappush(self.heap_dist, s)
 
     def get_highest_harvest(self, ship, curr_cell):
         """
         GET HIGHEST HARVEST PER TURN RATIO (MATRIX) FOR SPECIFIC SHIP
         """
-        available_harvest = self.harvest_matrix * self.taken_matrix  ## REMOVES CELL THAT ARE ALREADY TAKEN
-        distance_to = self.data.init_data.myMatrix.distances.cell[curr_cell]  ## WILL CONTAIN DISTANCES TO EACH CELL
-        distances = distance_to + self.data.myMatrix.distances.closest_dock  ## DISTANCE TO THAT CELL + DISTANCE TO GO HOME
+        available_harvest = self.harvest_matrix * self.taken_matrix             ## REMOVES CELL THAT ARE ALREADY TAKEN
+        distance_to = self.data.init_data.myMatrix.distances.cell[curr_cell]    ## WILL CONTAIN DISTANCES TO EACH CELL
+        distances = distance_to + self.data.myMatrix.distances.closest_dock     ## DISTANCE TO THAT CELL + DISTANCE TO GO HOME
 
         # harvest_per_turn_matrix = available_harvest / distances                    ## RATIO: HARVEST PER TURN
         ## CAUSES AN ERROR WHEN DISTANCES HAS ZERO
         ## TO HANDLE ERROR (WILL BE REPLACED WITH ZERO)
-        harvest_per_turn_ratio_matrix = np.divide(available_harvest, distances, out=np.zeros_like(available_harvest),
-                                                  where=distances != 0)
+        harvest_per_turn_ratio_matrix = np.divide(available_harvest, distances, out=np.zeros_like(available_harvest), where=distances != 0)
 
         return harvest_per_turn_ratio_matrix
 

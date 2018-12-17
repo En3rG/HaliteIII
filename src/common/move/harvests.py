@@ -5,16 +5,20 @@ from src.common.values import MyConstants, MoveMode, Matrix_val
 
 
 class Harvests():
-    def check_harvestNow(self, ship_id):
+    def check_harvestNow(self, ship_id, moveNow=True):
         """
         CHECK IF SHIP WILL HARVEST NOW, IF SO, MOVE IT
         """
+        harvesting = False
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
         direction, points = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST)
         if self.isHarvestingNow(direction, ship):
-            self.move_mark_unsafe(ship, direction, points)
+            harvesting = True
+            if moveNow: self.move_mark_unsafe(ship, direction, points)
+
+        return harvesting, direction
 
     def isHarvestingNow(self, direction, ship):
         """
@@ -35,19 +39,23 @@ class Harvests():
                 (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] >= self.data.myVars.harvest_percentile or self.isBlocked(ship)):
             return True
 
-    def check_harvestLater(self, ship_id, directions, kicked=False):
+    def check_harvestLater(self, ship_id, directions, kicked=False, moveNow=True):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
         """
+        harvesting = False
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
         direction, points = self.best_direction(ship, directions, mode=MoveMode.HARVEST)
         if self.isHarvestingLater(ship, direction):
-            self.move_mark_unsafe(ship, direction, points)
+            harvesting = True
+            if moveNow: self.move_mark_unsafe(ship, direction, points)
 
         elif kicked:  ## IF NOT A GOOD HARVEST AND KICKED, ADD TO TEMP TO BE MOVED LATER FOR EXPLORE
             self.ships_kicked_temp.add(ship_id)
+
+        return harvesting, direction
 
     def isHarvestingLater(self, ship, direction):
         """

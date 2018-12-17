@@ -81,7 +81,7 @@ while True:
     F = Harass(data, prev_data)
 
     ## HARVEST SHIPS
-    H = Harvest(data, prev_data)  
+    # H = Harvest(data, prev_data)
 
     ## ATTACK SHIPS
     G = Attack(data, prev_data)

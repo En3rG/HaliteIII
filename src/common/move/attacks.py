@@ -2,13 +2,12 @@ from src.common.classes import OrderedSet
 from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt.positionals import Position
 from src.common.points import SupportShip, SupportPoints, AttackPoints
-from src.common.move.harvests import Harvests
 from src.common.matrix.functions import get_coord_closest
 from hlt.positionals import Direction
 import logging
 import heapq
 
-class Attacks(Harvests):
+class Attacks():
     def populate_heap(self, ship_id):
         """
         POPULATE HEAP, SHIP WITH LEAST SUPPORT WILL MOVE FIRST
