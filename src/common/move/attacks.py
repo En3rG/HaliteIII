@@ -29,8 +29,8 @@ class Attacks(Harvests):
         if ship_id in self.data.mySets.ships_to_move:
             support_ships = OrderedSet()
             for support_id in potential_support:
-                if support_id in self.data.mySets.ships_to_move: self.check_harvestNow(ship_id)
-                if support_id in self.data.mySets.ships_to_move: self.check_harvestLater(ship_id, MyConstants.DIRECTIONS)
+                if support_id in self.data.mySets.ships_to_move: self.check_harvestNow(support_id)
+                if support_id in self.data.mySets.ships_to_move: self.check_harvestLater(support_id, MyConstants.DIRECTIONS)
 
                 if support_id in self.data.mySets.ships_to_move:
                     support_ship = self.data.game.me._ships.get(support_id)
