@@ -44,31 +44,24 @@ class Explores():
         if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
 
         ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
-        curr_cell = (ship.position.y, ship.position.x)
-        distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
-        matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
-        max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
-        explore_destination = Position(coord[1], coord[0])
+        matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
+
         directions = self.get_directions_target(ship, explore_destination)
         explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
-        if canHarvest:
-            harvest_destination = self.get_destination(ship, harvest_direction)
-            harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
+        harvest_destination = self.get_destination(ship, harvest_direction)
+        harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-            if max_ratio > harvest_ratio * 3:
-                destination = explore_destination
-                direction = explore_direction
-            else:
-                destination = harvest_destination
-                direction = harvest_direction
-
+        if canHarvest and max_ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+            destination = harvest_destination
+            direction = harvest_direction
         else:
             destination = explore_destination
             direction = explore_direction
 
         self.mark_taken_udpate_top_halite(destination)
         self.move_mark_unsafe(ship, direction, points)
+
 
     def isDestination_untaken(self, s):
         ## SAVING SORTED DISTANCES
@@ -109,12 +102,13 @@ class Explores():
         else:
             return s.destination
 
+
     def mark_taken_udpate_top_halite(self, destination):
         """
         MARKING DESTINATION TAKEN AND REMOVING DESTINATION FROM TOP HALITE, FOR FUTURE CALCULATIONS
         """
         self.taken_destinations.add((destination.y, destination.x))
-        self.top_halite[destination.y][destination.x] = Matrix_val.ZERO
+        #self.top_halite[destination.y][destination.x] = Matrix_val.ZERO
 
         ## FOR HIGHEST HARVEST PER TURN RATIO
         self.taken_matrix[destination.y][destination.x] = Matrix_val.ZERO
@@ -127,64 +121,20 @@ class Explores():
         #                    MyConstants.DIRECT_NEIGHBOR_DISTANCE,
         #                    cummulative=False)
 
-    def populate_heap(self, ship_id):
-        ## SAVING SORTED DISTANCES
-        ## TIMING OUT
-        # if ship_id not in self.heap_set:
-        #     self.heap_set.add(ship_id)
-        #
-        #     ship = self.data.game.me._ships.get(ship_id)
-        #
-        #     curr_cell = (ship.position.y, ship.position.x)
-        #     seek_val = Matrix_val.TEN
-        #
-        #     indices, distances = get_n_closest_masked(self.top_halite,
-        #                                               self.data.init_data.myMatrix.distances.cell[curr_cell],
-        #                                               seek_val,
-        #                                               15)
-        #
-        #     indices_deque = deque(indices)
-        #     distances_deque = deque(distances)
-        #
-        #     closest_ind = indices_deque.popleft()
-        #     closest_dist = distances_deque.popleft()
-        #
-        #     destination = Position(closest_ind[0], closest_ind[1]) ## INDICES ARE IN (y, x) FORMAT
-        #     s = ExploreShip(closest_dist, ship_id, curr_cell, destination, indices_deque, distances_deque)
-        #     heapq.heappush(self.heap_dist, s)
 
 
-        ## JUST GETS CLOSEST TOP AMOUNT HALITE (BASED ON TOP HALITE COPIED)
-        # if ship_id not in self.heap_set:
-        #     self.heap_set.add(ship_id)
-        #
-        #     ship = self.data.game.me._ships.get(ship_id)
-        #
-        #     curr_cell = (ship.position.y, ship.position.x)
-        #     seek_val = Matrix_val.ZERO
-        #     coord, min_di, val = get_coord_closest(seek_val,
-        #                                            self.top_halite,
-        #                                            self.data.init_data.myMatrix.distances.cell[curr_cell],
-        #                                            Inequality.GREATERTHAN)
-        #     destination = Position(coord[1], coord[0])
-        #     s = ExploreShip(min_di, ship_id, curr_cell, destination, None, None)
-        #     heapq.heappush(self.heap_dist, s)
 
 
-        ## FOR CLOSEST TOP HARVEST PER TURN
-        if ship_id not in self.heap_set:
-            self.heap_set.add(ship_id)
+    def get_matrix_ratio(self, ship):
+        curr_cell = (ship.position.y, ship.position.x)
+        distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
+        matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
+        max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
+        destination = Position(coord[1], coord[0])
 
-            ship = self.data.game.me._ships.get(ship_id)
+        return matrix_highest_ratio, max_ratio, destination
 
-            curr_cell = (ship.position.y, ship.position.x)
-            distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
-            matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
-            max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
-            destination = Position(coord[1], coord[0])
 
-            s = ExploreShip2(max_ratio, ship_id, destination, matrix_highest_ratio)
-            heapq.heappush(self.heap_dist, s)
 
     def get_highest_harvest(self, ship, curr_cell):
         """

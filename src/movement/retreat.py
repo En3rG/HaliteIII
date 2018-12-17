@@ -5,6 +5,9 @@ from src.common.move.retreats import Retreats
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 from src.common.points import FarthestShip, RetreatPoints
 from src.common.print import print_heading
+from src.common.matrix.functions import get_coord_closest
+from hlt.positionals import Position
+import heapq
 
 
 """
@@ -40,8 +43,33 @@ class Retreat(Moves, Retreats):
         if self.farthest_ship.distance + MyConstants.RETREAT_EXTRA_TURNS > self.turns_left:
             self.move_ships()
 
+    def populate_heap(self):
+        """
+        GET DISTANCE FROM SHIPYARD/DOCKS
+        """
+        ## ONLY BASED ON SHIPYARD POSITION
+        # for ship in self.data.game.me.get_ships():
+        #     distance = self.data.game.game_map.calculate_distance(ship.position, self.data.game.me.shipyard.position)
+        #     directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
+        #     num_directions = len(directions)
+        #     s = FarthestShip(distance, num_directions, ship.id, directions)
+        #     self.farthest_ship = max(s , self.farthest_ship)
+        #     heapq.heappush(self.heap_dist, s)
 
 
+        ## TAKING DOCKS INTO ACCOUNT
+        for ship in self.data.game.me.get_ships():
+            curr_cell = (ship.position.y, ship.position.x)
+            coord, distance, value = get_coord_closest(Matrix_val.ONE,
+                                                       self.data.myMatrix.locations.myDocks,
+                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                       Inequality.EQUAL)
+            position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, position)
+            num_directions = len(directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions)
+            self.farthest_ship = max(s, self.farthest_ship)
+            heapq.heappush(self.heap_dist, s)
 
 
 

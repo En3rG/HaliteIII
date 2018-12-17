@@ -7,34 +7,7 @@ import logging
 import heapq
 
 class Deposits():
-    def populate_heap(self, ship):
-        """
-        GET DISTANCE FROM SHIPYARD/DOCKS
-        """
-        ## ONLY TAKING SHIPYARD INTO ACCOUNT
-        # if ship.id not in self.heap_set:
-        #     self.heap_set.add(ship.id)
-        #
-        #     distance = self.data.game.game_map.calculate_distance(ship.position, self.data.game.me.shipyard.position)
-        #     directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
-        #     num_directions = len(directions)
-        #     s = FarthestShip(distance, num_directions, ship.id, directions)
-        #     heapq.heappush(self.heap_dist, s)
 
-        ## TAKING DOCKS INTO ACCOUNT
-        if ship.id not in self.heap_set:
-            self.heap_set.add(ship.id)
-
-            curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, value = get_coord_closest(Matrix_val.ONE,
-                                                       self.data.myMatrix.locations.myDocks,
-                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
-                                                       Inequality.EQUAL)
-            position = Position(coord[1], coord[0])
-            directions = self.get_directions_target(ship, position)
-            num_directions = len(directions)
-            s = FarthestShip(distance, num_directions, ship.id, directions)
-            heapq.heappush(self.heap_dist, s)
 
     def depositNow(self, ship, directions):
         """

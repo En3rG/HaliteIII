@@ -8,43 +8,7 @@ import logging
 import heapq
 
 class Attacks():
-    def populate_heap(self, ship_id):
-        """
-        POPULATE HEAP, SHIP WITH LEAST SUPPORT WILL MOVE FIRST
-        SO SHIPS WITH 2 SUPPORT WILL NOT TAKE A SUPPORT FOR ANOTHER
 
-        WILL NOT BE ADDED TO HEAP IF IT HAS TOO MUCH HALITE CARGO
-        """
-        ship = self.data.game.me._ships.get(ship_id)
-        neighbors = self.get_neighbor_IDs(ship)
-        potential_support = neighbors - self.considered_already
-        directions_to_enemy, enemy_position = self.get_enemy(ship)
-        enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
-        my_halite = ship.halite_amount
-
-        if ship_id in self.data.mySets.ships_to_move: self.check_harvestNow(ship_id)
-        if ship_id in self.data.mySets.ships_to_move: self.check_harvestLater(ship_id, MyConstants.DIRECTIONS)
-
-        if ship_id in self.data.mySets.ships_to_move:
-            support_ships = OrderedSet()
-            for support_id in potential_support:
-                if support_id in self.data.mySets.ships_to_move: self.check_harvestNow(support_id)
-                if support_id in self.data.mySets.ships_to_move: self.check_harvestLater(support_id, MyConstants.DIRECTIONS)
-
-                if support_id in self.data.mySets.ships_to_move:
-                    support_ship = self.data.game.me._ships.get(support_id)
-                    potental_harvest = (my_halite + enemy_halite) * 0.25  ## POTENTIAL HARVEST
-                    real_gain = support_ship.halite_amount + potental_harvest % 1000  ## CAN ONLY GET MAX 1000
-                    if real_gain > my_halite * MyConstants.SUPPORT_GAIN_RATIO:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
-                        support_ships.add(support_id)
-
-            num_support = len(support_ships)
-
-            # if my_halite < enemy_halite * MyConstants.ATTACK_ENEMY_HALITE_RATIO and num_support >= 1:
-            if num_support >= 1:  ## ATTACK EVEN WHEN HAS HIGH CARGO
-                s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy)
-                logging.debug(s)
-                heapq.heappush(self.heap_support, s)
 
     def get_neighbor_IDs(self, ship):
         """

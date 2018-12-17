@@ -63,13 +63,14 @@ while True:
     ## EXTRACT GAME DATA
     data = GetData(game, init_data, prev_data, halite_stats)
 
-    #a = Start(data, prev_data)
-
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)
 
     ## STUCK SHIPS
     B = Stuck(data, prev_data)
+
+    ## START SHIPS
+    a = Start(data, prev_data)
 
     ## BUILD DOCK
     C = Build(data, prev_data)
@@ -81,7 +82,7 @@ while True:
     F = Harass(data, prev_data)
 
     ## HARVEST SHIPS
-    # H = Harvest(data, prev_data)
+    H = Harvest(data, prev_data)
 
     ## ATTACK SHIPS
     G = Attack(data, prev_data)

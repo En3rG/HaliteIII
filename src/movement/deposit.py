@@ -4,7 +4,11 @@ from src.common.move.moves import Moves
 from src.common.move.deposits import Deposits
 from src.common.print import print_heading
 from src.movement.collision_prevention import avoid_collision_direction
-
+from src.common.points import FarthestShip, DepositPoints
+from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
+from hlt.positionals import Direction
+from src.common.matrix.functions import get_coord_closest
+from hlt.positionals import Position
 
 """
 TO DO!!!!
@@ -56,4 +60,31 @@ class Deposit(Moves, Deposits):
                 ship = self.data.game.me._ships.get(s.ship_id)
                 self.depositNow(ship, s.directions)
 
+    def populate_heap(self, ship):
+        """
+        GET DISTANCE FROM SHIPYARD/DOCKS
+        """
+        ## ONLY TAKING SHIPYARD INTO ACCOUNT
+        # if ship.id not in self.heap_set:
+        #     self.heap_set.add(ship.id)
+        #
+        #     distance = self.data.game.game_map.calculate_distance(ship.position, self.data.game.me.shipyard.position)
+        #     directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
+        #     num_directions = len(directions)
+        #     s = FarthestShip(distance, num_directions, ship.id, directions)
+        #     heapq.heappush(self.heap_dist, s)
 
+        ## TAKING DOCKS INTO ACCOUNT
+        if ship.id not in self.heap_set:
+            self.heap_set.add(ship.id)
+
+            curr_cell = (ship.position.y, ship.position.x)
+            coord, distance, value = get_coord_closest(Matrix_val.ONE,
+                                                       self.data.myMatrix.locations.myDocks,
+                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                       Inequality.EQUAL)
+            position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, position)
+            num_directions = len(directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions)
+            heapq.heappush(self.heap_dist, s)

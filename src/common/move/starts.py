@@ -12,11 +12,9 @@ class Starts():
 
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
-
-            hasShip = self.data.myMatrix.locations.myShips[destination.y][destination.x]
             harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
 
-            c = StartPoints(safe=0, hasShip=hasShip, harvest=harvest, direction=direction)
+            c = StartPoints(safe=0, harvest=harvest, direction=direction)
             points.append(c)
 
         logging.debug(points)
@@ -31,13 +29,9 @@ class Starts():
 
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
-
-            hasShip = self.data.myMatrix.locations.myShips[destination.y][destination.x]
-            canMove = 0 if self.data.myMatrix.locations.stuck[destination.y][destination.x] == 1 else 1
             harvest = self.data.myMatrix.halite.harvest[destination.y][destination.x]
 
-            c = StartPoints(safe=0, hasShip=hasShip, harvest=harvest, direction=direction,
-                            canMove=canMove)  ## FLIP HARVEST
+            c = StartPoints(safe=0, harvest=harvest, direction=direction)  ## FLIP HARVEST
             points.append(c)
 
         logging.debug(points)
