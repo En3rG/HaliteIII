@@ -12,7 +12,7 @@ class Harvests():
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction, points = self.best_direction(ship, mode=MoveMode.HARVEST)
+        direction, points = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST)
         if self.isHarvestingNow(direction, ship):
             self.move_mark_unsafe(ship, direction, points)
 
@@ -35,14 +35,14 @@ class Harvests():
                 (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] >= self.data.myVars.harvest_percentile or self.isBlocked(ship)):
             return True
 
-    def check_harvestLater(self, ship_id, kicked=False):
+    def check_harvestLater(self, ship_id, directions, kicked=False):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
         """
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction, points = self.best_direction(ship, mode=MoveMode.HARVEST)
+        direction, points = self.best_direction(ship, directions, mode=MoveMode.HARVEST)
         if self.isHarvestingLater(ship, direction):
             self.move_mark_unsafe(ship, direction, points)
 
@@ -84,7 +84,7 @@ class Harvests():
 
         return unsafe_num == 4
 
-    def get_move_points_harvest(self, ship):
+    def get_move_points_harvest(self, ship, directions):
         """
         GET POINTS FOR HARVESTING
 
@@ -96,7 +96,7 @@ class Harvests():
         leave_cost, harvest_stay = self.get_harvest(ship, Direction.Still)
         self.set_harvestPoints(ship, Direction.Still, harvest_stay, points)
 
-        for direction in MyConstants.DIRECTIONS:
+        for direction in directions:
             cost, harvest = self.get_harvest(ship, direction, leave_cost, harvest_stay)
             self.set_harvestPoints(ship, direction, harvest, points)
 

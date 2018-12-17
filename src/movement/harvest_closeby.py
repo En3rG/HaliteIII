@@ -2,6 +2,7 @@ from src.common.move.moves import Moves
 from src.common.move.harvests import Harvests
 from src.common.print import print_heading
 from src.common.classes import OrderedSet
+from src.common.values import MyConstants
 
 
 """
@@ -33,25 +34,22 @@ class Harvest(Moves, Harvests):
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             self.check_harvestNow(ship_id)
 
-
         print_heading("Moving harvesting (later) ships......")
-        ## COMMENTING OUT BECAUSE WE WANT TO EXPLORE INSTEAD
-        ## COMMENTING THIS OUT CAUSED A BIG DROP IN RATING
         ## MOVE SHIPS (THAT WILL HARVEST NEXT TURN)
-        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
-        for ship_id in ships:
-            ## MOVE KICKED SHIPS FIRST (IF ANY)
-            while self.data.mySets.ships_kicked:
-                ship_kicked = self.data.mySets.ships_kicked.pop()
-                self.check_harvestLater(ship_kicked, kicked=True)
-
-            ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-            if ship_id in self.data.mySets.ships_to_move:
-                self.check_harvestLater(ship_id)
-
-        ## MERGE TEMP BACK TO SHIPS KICKED
-        ## UNION WITH ships_to_move IN CASE SHIP MOVED
-        self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
+        # ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move) ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        # for ship_id in ships:
+        #     ## MOVE KICKED SHIPS FIRST (IF ANY)
+        #     while self.data.mySets.ships_kicked:
+        #         ship_kicked = self.data.mySets.ships_kicked.pop()
+        #         self.check_harvestLater(ship_kicked, MyConstants.DIRECTIONS, kicked=True)
+        #
+        #     ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
+        #     if ship_id in self.data.mySets.ships_to_move:
+        #         self.check_harvestLater(ship_id, MyConstants.DIRECTIONS)
+        #
+        # ## MERGE TEMP BACK TO SHIPS KICKED
+        # ## UNION WITH ships_to_move IN CASE SHIP MOVED
+        # self.data.mySets.ships_kicked.update(self.ships_kicked_temp & self.data.mySets.ships_to_move)
 
 
 

@@ -134,7 +134,7 @@ class Moves(abc.ABC):
         elif mode == MoveMode.DEPOSIT:
             points = self.get_move_points_returning(ship, directions)
         elif mode == MoveMode.HARVEST:
-            points = self.get_move_points_harvest(ship)
+            points = self.get_move_points_harvest(ship, directions)
         elif mode == MoveMode.EXPLORE:
             points = self.get_move_points_explore(ship, directions)
         elif mode == MoveMode.DEPART:
