@@ -1,7 +1,6 @@
 
 from src.common.print import print_heading
 from src.common.move.moves import Moves
-from src.common.move.starts import Starts
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.move.harvests import Harvests
 from src.common.move.explores import Explores
@@ -18,7 +17,7 @@ TO DO!!!!!!!!!!!
 
 """
 
-class Start(Moves, Starts, Harvests, Explores):
+class Start(Moves, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
@@ -48,16 +47,6 @@ class Start(Moves, Starts, Harvests, Explores):
             self.populate_heap(ship_id)
 
         if self.data.game.turn_number <= 6:  ## SHIPS SHOULD MOVE OUT ON TURNS 2, 3, 4, 5, 6
-            # if self.data.game.turn_number == 6:
-            #     new_ship_id = list(sorted(self.data.mySets.ships_all))[-1]
-            #     ship = self.data.game.me._ships.get(new_ship_id)
-            #     direction, points = self.best_direction(ship, mode=MoveMode.MINSTART)
-            #     self.move_mark_unsafe(ship, direction, points)
-            # elif len(self.data.mySets.ships_all) >= 1:
-            #     out_ship_id = list(sorted(self.data.mySets.ships_all))[-1]
-            #     ship = self.data.game.me._ships.get(out_ship_id)
-            #     direction, points = self.best_direction(ship, mode=MoveMode.MAXSTART)
-            #     self.move_mark_unsafe(ship, direction, points)
 
             while self.heap_dist:
                 ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -74,6 +63,7 @@ class Start(Moves, Starts, Harvests, Explores):
                 explore_destination = self.isDestination_untaken(s)
 
                 if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
+                    ## CHECK IF CAN HARVEST NOW/LATER
                     canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
                     if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
                                                                                                  MyConstants.DIRECTIONS,
@@ -86,6 +76,7 @@ class Start(Moves, Starts, Harvests, Explores):
                     harvest_destination = self.get_destination(ship, harvest_direction)
                     harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
+                    ## CHECK WHETHER IT'LL HARVEST OR EXPLORE
                     if s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
                         destination = harvest_destination
                         direction = harvest_direction
@@ -98,7 +89,6 @@ class Start(Moves, Starts, Harvests, Explores):
 
 
     def populate_heap(self, ship_id):
-        ## FOR CLOSEST TOP HARVEST PER TURN
         if ship_id not in self.heap_set:
             self.heap_set.add(ship_id)
 

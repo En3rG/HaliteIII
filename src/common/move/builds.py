@@ -66,17 +66,17 @@ class Builds():
 
             ## GET DOCK POSITION
             curr_cell = (ship.position.y, ship.position.x)
-            coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
+            dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
                                                      self.data.init_data.myMatrix.locations.dock_placement,
                                                      self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                      Inequality.EQUAL)
 
-            if coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
-                dock_position = Position(coord[1], coord[0])
+            if dock_coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
+                dock_position = Position(dock_coord[1], dock_coord[0])
                 directions = self.get_directions_target(ship, dock_position)
 
-                self.ships_building_towards_dock.setdefault(coord, set())
-                if len(self.ships_building_towards_dock[coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
+                self.ships_building_towards_dock.setdefault(dock_coord, set())
+                if len(self.ships_building_towards_dock[dock_coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
                     self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
                     ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
@@ -90,7 +90,7 @@ class Builds():
                         self.move_mark_unsafe(ship, Direction.Still, [])
 
                     ## SHIP COUNTER PER DOCK
-                    self.ships_building_towards_dock[coord].add(ship.id)
+                    self.ships_building_towards_dock[dock_coord].add(ship.id)
 
 
     def go_towards_building(self):
@@ -108,9 +108,9 @@ class Builds():
 
                     curr_cell = (ship.position.y, ship.position.x)
                     dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
-                                                             self.data.init_data.myMatrix.locations.dock_placement,
-                                                             self.data.init_data.myMatrix.distances.cell[curr_cell],
-                                                             Inequality.EQUAL)
+                                                                  self.data.init_data.myMatrix.locations.dock_placement,
+                                                                  self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                                  Inequality.EQUAL)
 
                     ## dock_coord WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
                     if dock_coord and (ship.halite_amount == 1000 or ship_id in self.prev_data.ships_building):

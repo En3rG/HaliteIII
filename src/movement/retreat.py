@@ -43,6 +43,7 @@ class Retreat(Moves, Retreats):
         if self.farthest_ship.distance + MyConstants.RETREAT_EXTRA_TURNS > self.turns_left:
             self.move_ships()
 
+
     def populate_heap(self):
         """
         GET DISTANCE FROM SHIPYARD/DOCKS

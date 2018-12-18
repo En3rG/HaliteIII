@@ -2,7 +2,7 @@ from src.common.values import Matrix_val
 from hlt.positionals import Direction
 import logging
 from src.common.points import RetreatPoints, DepositPoints, HarvestPoints, ExplorePoints, CollisionPoints, BuildPoints,\
-                        AttackPoints, SupportPoints, StartPoints
+                        AttackPoints, SupportPoints
 
 def optimize_moves(commands):
     pass
