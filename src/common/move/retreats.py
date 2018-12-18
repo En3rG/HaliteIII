@@ -6,8 +6,6 @@ from src.common.points import FarthestShip, RetreatPoints
 import logging
 
 class Retreats():
-
-
     def move_ships(self):
         """
         MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD/DOCKS
@@ -21,6 +19,7 @@ class Retreats():
 
             self.move_mark_unsafe(ship, direction, points)
 
+
     def get_move_points_retreat(self, ship, directions):
         """
         GET POINTS FOR RETREATING
@@ -30,7 +29,11 @@ class Retreats():
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [RetreatPoints(priority_direction=1, shipyard=0, safe=1, stuck=0, potential_ally_collision=-999,
+        points = [RetreatPoints(priority_direction=1,
+                                shipyard=0,
+                                safe=1,
+                                stuck=0,
+                                potential_ally_collision=-999,
                                 direction=Direction.Still)]
 
         for direction in directions:
@@ -43,8 +46,7 @@ class Retreats():
             shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
-            stuck = self.data.myMatrix.locations.stuck[ship.position.y][
-                ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
+            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
 
             c = RetreatPoints(priority_direction, shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)

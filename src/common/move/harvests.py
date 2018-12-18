@@ -20,6 +20,7 @@ class Harvests():
 
         return harvesting, direction
 
+
     def isHarvestingNow(self, direction, ship):
         """
         CHECK IF SHIP IS HARVESTING NOW
@@ -39,6 +40,7 @@ class Harvests():
                 (self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x] >= self.data.myVars.harvest_percentile or self.isBlocked(ship)):
             return True
 
+
     def check_harvestLater(self, ship_id, directions, kicked=False, moveNow=True):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
@@ -56,6 +58,7 @@ class Harvests():
             self.ships_kicked_temp.add(ship_id)
 
         return harvesting, direction
+
 
     def isHarvestingLater(self, ship, direction):
         """
@@ -79,6 +82,7 @@ class Harvests():
         return (self.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x] >= self.data.myVars.harvest_percentile
                 and self.data.myMatrix.locations.occupied[destination.y][destination.x] > Matrix_val.OCCUPIED)
 
+
     def isBlocked(self, ship):
         """
         IF ALL 4 DIRECTIONS ARE NOT SAFE
@@ -91,6 +95,7 @@ class Harvests():
             if self.data.myMatrix.locations.safe[destination.y][destination.x] == -1: unsafe_num += 1
 
         return unsafe_num == 4
+
 
     def get_move_points_harvest(self, ship, directions):
         """
@@ -128,6 +133,7 @@ class Harvests():
 
         return cost, harvest_with_bonus
 
+
     def set_harvestPoints(self, ship, direction, harvest, points):
         """
         GATHER POINTS WITH DIRECTION PROVIDED
@@ -142,5 +148,5 @@ class Harvests():
         occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
         enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
 
-        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction)
+        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, self.data)
         points.append(c)

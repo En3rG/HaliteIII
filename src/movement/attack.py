@@ -136,7 +136,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 if support_id in self.data.mySets.ships_to_move and not(canHarvest) and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
                     potental_harvest = (my_halite + enemy_halite) * 0.25  ## POTENTIAL HARVEST
                     real_gain = support_ship.halite_amount + potental_harvest % 1000  ## CAN ONLY GET MAX 1000
-                    if real_gain > my_halite * MyConstants.SUPPORT_GAIN_RATIO:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
+                    if real_gain > my_halite * self.data.myVars.support_gain_ratio:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
                         support_ships.add(support_id)
 
             num_support = len(support_ships)

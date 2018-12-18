@@ -365,13 +365,14 @@ class HarvestPoints():
     HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
 
     """
-    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction):
+    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, data):
         self.safe = safe
         self.occupied = occupied
         self.enemy_occupied = -enemy_occupied
         self.potential_enemy_collision = potential_enemy_collision
         self.harvest = harvest
         self.direction = direction
+        self.data = data
 
     def __gt__(self, other):
         if isinstance(other, HarvestPoints):
@@ -387,9 +388,9 @@ class HarvestPoints():
                 return True
             elif self.enemy_occupied < other.enemy_occupied:
                 return False
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
+            # elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
             #     return True
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
+            # elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
             #     return False
             elif self.harvest > other.harvest:
                 return True
@@ -414,9 +415,9 @@ class HarvestPoints():
                 return True
             elif self.enemy_occupied > other.enemy_occupied:
                 return False
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
+            # elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
             #     return True
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
+            # elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
             #     return False
             elif self.harvest < other.harvest:
                 return True

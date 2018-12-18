@@ -5,17 +5,12 @@ from src.common.points import SupportShip, SupportPoints, AttackPoints
 from src.common.matrix.functions import get_coord_closest
 from hlt.positionals import Direction
 import logging
-import heapq
 
 class Attacks():
-
-
     def get_neighbor_IDs(self, ship):
         """
-        GET NEXT NEIGHBORS IN THE GIVEN MATRIX
+        GET NEXT NEIGHBORS IN THE GIVEN SHIP
 
-        :param matrix:
-        :param position:
         :return: SET OF IDs
         """
         ids = OrderedSet()
@@ -26,9 +21,10 @@ class Attacks():
 
         return ids
 
+
     def get_enemy(self, ship):
         """
-        GET DIRECTIONS AND POSITION OF THE ENEMY
+        GET DIRECTIONS AND POSITION OF THE ENEMY GIVEN THE SHIP
         """
         curr_cell = (ship.position.y, ship.position.x)
         coord, distance, val = get_coord_closest(Matrix_val.ONE,
@@ -39,6 +35,7 @@ class Attacks():
         directions = self.get_directions_target(ship, enemy_position)
 
         return directions, enemy_position
+
 
     def get_move_points_attacking(self, ship, directions):
         """
@@ -67,6 +64,7 @@ class Attacks():
         logging.debug(points)
 
         return points
+
 
     def get_move_points_supporting(self, ship, directions):
         """

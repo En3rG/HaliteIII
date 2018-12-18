@@ -7,8 +7,6 @@ import logging
 import heapq
 
 class Deposits():
-
-
     def depositNow(self, ship, directions):
         """
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
@@ -17,6 +15,7 @@ class Deposits():
         direction, points = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
         self.move_mark_unsafe(ship, direction, points)
         self.data.mySets.ships_returning.add(ship.id)
+
 
     def get_move_points_returning(self, ship, directions):
         """

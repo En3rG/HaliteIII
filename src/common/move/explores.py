@@ -122,9 +122,6 @@ class Explores():
         #                    cummulative=False)
 
 
-
-
-
     def get_matrix_ratio(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
         distance_matrix = self.data.init_data.myMatrix.distances.cell[curr_cell]
@@ -133,7 +130,6 @@ class Explores():
         destination = Position(coord[1], coord[0])
 
         return matrix_highest_ratio, max_ratio, destination
-
 
 
     def get_highest_harvest(self, ship, curr_cell):
@@ -150,6 +146,7 @@ class Explores():
         harvest_per_turn_ratio_matrix = np.divide(available_harvest, distances, out=np.zeros_like(available_harvest), where=distances != 0)
 
         return harvest_per_turn_ratio_matrix
+
 
     def get_move_points_explore(self, ship, directions):
         """
@@ -170,16 +167,14 @@ class Explores():
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][
-                destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
             c = ExplorePoints(priority_direction, safe, occupied, potential_enemy_collision, cost, direction)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
         occupied = 0 if self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
-        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][
-            ship.position.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
 
         points.append(ExplorePoints(priority_direction=1,
                                     safe=safe,
