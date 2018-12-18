@@ -52,7 +52,7 @@ class MyConstants():
     NUM_SHIPS_BEFORE_BUILDING = 10
 
     SHIPS_BUILDING_PERCENT = 0.25                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
-    SHIPS_BUILDING_PER_DOCK = 3                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
+    SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
     DOCK_MANHATTAN = 7                              ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
                                                     ## USED TO BE:
                                                     ## V28: 2
@@ -66,7 +66,7 @@ class MyConstants():
 
 
     ## ATTACKING
-    ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
+    ENGAGE_ENEMY_DISTANCE = 2                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
     ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING

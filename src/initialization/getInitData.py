@@ -240,6 +240,15 @@ class GetInitData(Data):
 
         print_matrix("Eliminate close to shipyard: top N", matrix)
 
+        ## ELIMINATE TOP N CLOSE TO ENEMY SHIPYARD
+        for id, player in self.game.players.items():
+            if id != self.game.me.id:
+                enemyShipyard_position = player.shipyard.position
+                populate_manhattan(matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.MIN_DIST_BTW_DOCKS)
+
+        print_matrix("Eliminate close to enemy shipyard: top N", matrix)
+
+
         ## GET COORD OF HIGHEST VALUE IN MATRIX
         ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
         curr_cell = (shipyard.position.y, shipyard.position.x)

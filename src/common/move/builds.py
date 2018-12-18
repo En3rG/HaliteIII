@@ -120,7 +120,8 @@ class Builds():
                             dock_position = Position(dock_coord[1], dock_coord[0])
                             directions = self.get_directions_target(ship, dock_position)
 
-                            # self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                            self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+
                             self.data.mySets.ships_building.add(ship_id)
                             direction, points = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
                             self.move_mark_unsafe(ship, direction, points)
