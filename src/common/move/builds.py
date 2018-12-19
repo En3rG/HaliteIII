@@ -50,6 +50,10 @@ class Builds():
                 self.data.commands.set_coords_taken((ship.position.y, ship.position.x), ship.id)
                 self.data.command_queue.append(command)
 
+            dock_coord = (ship.position.y, ship.position.x)
+            self.ships_building_towards_dock.setdefault(dock_coord, set())
+            self.ships_building_towards_dock[dock_coord].add(ship.id)
+
 
     def building_later(self):
         """
@@ -60,6 +64,8 @@ class Builds():
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
         matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
+
+        logging.debug("ship next to dock: {}".format(ships_going_dock))
 
         for ship_id in ships_going_dock:
             ship = self.data.game.me._ships.get(ship_id)
@@ -76,7 +82,8 @@ class Builds():
                 directions = self.get_directions_target(ship, dock_position)
 
                 self.ships_building_towards_dock.setdefault(dock_coord, set())
-                if len(self.ships_building_towards_dock[dock_coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
+
+                if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
                     self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
                     ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
@@ -103,6 +110,8 @@ class Builds():
                 matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
                 ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
+                logging.debug("ship going to dock: {} at i {}".format(ships_going_dock, i))
+
                 for ship_id in ships_going_dock:
                     ship = self.data.game.me._ships.get(ship_id)
 
@@ -116,7 +125,7 @@ class Builds():
                     if dock_coord and (ship.halite_amount == 1000 or ship_id in self.prev_data.ships_building):
                         self.ships_building_towards_dock.setdefault(dock_coord, set())
 
-                        if len(self.ships_building_towards_dock[dock_coord]) <= MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
+                        if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
                             dock_position = Position(dock_coord[1], dock_coord[0])
                             directions = self.get_directions_target(ship, dock_position)
 

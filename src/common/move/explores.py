@@ -107,6 +107,7 @@ class Explores():
         """
         MARKING DESTINATION TAKEN AND REMOVING DESTINATION FROM TOP HALITE, FOR FUTURE CALCULATIONS
         """
+        logging.debug("mark_taken_udpate_top_halite destination: {}".format(destination))
         self.taken_destinations.add((destination.y, destination.x))
         #self.top_halite[destination.y][destination.x] = Matrix_val.ZERO
 
@@ -167,21 +168,25 @@ class Explores():
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             occupied = self.data.myMatrix.locations.occupied[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
+            enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
-            c = ExplorePoints(priority_direction, safe, occupied, potential_enemy_collision, cost, direction)
+            c = ExplorePoints(priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
         occupied = 0 if self.data.myMatrix.locations.occupied[ship.position.y][ship.position.x] >= -1 else -1
+        enemy_occupied = self.data.myMatrix.locations.enemyShips[ship.position.y][ship.position.x]
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
 
         points.append(ExplorePoints(priority_direction=1,
                                     safe=safe,
                                     occupied=occupied,
+                                    enemy_occupied=enemy_occupied,
                                     potential_enemy_collision=potential_enemy_collision,
                                     cost=999,
-                                    direction=Direction.Still))
+                                    direction=Direction.Still,
+                                    data=self.data))
 
         logging.debug(points)
 

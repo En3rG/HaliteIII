@@ -52,7 +52,7 @@ class MyConstants():
     NUM_SHIPS_BEFORE_BUILDING = 10
 
     SHIPS_BUILDING_PERCENT = 0.25                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
-    SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
+    SHIPS_BUILDING_PER_DOCK = 2                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
     DOCK_MANHATTAN = 7                              ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
                                                     ## USED TO BE:
                                                     ## V28: 2
@@ -64,6 +64,9 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V19: 12
 
+
+    ## INFLUENCE
+    ENGAGE_INFLUENCE_DISTANCE = 4                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
 
     ## ATTACKING
     ENGAGE_ENEMY_DISTANCE = 2                       ## DISTANCE TO ENGAGE WITH ENEMY

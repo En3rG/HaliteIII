@@ -54,7 +54,8 @@ class Start(Moves, Harvests, Explores):
                     ship_kicked = self.data.mySets.ships_kicked.pop()
                     if ship_kicked in self.data.mySets.ships_to_move:
                         logging.debug("Moving kicked ship ({}) for start".format(ship_kicked))
-                        self.exploreNow(ship_kicked)
+                        #self.exploreNow(ship_kicked)
+                        self.populate_heap(ship_kicked)
 
                 s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
                 logging.debug(s)  ## EXPLORE SHIP OBJECT

@@ -5,6 +5,7 @@ from src.initialization.getInitData import GetInitData
 from src.initialization.getData import GetData
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
+from src.movement.influence import Influence
 from src.movement.explore import Explore
 from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
@@ -86,6 +87,9 @@ while True:
 
     ## ATTACK SHIPS
     G = Attack(data, prev_data)
+
+    ## INFLUENCE SHIPS
+    K = Influence(data, prev_data)
 
     ## EXPLORE SHIPS
     I = Explore(data, prev_data)

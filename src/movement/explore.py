@@ -1,10 +1,10 @@
 from src.common.move.moves import Moves
 from src.common.move.explores import Explores
+from src.common.move.harvests import Harvests
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 import logging
 from src.common.print import print_heading, print_matrix
 from src.common.points import ExploreShip, ExploreShip2, ExplorePoints
-from src.common.move.harvests import Harvests
 from hlt import constants
 import heapq
 import copy
@@ -87,7 +87,8 @@ class Explore(Moves, Explores, Harvests):
                 ship_kicked = self.data.mySets.ships_kicked.pop()
                 if ship_kicked in self.data.mySets.ships_to_move:
                     logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
-                    self.exploreNow(ship_kicked)
+                    #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, EVEN WHEN VERY FAR
+                    self.populate_heap(ship_kicked)
 
             s = heapq.heappop(self.heap_dist)                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug(s)                                        ## EXPLORE SHIP OBJECT

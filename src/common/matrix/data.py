@@ -114,6 +114,9 @@ class Locations():
         for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
             ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
             self.engage_enemy[i] = np.zeros((map_height, map_width), dtype=np.int16)
+
+        self.engage_influence = np.zeros((map_height, map_width), dtype=np.int16)
+
         self.influenced = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.stuck = np.zeros((map_height, map_width), dtype=np.int16)
@@ -375,11 +378,19 @@ class Data(abc.ABC):
                                        ship.position,
                                        constants.INSPIRATION_RADIUS,
                                        cummulative=True)
+
                     populate_manhattan(self.myMatrix.locations.potential_enemy_collisions,
                                        Matrix_val.POTENTIAL_COLLISION,
                                        ship.position,
                                        MyConstants.DIRECT_NEIGHBOR_DISTANCE,
                                        cummulative=True)
+
+                    populate_manhattan(self.myMatrix.locations.engage_influence,
+                                       Matrix_val.ONE,
+                                       ship.position,
+                                       MyConstants.ENGAGE_INFLUENCE_DISTANCE,
+                                       cummulative=False)
+
                     for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
                         populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
                                            Matrix_val.ONE,
