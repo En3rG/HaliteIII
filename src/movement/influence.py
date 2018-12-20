@@ -88,9 +88,6 @@ class Influence(Moves, Explores, Harvests):
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
 
-            if ship_id == 44:
-                print_matrix("matrix_highest_ratio", matrix_highest_ratio)
-
             logging.debug("ship id: {} max_ratio {} destination {}".format(ship_id, max_ratio, destination))
             s = ExploreShip2(max_ratio, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)

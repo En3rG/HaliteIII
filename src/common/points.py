@@ -264,7 +264,7 @@ class DepositPoints():
 
     COMMENTED OUT ALLY COLLISION, WITH IT IT CAUSES A TRAFFIC JAM AT THE DOCK
     """
-    def __init__(self, priority_direction, safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction):
+    def __init__(self, priority_direction, safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction, avoid_enemy):
         self.priority_direction = priority_direction
         self.safe = safe
         self.dock = dock
@@ -273,6 +273,7 @@ class DepositPoints():
         self.potential_ally_collision = potential_ally_collision
         self.cost = -cost  ## NEGATIVE BECAUSE WE WANT THE LEAST COST
         self.direction = direction
+        self.avoid_enemy = avoid_enemy
 
     def __gt__(self, other):
         if isinstance(other, DepositPoints):
@@ -288,14 +289,14 @@ class DepositPoints():
                 return True
             elif self.dock < other.dock:
                 return False
-            # elif self.enemy_occupied > other.enemy_occupied:
-            #     return True
-            # elif self.enemy_occupied < other.enemy_occupied:
-            #     return False
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
-            #     return True
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
-            #     return False
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
+                return True
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
+                return False
             # elif self.potential_ally_collision > other.potential_ally_collision:
             #     return True
             # elif self.potential_ally_collision < other.potential_ally_collision:
@@ -323,14 +324,14 @@ class DepositPoints():
                 return True
             elif self.dock > other.dock:
                 return False
-            # elif self.enemy_occupied < other.enemy_occupied:
-            #     return True
-            # elif self.enemy_occupied > other.enemy_occupied:
-            #     return False
-            # elif self.potential_enemy_collision < other.potential_enemy_collision:
-            #     return True
-            # elif self.potential_enemy_collision > other.potential_enemy_collision:
-            #     return False
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
+                return True
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
+                return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
+                return False
             # elif self.potential_ally_collision < other.potential_ally_collision:
             #     return True
             # elif self.potential_ally_collision > other.potential_ally_collision:
@@ -345,7 +346,7 @@ class DepositPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {}".format(
+        return "{} priority_direction: {} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {} avoid_enemy {}".format(
                                                                                         self.__class__.__name__,
                                                                                         self.priority_direction,
                                                                                         self.safe,
@@ -354,7 +355,8 @@ class DepositPoints():
                                                                                         self.potential_enemy_collision,
                                                                                         self.potential_ally_collision,
                                                                                         self.cost,
-                                                                                        self.direction)
+                                                                                        self.direction,
+                                                                                        self.avoid_enemy)
 
 
 class HarvestPoints():
@@ -365,7 +367,7 @@ class HarvestPoints():
     HARVEST SHOULD CONSISTS OF: BONUS + HARVEST - COST
 
     """
-    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, data):
+    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, data, avoid_enemy):
         self.safe = safe
         self.occupied = occupied
         self.enemy_occupied = -enemy_occupied
@@ -373,6 +375,7 @@ class HarvestPoints():
         self.harvest = harvest
         self.direction = direction
         self.data = data
+        self.avoid_enemy = avoid_enemy
 
     def __gt__(self, other):
         if isinstance(other, HarvestPoints):
@@ -384,13 +387,13 @@ class HarvestPoints():
                 return True
             elif self.occupied < other.occupied:
                 return False
-            elif self.enemy_occupied > other.enemy_occupied:
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
                 return True
-            elif self.enemy_occupied < other.enemy_occupied:
+            elif self.enemy_occupied < other.enemy_occupied  and self.avoid_enemy:
                 return False
-            elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
                 return True
-            elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.harvest > other.harvest:
                 return True
@@ -411,13 +414,13 @@ class HarvestPoints():
                 return True
             elif self.occupied > other.occupied:
                 return False
-            elif self.enemy_occupied < other.enemy_occupied:
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
                 return True
-            elif self.enemy_occupied > other.enemy_occupied:
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
                 return False
-            elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
                 return True
-            elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.harvest < other.harvest:
                 return True
@@ -429,21 +432,22 @@ class HarvestPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} harvest: {} direction: {}".format(
+        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} harvest: {} direction: {} avoid_enemy {}".format(
                                                                                 self.__class__.__name__,
                                                                                 self.safe,
                                                                                 self.occupied,
                                                                                 self.enemy_occupied,
                                                                                 self.potential_enemy_collision,
                                                                                 self.harvest,
-                                                                                self.direction)
+                                                                                self.direction,
+                                                                                self.avoid_enemy)
 
 
 class ExplorePoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR EXPLORING
     """
-    def __init__(self, priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, data):
+    def __init__(self, priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, data, avoid_enemy):
         self.priority_direction = priority_direction
         self.safe = safe
         self.occupied = occupied
@@ -452,6 +456,7 @@ class ExplorePoints():
         self.cost = -cost
         self.direction = direction
         self.data = data
+        self.avoid_enemy = avoid_enemy
 
     def __gt__(self, other):
         if isinstance(other, ExplorePoints):
@@ -467,13 +472,13 @@ class ExplorePoints():
                 return True
             elif self.occupied < other.occupied:
                 return False
-            elif self.enemy_occupied > other.enemy_occupied:
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
                 return True
-            elif self.enemy_occupied < other.enemy_occupied:
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
                 return False
-            elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
                 return True
-            elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.cost > other.cost:
                 return True
@@ -498,13 +503,13 @@ class ExplorePoints():
                 return True
             elif self.occupied > other.occupied:
                 return False
-            elif self.enemy_occupied < other.enemy_occupied:
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
                 return True
-            elif self.enemy_occupied > other.enemy_occupied:
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
                 return False
-            elif self.potential_enemy_collision < other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
                 return True
-            elif self.potential_enemy_collision > other.potential_enemy_collision and len(self.data.game.players) == 4:
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.cost < other.cost:
                 return True
@@ -516,7 +521,7 @@ class ExplorePoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {}".format(
+        return "{} priority_direction: {} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {} avoid_enemy {}".format(
             self.__class__.__name__,
             self.priority_direction,
             self.safe,
@@ -524,7 +529,8 @@ class ExplorePoints():
             self.enemy_occupied,
             self.potential_enemy_collision,
             self.cost,
-            self.direction)
+            self.direction,
+            self.avoid_enemy)
 
 
 class CollisionPoints():

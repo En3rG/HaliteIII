@@ -17,8 +17,6 @@ class MoveMode():
     BUILDING = "building"
     ATTACKING = "attacking"
     SUPPORTING = "supporting"
-    MAXSTART = "maxstart"
-    MINSTART = "minstart"
 
 
 class Matrix_val():
@@ -66,10 +64,10 @@ class MyConstants():
 
 
     ## INFLUENCE
-    ENGAGE_INFLUENCE_DISTANCE = 4                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
+    ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
 
     ## ATTACKING
-    ENGAGE_ENEMY_DISTANCE = 2                       ## DISTANCE TO ENGAGE WITH ENEMY
+    ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
     ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
     ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING

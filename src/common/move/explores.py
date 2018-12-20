@@ -149,7 +149,7 @@ class Explores():
         return harvest_per_turn_ratio_matrix
 
 
-    def get_move_points_explore(self, ship, directions):
+    def get_move_points_explore(self, ship, directions, avoid_enemy):
         """
         GET POINTS FOR MOVING EXPLORING SHIPS
 
@@ -171,7 +171,7 @@ class Explores():
             enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
-            c = ExplorePoints(priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data)
+            c = ExplorePoints(priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data, avoid_enemy)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
@@ -186,7 +186,8 @@ class Explores():
                                     potential_enemy_collision=potential_enemy_collision,
                                     cost=999,
                                     direction=Direction.Still,
-                                    data=self.data))
+                                    data=self.data,
+                                    avoid_enemy=avoid_enemy))
 
         logging.debug(points)
 

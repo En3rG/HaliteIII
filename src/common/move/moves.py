@@ -117,7 +117,7 @@ class Moves(abc.ABC):
         self.data.myMatrix.locations.occupied[destination.y][destination.x] += Matrix_val.OCCUPIED
 
 
-    def best_direction(self, ship, directions=None, mode=""):
+    def best_direction(self, ship, directions=None, mode="", avoid_enemy=True):
         """
         USING POINT SYSTEM
         GET BEST DIRECTION GIVEN CLEAN POSSIBLE DIRECTIONS TOWARD HOME/TARGET
@@ -132,11 +132,11 @@ class Moves(abc.ABC):
         if mode == MoveMode.RETREAT:
             points = self.get_move_points_retreat(ship, directions)
         elif mode == MoveMode.DEPOSIT:
-            points = self.get_move_points_returning(ship, directions)
+            points = self.get_move_points_returning(ship, directions, avoid_enemy)
         elif mode == MoveMode.HARVEST:
-            points = self.get_move_points_harvest(ship, directions)
+            points = self.get_move_points_harvest(ship, directions, avoid_enemy)
         elif mode == MoveMode.EXPLORE:
-            points = self.get_move_points_explore(ship, directions)
+            points = self.get_move_points_explore(ship, directions, avoid_enemy)
         elif mode == MoveMode.DEPART:
             points = self.get_move_points_depart(ship, directions)
         elif mode == MoveMode.BUILDING:
@@ -145,10 +145,6 @@ class Moves(abc.ABC):
             points = self.get_move_points_attacking(ship, directions)
         elif mode == MoveMode.SUPPORTING:
             points = self.get_move_points_supporting(ship, directions)
-        elif mode == MoveMode.MAXSTART:
-            points = self.get_move_points_maxstart(ship)
-        elif mode == MoveMode.MINSTART:
-            points = self.get_move_points_minstart(ship)
         else:
             raise NotImplemented
 

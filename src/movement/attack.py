@@ -106,7 +106,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
         my_halite = ship.halite_amount
 
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-        if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
+        if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
+                                                                                     MyConstants.DIRECTIONS,
+                                                                                     kicked=False,
+                                                                                     moveNow=False)
 
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
@@ -123,7 +126,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 support_ship = self.data.game.me._ships.get(support_id)
 
                 canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False)
-                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
+                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
+                                                                                             MyConstants.DIRECTIONS,
+                                                                                             kicked=False,
+                                                                                             moveNow=False)
 
                 matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(support_ship)
 

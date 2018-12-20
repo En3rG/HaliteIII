@@ -122,6 +122,30 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix, condition):
         return None, None, None
 
 
+def count_manhattan(matrix, val, position, dist):
+    """
+    COUNT HOW MANY 'val' IS IN THE MATRIX, WITH THE GIVEN dist AND position
+
+    :param matrix:
+    :param val:
+    :param position:
+    :param dist:
+    :return: NUMBER OF val OCCURENCES IN THE MATRIX, CENTERED AT POSITION WITH DIST GIVEN
+    """
+    count = 0
+
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + position.y) % size
+            x_ = (x + position.x) % size
+
+            if matrix[y_, x_] == val:
+                count += 1
+
+    return count
+
+
 def populate_manhattan(matrix, val, position, dist, cummulative=False):
     """
     POPULATE AREA IN MATRIX PROVIDED (BASED ON DISTANCE FROM ORIGIN OR LOC)

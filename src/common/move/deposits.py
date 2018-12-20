@@ -17,7 +17,7 @@ class Deposits():
         self.data.mySets.ships_returning.add(ship.id)
 
 
-    def get_move_points_returning(self, ship, directions):
+    def get_move_points_returning(self, ship, directions, avoid_enemy):
         """
         GET POINTS FOR RETURNING
 
@@ -25,6 +25,10 @@ class Deposits():
         :param directions: CLEAN POSSIBLE DIRECTIONS
         :return:
         """
+        if len(directions) == 1:
+            avoid_enemy = False
+
+
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
         potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[ship.position.y][ship.position.x]
@@ -35,7 +39,8 @@ class Deposits():
                                 potential_enemy_collision=potential_enemy_collision,
                                 potential_ally_collision=potential_ally_collision,
                                 cost=999,
-                                direction=Direction.Still)]
+                                direction=Direction.Still,
+                                avoid_enemy=avoid_enemy)]
 
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
@@ -57,7 +62,8 @@ class Deposits():
                               potential_enemy_collision,
                               potential_ally_collision,
                               cost,
-                              direction)
+                              direction,
+                              avoid_enemy=avoid_enemy)
             points.append(c)
 
         logging.debug(points)
