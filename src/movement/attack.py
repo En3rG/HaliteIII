@@ -7,6 +7,7 @@ from src.common.classes import OrderedSet
 from src.common.move.harvests import Harvests
 from src.common.move.explores import Explores
 from src.common.points import SupportShip, SupportPoints, AttackPoints
+from src.common.matrix.functions import count_manhattan, get_manhattan, calculate_distance
 from hlt import constants
 import numpy as np
 import logging
@@ -32,10 +33,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
-        else:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
+        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
@@ -99,47 +97,47 @@ class Attack(Moves, Attacks, Harvests, Explores):
         WILL NOT BE ADDED TO HEAP IF IT HAS TOO MUCH HALITE CARGO
         """
         ship = self.data.game.me._ships.get(ship_id)
-        neighbors = self.get_neighbor_IDs(ship)
-        potential_support = neighbors - self.considered_already
-        directions_to_enemy, enemy_position = self.get_enemy(ship)
+        directions_to_enemy, enemy_position = self.get_enemy_position(ship)
+        ship_distance = calculate_distance(ship.position, enemy_position, self.data)
+        enemy_ship, enemy_shipID = self.get_enemy_ship(enemy_position)
+        potential_support = get_manhattan(self.data.myMatrix.locations.myShipsID, enemy_position, MyConstants.ENGAGE_ENEMY_DISTANCE)
+        potential_support_IDs = potential_support - {-1} - self.considered_already ## myShipsID contains -1
+        num_enemy_ships = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE, enemy_position, MyConstants.ENEMY_BACKUP_DISTANCE)
         enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-        if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
-                                                                                     MyConstants.DIRECTIONS,
-                                                                                     kicked=False,
-                                                                                     moveNow=False)
+        if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
 
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
-        directions = self.get_directions_target(ship, explore_destination)
-        explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        # directions = self.get_directions_target(ship, explore_destination)
+        # explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)
 
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        if not(canHarvest) and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+        if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and len(potential_support_IDs) > num_enemy_ships:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
-            for support_id in potential_support:
+            for support_id in potential_support_IDs:
                 support_ship = self.data.game.me._ships.get(support_id)
+                support_distance = calculate_distance(support_ship.position, enemy_position, self.data)
 
                 canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False)
-                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
-                                                                                             MyConstants.DIRECTIONS,
-                                                                                             kicked=False,
-                                                                                             moveNow=False)
+                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
 
                 matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(support_ship)
 
-                directions = self.get_directions_target(ship, explore_destination)
-                explore_direction, points = self.best_direction(support_ship, directions, mode=MoveMode.EXPLORE)
+                # directions = self.get_directions_target(ship, explore_destination)
+                # explore_direction, points = self.best_direction(support_ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)
 
                 harvest_destination = self.get_destination(support_ship, harvest_direction)
                 harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-                if support_id in self.data.mySets.ships_to_move and not(canHarvest) and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+                if support_id in self.data.mySets.ships_to_move \
+                        and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+                        and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OF CLOSER
                     potental_harvest = (my_halite + enemy_halite) * 0.25  ## POTENTIAL HARVEST
                     real_gain = (support_ship.halite_amount + potental_harvest) % 1000  ## CAN ONLY GET MAX 1000
                     if real_gain > my_halite * self.data.myVars.support_gain_ratio:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
@@ -153,27 +151,6 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 logging.debug(s)
                 heapq.heappush(self.heap_support, s)
 
-        ## ABOVE IS CONSIDERING HARVEST AND EXPLORE, BUT NOT REALLY DOING ANYTHING ABOUT EXPLORE
-        # ship = self.data.game.me._ships.get(ship_id)
-        # neighbors = self.get_neighbor_IDs(ship)
-        # potential_support = neighbors - self.considered_already
-        # directions_to_enemy, enemy_position = self.get_enemy(ship)
-        # enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
-        # my_halite = ship.halite_amount
-        #
-        # support_ships = OrderedSet()
-        # for support_id in potential_support:
-        #     if support_id in self.data.mySets.ships_to_move:
-        #         support_ship = self.data.game.me._ships.get(support_id)
-        #         potental_harvest = (my_halite + enemy_halite) * 0.25  ## POTENTIAL HARVEST
-        #         real_gain = (support_ship.halite_amount + potental_harvest) % 1000  ## CAN ONLY GET MAX 1000
-        #         if real_gain > my_halite * self.data.myVars.support_gain_ratio:  ## MORE THAN 20% GAIN THAN WHAT WE LOST
-        #             support_ships.add(support_id)
-        #
-        # num_support = len(support_ships)
-        #
-        # # if my_halite < enemy_halite * MyConstants.ATTACK_ENEMY_HALITE_RATIO and num_support >= 1:
-        # if num_support >= 1:  ## ATTACK EVEN WHEN HAS HIGH CARGO
-        #     s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy)
-        #     logging.debug(s)
-        #     heapq.heappush(self.heap_support, s)
+
+
+

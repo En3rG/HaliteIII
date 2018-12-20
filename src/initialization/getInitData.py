@@ -197,8 +197,7 @@ class GetInitData(Data):
 
             dist_shipyard = calculate_distance(self.game.me.shipyard.position,
                                                pos_normalized,
-                                               self.game.game_map.height,
-                                               self.game.game_map.width)
+                                               self)
 
             if dist_shipyard < closest[0]:
                 closest = (dist_shipyard, loc_normalized, pos_normalized)
@@ -217,8 +216,7 @@ class GetInitData(Data):
         for ind in indexes:
             dist_shipyard = calculate_distance(self.game.me.shipyard.position,
                                                Position(ind[1], ind[0]),
-                                               self.game.game_map.height,
-                                               self.game.game_map.width)
+                                               self)
 
             if dist_shipyard < closest[0]:
                 closest = (dist_shipyard, ind)

@@ -108,6 +108,8 @@ class Locations():
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
+        self.enemyShipsOwner = np.zeros((map_height, map_width), dtype=np.int16)
+        self.enemyShipsOwner.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
         self.shipCargo = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.engage_enemy = {}
@@ -364,6 +366,7 @@ class Data(abc.ABC):
                     self.myDicts.players_halite[id].halite_carried += ship.halite_amount
                     self.myMatrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
                     self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
+                    self.myMatrix.locations.enemyShipsOwner[ship.position.y][ship.position.x] = id
                     self.myMatrix.locations.shipCargo[ship.position.y][ship.position.x] = ship.halite_amount
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
@@ -432,7 +435,7 @@ class Data(abc.ABC):
         width = self.game.game_map.width
 
         curr_cell = (0, 0)
-        base_matrix = get_distance_matrix(curr_cell, height, width)
+        base_matrix = get_distance_matrix(curr_cell, self)
 
         for r in range(height + 1):
             for c in range(width + 1):

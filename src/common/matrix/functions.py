@@ -17,7 +17,7 @@ def shift_matrix(y_shift, x_shift, matrix):
     return np.roll(np.roll(matrix, shift=x_shift, axis=1), shift=y_shift, axis=0)
 
 
-def get_distance_matrix(start_tuple, height, width):
+def get_distance_matrix(start_tuple, data):
     """
     GENERATES A TABLE WITH ACTUAL DISTANCES FROM START PROVIDED
 
@@ -41,18 +41,21 @@ def get_distance_matrix(start_tuple, height, width):
     #
     # return distances.reshape((height, width))
 
+    height = data.game.game_map.height
+    width = data.game.game_map.width
+
     start = Position(start_tuple[1], start_tuple[0])  ## REMEMBER Position(x, y)
     distance_matrix = np.zeros((height, width), dtype=np.int16)
 
     for y in range(height):
         for x in range(width):
             destination = Position(x, y)
-            distance_matrix[y][x] = calculate_distance(start, destination, height, width)
+            distance_matrix[y][x] = calculate_distance(start, destination, data)
 
     return distance_matrix
 
 
-def calculate_distance(start, destination, height, width):
+def calculate_distance(start, destination, data):
     """
     UPDATED FROM hlt.game_map.calculate distance
 
@@ -62,6 +65,9 @@ def calculate_distance(start, destination, height, width):
     :param target: The target to where calculate
     :return: The distance between these items
     """
+    height = data.game.game_map.height
+    width = data.game.game_map.width
+
     resulting_position = abs(start - destination)
     return min(resulting_position.x, width - resulting_position.x) + \
            min(resulting_position.y, height - resulting_position.y)
@@ -120,6 +126,23 @@ def get_coord_closest(seek_val, value_matrix, distance_matrix, condition):
     else:
         ## NO seek_val FOUND
         return None, None, None
+
+
+def get_manhattan(matrix, position, dist):
+    """
+    RETURN A SET OF VALUES FOUND IN THE GIVEN AREA/MANHATTAN BASED ON POSITION AND DIST
+    """
+    found_values = set()
+
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + position.y) % size
+            x_ = (x + position.x) % size
+
+            found_values.add(matrix[y_, x_])
+
+    return found_values
 
 
 def count_manhattan(matrix, val, position, dist):

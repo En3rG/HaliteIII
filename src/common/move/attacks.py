@@ -22,9 +22,20 @@ class Attacks():
         return ids
 
 
-    def get_enemy(self, ship):
+    def get_enemy_ship(self, position):
         """
-        GET DIRECTIONS AND POSITION OF THE ENEMY GIVEN THE SHIP
+        GET ENEMY SHIP OBJECT GIVEN THE POSITION
+        """
+        player_id = self.data.myMatrix.locations.enemyShipsOwner[position.y][position.x]
+        ship_id = self.data.myMatrix.locations.enemyShipsID[position.y][position.x]
+        ship = self.data.game.players[player_id]._ships.get(ship_id)
+
+        return ship, ship_id
+
+
+    def get_enemy_position(self, ship):
+        """
+        GET DIRECTIONS AND POSITION OF THE CLOSEST ENEMY GIVEN THE SHIP
         """
         curr_cell = (ship.position.y, ship.position.x)
         coord, distance, val = get_coord_closest(Matrix_val.ONE,
