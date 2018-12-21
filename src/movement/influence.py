@@ -90,5 +90,5 @@ class Influence(Moves, Explores, Harvests):
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
 
             logging.debug("ship id: {} max_ratio {} destination {}".format(ship_id, max_ratio, destination))
-            s = ExploreShip2(max_ratio, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip2(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)

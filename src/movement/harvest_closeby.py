@@ -108,7 +108,7 @@ class Harvest(Moves, Harvests, Explores):
 
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-            s = ExploreShip2(max_ratio, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip2(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)
 
 

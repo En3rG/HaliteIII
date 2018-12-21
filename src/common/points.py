@@ -142,8 +142,9 @@ class ExploreShip2:
     USED TO DETERMINE CLOSEST SHIP FOR EXPLORING WITH HIGHEST
     HALITE HARVEST PER TURN
     """
-    def __init__(self, ratio, id, destination, matrix_ratio):
+    def __init__(self, ratio, cargo, id, destination, matrix_ratio):
         self.ratio = -ratio  ## NEED HIGHEST RATIO TO BE FIRST IN HEAP
+        self.cargo = cargo
         self.ship_id = id
         self.destination = destination
         self.matrix_ratio = matrix_ratio
@@ -153,6 +154,10 @@ class ExploreShip2:
             if self.ratio > other.ratio:
                 return True
             elif self.ratio < other.ratio:
+                return False
+            elif self.cargo >= other.cargo:
+                return True
+            elif self.cargo < other.cargo:
                 return False
             elif self.ship_id >= other.ship_id:
                 return True
@@ -167,6 +172,10 @@ class ExploreShip2:
                 return True
             elif self.ratio > other.ratio:
                 return False
+            elif self.cargo <= other.cargo:
+                return True
+            elif self.cargo > other.cargo:
+                return False
             elif self.ship_id <= other.ship_id:
                 return True
             elif self.ship_id > other.ship_id:
@@ -175,8 +184,10 @@ class ExploreShip2:
         return NotImplemented
 
     def __repr__(self):
-        return "{} Ship id: {} ratio: {}".format(self.__class__.__name__,
-                                                 self.ship_id, self.ratio)
+        return "{} Ship id: {} ratio: {} cargo: {}".format(self.__class__.__name__,
+                                                           self.ship_id,
+                                                           self.ratio,
+                                                           self.cargo)
 
 
 
