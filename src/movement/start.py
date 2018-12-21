@@ -5,6 +5,7 @@ from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.move.harvests import Harvests
 from src.common.move.explores import Explores
 from src.common.points import ExploreShip, ExploreShip2, ExplorePoints
+from hlt.positionals import Direction
 from hlt import constants
 import copy
 import numpy as np
@@ -42,11 +43,21 @@ class Start(Moves, Harvests, Explores):
     def move_ships(self):
         print_heading("Moving start moves......")
 
-        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)
-        for ship_id in ships:
-            self.populate_heap(ship_id)
-
         if self.data.game.turn_number <= 6:  ## SHIPS SHOULD MOVE OUT ON TURNS 2, 3, 4, 5, 6
+
+            ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)
+
+            ## MOVE NEW SHIP FIRST
+            if len(ships) >= 1:
+                ship_id = sorted(ships)[-1]
+                self.heap_set.add(ship_id)
+                ship = self.data.game.me._ships.get(ship_id)
+                matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
+                s = ExploreShip2(-max_ratio, ship_id, destination, matrix_highest_ratio)
+                self.move_ship(s)
+
+            for ship_id in ships:
+                self.populate_heap(ship_id)
 
             while self.heap_dist:
                 ## MOVE KICKED SHIPS FIRST (IF ANY)
@@ -60,33 +71,38 @@ class Start(Moves, Harvests, Explores):
                 s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
                 logging.debug(s)  ## EXPLORE SHIP OBJECT
 
-                ship = self.data.game.me._ships.get(s.ship_id)
-                explore_destination = self.isDestination_untaken(s)
+                self.move_ship(s)
 
-                if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
-                    ## CHECK IF CAN HARVEST NOW/LATER
-                    canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
-                    if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
-                                                                                                 MyConstants.DIRECTIONS,
-                                                                                                 kicked=False,
-                                                                                                 moveNow=False)
 
-                    directions = self.get_directions_target(ship, explore_destination)
-                    explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+    def move_ship(self, s):
+        ship = self.data.game.me._ships.get(s.ship_id)
+        explore_destination = self.isDestination_untaken(s)
 
-                    harvest_destination = self.get_destination(ship, harvest_direction)
-                    harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
+        if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
+            ## CHECK IF CAN HARVEST NOW/LATER
+            canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
+            if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
+                                                                                         MyConstants.DIRECTIONS,
+                                                                                         kicked=False,
+                                                                                         moveNow=False)
 
-                    ## CHECK WHETHER IT'LL HARVEST OR EXPLORE
-                    if s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
-                        destination = harvest_destination
-                        direction = harvest_direction
-                    else:
-                        destination = explore_destination
-                        direction = explore_direction
+            directions = self.get_directions_target(ship, explore_destination)
+            explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
-                    self.mark_taken_udpate_top_halite(destination)
-                    self.move_mark_unsafe(ship, direction, points)
+            harvest_destination = self.get_destination(ship, harvest_direction)
+            harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
+
+            ## CHECK WHETHER IT'LL HARVEST OR EXPLORE
+            if s.ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and explore_direction != Direction.Still:
+                destination = explore_destination
+                direction = explore_direction
+            else:
+                destination = harvest_destination
+                direction = harvest_direction
+
+
+            self.mark_taken_udpate_top_halite(destination)
+            self.move_mark_unsafe(ship, direction, points)
 
 
     def populate_heap(self, ship_id):
