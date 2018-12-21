@@ -59,6 +59,7 @@ class Explores():
             destination = explore_destination
             direction = explore_direction
 
+        # self.mark_unsafe(ship, explore_destination)
         self.mark_taken_udpate_top_halite(destination)
         self.move_mark_unsafe(ship, direction, points)
 

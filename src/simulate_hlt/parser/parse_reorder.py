@@ -117,7 +117,9 @@ class Parse():
                     if event.get('type') == "spawn":
                         ship_id = event.get('id')
                         owner_id = event.get('owner_id')
-                        id , player_id = heapq.heappop(self.heap)
+                        id, player_id = heapq.heappop(self.heap)
+
+                        print("Online: ship_id {} owner_id {} heap: id {} player_id {}".format(ship_id, owner_id, id, player_id))
 
                         online_order[owner_id] = ship_id
                         local_order[player_id] = ship_id

@@ -114,6 +114,7 @@ class Explore(Moves, Explores, Harvests):
                     direction = explore_direction
 
                 logging.debug("explore_destination {} -s.ratio {} harvest_destination {} harvest_ratio {}".format(explore_destination, -s.ratio, harvest_destination, harvest_ratio))
+                # self.mark_unsafe(ship, explore_destination)
                 self.mark_taken_udpate_top_halite(destination)
                 self.move_mark_unsafe(ship, direction, points)
 

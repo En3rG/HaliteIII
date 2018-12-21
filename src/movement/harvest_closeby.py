@@ -97,7 +97,8 @@ class Harvest(Moves, Harvests, Explores):
                 if canHarvest and -s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
                     destination = harvest_destination
                     direction = harvest_direction
-
+                    
+                    # self.mark_unsafe(ship, explore_destination)
                     self.mark_taken_udpate_top_halite(destination)
                     self.move_mark_unsafe(ship, direction, points)
 

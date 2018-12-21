@@ -2,6 +2,7 @@ from src.common.points import FarthestShip, DepositPoints
 from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
 from hlt.positionals import Direction
 from src.common.matrix.functions import get_coord_closest
+from src.common.functions import get_adjacent_directions
 from hlt.positionals import Position
 import logging
 import heapq
@@ -12,7 +13,12 @@ class Deposits():
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
         """
         logging.debug("Ship id: {} is returning".format(ship.id))
-        direction, points = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
+
+        if len(directions) == 1:
+            direction, points = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=False)
+        else:
+            direction, points = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT)
+
         self.move_mark_unsafe(ship, direction, points)
         self.data.mySets.ships_returning.add(ship.id)
 
@@ -25,10 +31,6 @@ class Deposits():
         :param directions: CLEAN POSSIBLE DIRECTIONS
         :return:
         """
-        if len(directions) == 1:
-            avoid_enemy = False
-
-
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
         potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[ship.position.y][ship.position.x]
