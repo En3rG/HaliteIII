@@ -4,7 +4,7 @@ from src.common.move.moves import Moves
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.move.harvests import Harvests
 from src.common.move.explores import Explores
-from src.common.points import ExploreShip, ExploreShip2, ExplorePoints
+from src.common.points import ExploreShip, ExplorePoints
 from hlt.positionals import Direction
 from hlt import constants
 import copy
@@ -53,7 +53,7 @@ class Start(Moves, Harvests, Explores):
                 self.heap_set.add(ship_id)
                 ship = self.data.game.me._ships.get(ship_id)
                 matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-                s = ExploreShip2(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+                s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
                 self.move_ship(s)
 
             for ship_id in ships:
@@ -112,6 +112,6 @@ class Start(Moves, Harvests, Explores):
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
             ## NEGATIVE MAX RATIO TO MOVE LOWEST FIRST
-            s = ExploreShip2(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)
 

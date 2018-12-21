@@ -4,7 +4,7 @@ from src.common.classes import OrderedSet
 from src.common.move.explores import Explores
 from src.common.move.harvests import Harvests
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
-from src.common.points import ExploreShip2
+from src.common.points import ExploreShip
 import numpy as np
 import logging
 import copy
@@ -90,5 +90,5 @@ class Influence(Moves, Explores, Harvests):
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
 
             logging.debug("ship id: {} max_ratio {} destination {}".format(ship_id, max_ratio, destination))
-            s = ExploreShip2(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)

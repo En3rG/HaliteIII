@@ -48,16 +48,6 @@ class Retreat(Moves, Retreats):
         """
         GET DISTANCE FROM SHIPYARD/DOCKS
         """
-        ## ONLY BASED ON SHIPYARD POSITION
-        # for ship in self.data.game.me.get_ships():
-        #     distance = self.data.game.game_map.calculate_distance(ship.position, self.data.game.me.shipyard.position)
-        #     directions = self.get_directions_target(ship, self.data.game.me.shipyard.position)
-        #     num_directions = len(directions)
-        #     s = FarthestShip(distance, num_directions, ship.id, directions)
-        #     self.farthest_ship = max(s , self.farthest_ship)
-        #     heapq.heappush(self.heap_dist, s)
-
-
         ## TAKING DOCKS INTO ACCOUNT
         for ship in self.data.game.me.get_ships():
             curr_cell = (ship.position.y, ship.position.x)

@@ -90,54 +90,7 @@ class SupportShip:
         return "{} Ship id: {} num_support: {}".format(self.__class__.__name__, self.ship_id, self.num_support)
 
 
-
 class ExploreShip:
-    """
-    USED TO DETERMINE CLOSEST SHIP FOR EXPLORING
-    ALSO USED FOR HEAPQ PURPOSES
-
-    NO LONGER USED, USING EXPLORE2 NOW!!!!
-    """
-    def __init__(self, dist, id, curr_cell, destination, indices_deque, distances_deque):
-        self.distance = dist
-        self.ship_id = id
-        self.curr_cell = curr_cell
-        self.destination = destination
-        self.indices_deque = indices_deque      ## NO LONGER USED (TIMING OUT)
-        self.distances_deque = distances_deque  ## NO LONGER USED (TIMING OUT)
-
-    def __gt__(self, other):
-        if isinstance(other, ExploreShip):
-            if self.distance > other.distance:
-                return True
-            elif self.distance < other.distance:
-                return False
-            elif self.ship_id >= other.ship_id:
-                return True
-            elif self.ship_id < other.ship_id:
-                return False
-
-        return NotImplemented
-
-    def __lt__(self, other):
-        if isinstance(other, ExploreShip):
-            if self.distance < other.distance:
-                return True
-            elif self.distance > other.distance:
-                return False
-            elif self.ship_id <= other.ship_id:
-                return True
-            elif self.ship_id > other.ship_id:
-                return False
-
-        return NotImplemented
-
-    def __repr__(self):
-        return "{} Ship id: {} distance: {}".format(self.__class__.__name__, self.ship_id, self.distance)
-
-
-
-class ExploreShip2:
     """
     USED TO DETERMINE CLOSEST SHIP FOR EXPLORING WITH HIGHEST
     HALITE HARVEST PER TURN
@@ -150,7 +103,7 @@ class ExploreShip2:
         self.matrix_ratio = matrix_ratio
 
     def __gt__(self, other):
-        if isinstance(other, ExploreShip2):
+        if isinstance(other, ExploreShip):
             if self.ratio > other.ratio:
                 return True
             elif self.ratio < other.ratio:
@@ -167,7 +120,7 @@ class ExploreShip2:
         return NotImplemented
 
     def __lt__(self, other):
-        if isinstance(other, ExploreShip2):
+        if isinstance(other, ExploreShip):
             if self.ratio < other.ratio:
                 return True
             elif self.ratio > other.ratio:

@@ -44,6 +44,8 @@ class MyConstants():
     RETREAT_EXTRA_TURNS = 5                         ## EXTRA TURNS ADDED TO FURTHEST SHIP WHEN TO START RETREATING
 
     ## BUILDING / DOCK PLACEMENT
+    TOP_N_HALITE = 0.04                             ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
+    TOP_N = 20                                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
     ALLOW_BUILDING_TURNS = 0.70                     ## USED TO BE:
                                                     ## V28: 0.70
     STOP_BUILDING_HALITE_LEFT = 0.30
@@ -55,13 +57,12 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 2
     AVERAGE_MANHATTAN_DISTANCE = 6                  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
-    TOP_N = 20                                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
+
                                                     ## USED TO BE:
                                                     ## V19: 20
     MIN_DIST_BTW_DOCKS = 12                         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
                                                     ## USED TO BE:
                                                     ## V19: 12
-
 
     ## INFLUENCE
     ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
@@ -70,12 +71,9 @@ class MyConstants():
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
-    ATTACK_ENEMY_HALITE_RATIO = 0.5                 ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
     ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING
                                                     ## USED TO BE:
                                                     ## V28: 0.80
-
-
 
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
@@ -83,13 +81,6 @@ class MyConstants():
     HARVEST_RATIO_TO_EXPLORE = 3
     HARVEST_ABOVE_PERCENTILE = 35                   ## USED TO BE:
                                                     ## V28: 35
-
-
-    ## EXPLORING
-    ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
-    TOP_N_HALITE = 0.04                             ## USED TO BE:
-                                                    ## V13: 0.10
-                                                    ## V14: 0.04
 
 
     EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 1.00    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
@@ -133,8 +124,11 @@ class MyConstants():
     # DIRECT_NEIGHBORS = np.array([[0,1,0],
     #                              [1,0,1],
     #                              [0,1,0]])
-
-
+    #
+    #
+    #
+    # ATTACK_ENEMY_HALITE_RATIO = 0.5  ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
+    #
 
 
 

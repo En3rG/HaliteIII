@@ -1,6 +1,6 @@
 from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, get_coord_max_closest
 from hlt.positionals import Direction
-from src.common.points import ExploreShip, ExploreShip2, ExplorePoints
+from src.common.points import ExploreShip, ExplorePoints
 from hlt.positionals import Position
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 import heapq
@@ -15,30 +15,6 @@ class Explores():
         SHIP IS EXPLORING, PERFORM NECESSARY STEPS
         """
         ship = self.data.game.me._ships.get(ship_id)
-
-        ## GET DIRECTION TO HIGHEST NEIGHBOR
-        # direction = self.get_highest_harvest_move(ship)
-
-
-        ## GET DIRECTION TO HIGHEST SECTION
-        # destination = get_position_highest_section(self.data)
-        # directions = self.get_directions_target(ship, destination)
-        # direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-        # self.move_mark_unsafe(ship, direction)
-
-
-        ## GET DIRECTION TO CLOSEST TOP HALITE
-        # curr_cell = (ship.position.y, ship.position.x)
-        # seek_val = Matrix_val.ZERO
-        # coord, min_di, val = get_coord_closest(seek_val,
-        #                                        self.data.myMatrix.halite.top_amount,
-        #                                        self.data.init_data.myMatrix.distances.cell[curr_cell],
-        #                                        Inequality.GREATERTHAN)
-        # destination = Position(coord[1], coord[0])
-        # directions = self.get_directions_target(ship, destination)
-        # direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-        # self.move_mark_unsafe(ship, direction)
-
 
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
         if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
@@ -65,36 +41,8 @@ class Explores():
 
 
     def isDestination_untaken(self, s):
-        ## SAVING SORTED DISTANCES
-        ## TIMING OUT (SORTING A BUNCH IS MUCH SLOWER THAN GETTING CLOSEST MAX MULTIPLE TIMES???)
-        # if (s.destination.y, s.destination.x) in self.taken_destinations:
-        #
-        #     found_good_destination = False
-        #
-        #     while s.indices_deque:
-        #         closest_ind = s.indices_deque.popleft()
-        #         closest_dist = s.distances_deque.popleft()
-        #         destination = Position(closest_ind[0], closest_ind[1])  ## INDICES ARE IN (y, x) FORMAT
-        #
-        #         if (destination.y, destination.x) not in self.taken_destinations:
-        #             found_good_destination = True
-        #             s.distance = closest_dist
-        #             s.destination = destination
-        #             heapq.heappush(self.heap_dist, s)
-        #             break
-        #
-        #     if not(found_good_destination):
-        #         ## NEED TO REPOPULATE HEAP
-        #         self.heap_set.remove(s.ship_id)
-        #         self.populate_heap(s.ship_id)
-        #
-        #     return None
-        # else:
-        #     return s.destination
-
-
         ## RECALCULATING TOP HALITE
-        ## MUCH FASTER THAN ABOVE!
+        ## MUCH FASTER SORTING (PREVIOUS VERSION)
         if (s.destination.y, s.destination.x) in self.taken_destinations:
             self.heap_set.remove(s.ship_id)
             self.populate_heap(s.ship_id)
