@@ -13,33 +13,7 @@ import copy
 import abc
 
 
-class Section():
-    """
-    GET A SECTION OF THE MATRIX PROVIDED
-    GIVEN THE CENTER (POSITION) AND SIZE OF SECTION
-    SECTION IS A SQUARE MATRIX
-    ACTUAL SIZE OF SECTION IS ACTUALLY (SIZE * 2 + 1) by (SIZE * 2 + 1)
 
-    :param matrix: ORIGINAL MATRIX
-    :param position: CENTER OF THE SECTION
-    :param size: SIZE OF THE SECTION TO BE EXTRACTED (FROM POSITION)
-    :return: A MATRIX REPRESENTING THE SECTION EXTRACTED
-    """
-    def __init__(self, matrix, position, size):
-        self.a = matrix
-        self.position = position
-        self.size = size
-
-        self.matrix = self.get_section()
-        self.center = Position(size, size)
-
-    def get_section(self):
-
-        h, w = self.a.shape
-        rows = [i % h for i in range(self.position.y - self.size, self.position.y + self.size + 1)]
-        cols = [i % w for i in range(self.position.x - self.size, self.position.x + self.size + 1)]
-
-        return self.a[rows, :][:, cols]
 
 
 ## NO LONGER USED

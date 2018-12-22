@@ -1,7 +1,6 @@
 from src.common.matrix.data import Data
 from src.common.print import print_matrix
-from src.common.matrix.data import Section
-from src.common.matrix.functions import populate_manhattan, get_index_highest_val, get_coord_closest, \
+from src.common.matrix.functions import Section, populate_manhattan, get_index_highest_val, get_coord_closest, \
     get_n_largest_values, get_cell_averages, get_n_max_values, calculate_distance
 from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position

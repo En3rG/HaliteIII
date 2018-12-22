@@ -14,7 +14,7 @@ from hlt.positionals import Position
 TO DO!!!!
 
 IF DOCK IS BLOCKED, SHOULD GO AROUND OR COLLIDE WITH ENEMY
-
+USE Concurrent Dijkstra's Algorithm
 
 """
 
@@ -58,7 +58,7 @@ class Deposit(Moves, Deposits):
             s = heapq.heappop(self.heap_dist)
             if s.ship_id in self.data.mySets.ships_to_move:    ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
                 ship = self.data.game.me._ships.get(s.ship_id)
-                self.depositNow(ship, s.directions)
+                self.depositNow(ship, s.dock_position, s.directions)
 
     def populate_heap(self, ship):
         """
@@ -83,8 +83,8 @@ class Deposit(Moves, Deposits):
                                                        self.data.myMatrix.locations.myDocks,
                                                        self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                        Inequality.EQUAL)
-            position = Position(coord[1], coord[0])
-            directions = self.get_directions_target(ship, position)
+            dock_position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, dock_position)
             num_directions = len(directions)
-            s = FarthestShip(distance, num_directions, ship.id, directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions, dock_position)
             heapq.heappush(self.heap_dist, s)

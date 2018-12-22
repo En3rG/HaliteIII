@@ -6,11 +6,12 @@ class FarthestShip:
 
     distance > num_directions > ship_id
     """
-    def __init__(self, dist, num_directions, id, directions):
+    def __init__(self, dist, num_directions, id, directions, dock_position=None):
         self.distance = dist
         self.num_directions = num_directions
         self.ship_id = id
         self.directions = directions
+        self.dock_position = dock_position
 
     def __gt__(self, other):
         if isinstance(other, FarthestShip):

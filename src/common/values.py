@@ -75,6 +75,10 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
+    ## DEPOSIT
+    DEPOSIT_PERIMETER = 5
+
+
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER

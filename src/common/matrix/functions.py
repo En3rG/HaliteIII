@@ -4,6 +4,53 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 from src.common.print import print_matrix
 import logging
 
+class Section():
+    """
+    GET A SECTION OF THE MATRIX PROVIDED
+    GIVEN THE CENTER (POSITION) AND SIZE OF SECTION
+    SECTION IS A SQUARE MATRIX
+    ACTUAL SIZE OF SECTION IS ACTUALLY (SIZE * 2 + 1) by (SIZE * 2 + 1)
+
+    :param matrix: ORIGINAL MATRIX
+    :param position: CENTER OF THE SECTION
+    :param size: SIZE OF THE SECTION TO BE EXTRACTED (FROM POSITION)
+    :return: A MATRIX REPRESENTING THE SECTION EXTRACTED
+    """
+    def __init__(self, matrix, position, size):
+        self.a = matrix
+        self.position = position
+        self.size = size
+
+        self.matrix = self.get_section()
+        self.center = Position(size, size)
+
+    def get_section(self):
+
+        h, w = self.a.shape
+        rows = [i % h for i in range(self.position.y - self.size, self.position.y + self.size + 1)]
+        cols = [i % w for i in range(self.position.x - self.size, self.position.x + self.size + 1)]
+
+        return self.a[rows, :][:, cols]
+
+
+def pad_around(matrix):
+    """
+    np.pad(matrix, [(1, 1), (1, 1)], mode='constant')
+    WHERE 0 IS DEFAULT VALUE FOR CONSTANT
+
+    WHERE SECOND ARGUMENT:
+    [(0, 1), (0, 1)]
+              ^^^^^^------ padding for second dimension
+     ^^^^^^-------------- padding for first dimension
+
+      ^------------------ no padding at the beginning of the first axis
+          ^--------------- pad with one "value" at the end of the first axis.
+
+    :param matrix:
+    :return: MATRIX PADDED 0s AROUND
+    """
+    return np.pad(matrix, [(1, 1), (1, 1)], mode='constant')
+
 
 def shift_matrix(y_shift, x_shift, matrix):
     """

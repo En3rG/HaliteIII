@@ -5,8 +5,7 @@ from hlt.positionals import Direction
 import abc
 import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
-from src.common.matrix.functions import move_populate_manhattan, get_index_highest_val
-from src.common.matrix.data import Section
+from src.common.matrix.functions import Section, move_populate_manhattan, get_index_highest_val
 from src.movement.collision_prevention import avoid_collision_direction
 from src.common.print import print_matrix
 
@@ -220,6 +219,17 @@ class Moves(abc.ABC):
         clean_directions = [x for x in directions if x != None]  ## CAN HAVE A NONE
 
         return clean_directions
+
+    def get_directions_start_target(self, start, destination):
+        """
+        GET DIRECTION TOWARD DESTINATION (1 STEP AWAY)
+        """
+        ## NO WRAPPING NEEDED, SINCE WE GOT THE SECTION
+        directions = GameMap._get_target_direction(start, destination)
+
+        direction = [x for x in directions if x != None]
+
+        return direction
 
 
     def get_destination(self, ship, direction):
