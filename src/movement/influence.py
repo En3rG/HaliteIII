@@ -4,7 +4,11 @@ from src.common.classes import OrderedSet
 from src.common.move.explores import Explores
 from src.common.move.harvests import Harvests
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
+from src.common.astar import a_star, get_goal_in_section
 from src.common.points import ExploreShip
+from src.common.matrix.functions import get_coord_closest, pad_around, Section
+from hlt.positionals import Position
+from hlt.positionals import Direction
 import numpy as np
 import logging
 import copy
@@ -72,11 +76,40 @@ class Influence(Moves, Explores, Harvests):
                     direction = harvest_direction
                 else:
                     destination = explore_destination
+
+                    ## OLD WAY
                     direction = explore_direction
+                    ## A STAR WAY (TIMED OUT)
+                    #direction = self.get_a_star_direction(ship, explore_destination, directions)
 
                 # self.mark_unsafe(ship, explore_destination)
                 self.mark_taken_udpate_top_halite(destination)
                 self.move_mark_unsafe(ship, direction)
+
+
+    def get_a_star_direction(self, ship, target_position, directions):
+        ## PATH IS 1 LESS, SINCE WILL BE PADDED
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        matrix_path = pad_around(section.matrix)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        matrix_cost = section.matrix
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
+        logging.debug("path: {}".format(path))
+
+        if len(path) == 1:
+            direction = Direction.Still
+        elif len(path) > 1:
+            start_coord = path[-1]
+            next_coord = path[-2]
+            start = Position(start_coord[1], start_coord[0])
+            destination = Position(next_coord[1], next_coord[0])
+            directions = self.get_directions_start_target(start, destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        else:
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+
+        return direction
 
 
     def populate_heap(self, ship_id):

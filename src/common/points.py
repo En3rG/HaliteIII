@@ -539,16 +539,27 @@ class BuildPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR BUILDING
     """
-    def __init__(self, safe, cost, direction):
+    def __init__(self, safe, enemy_occupied, potential_enemy_collision, cost, direction, avoid_enemy):
         self.safe = safe
+        self.enemy_occupied = -enemy_occupied
+        self.potential_enemy_collision = potential_enemy_collision
         self.cost = -cost
         self.direction = direction
+        self.avoid_enemy = avoid_enemy
 
     def __gt__(self, other):
         if isinstance(other, BuildPoints):
             if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
+                return False
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
+                return True
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.cost > other.cost:
                 return True
@@ -564,6 +575,14 @@ class BuildPoints():
             if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
+                return False
+            elif self.enemy_occupied < other.enemy_occupied and self.avoid_enemy:
+                return True
+            elif self.enemy_occupied > other.enemy_occupied and self.avoid_enemy:
+                return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision and self.avoid_enemy:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision and self.avoid_enemy:
                 return False
             elif self.cost < other.cost:
                 return True

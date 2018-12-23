@@ -16,41 +16,41 @@ class Deposits():
         """
         logging.debug("Ship id: {} is returning".format(ship.id))
 
-        if self.isEnemy_closeby(ship):
-            ## PATH IS 1 LESS, SINCE WILL BE PADDED
-            section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_PERIMETER-1)
-            matrix_path = pad_around(section.matrix)
-            section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_PERIMETER)
-            matrix_cost = section.matrix
-            goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
-            print_matrix("matrix path", matrix_path)
-            print_matrix("matrix_cost", matrix_cost)
-            logging.debug("ship id {} ship position {} dock position {} goal_position {}".format(ship.id, ship.position, dock_position, goal_position))
-            path = a_star(matrix_path, matrix_cost, section.center, goal_position)
-            logging.debug("path {}".format(path))
-
-            if len(path) > 0:
-                start_coord = path[-1]
-                next_coord = path[-2]
-                start = Position(start_coord[1], start_coord[0])
-                destination = Position(next_coord[1], next_coord[0])
-                directions = self.get_directions_start_target(start, destination)
-                logging.debug("Found path using A* directions {}".format(directions))
-                direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=False)
-            else:
-                direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True)
-        else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=False)
+        direction = self.get_a_star_direction(ship, dock_position, directions)
 
         self.move_mark_unsafe(ship, direction)
         self.data.mySets.ships_returning.add(ship.id)
 
 
+    def get_a_star_direction(self, ship, dock_position, directions):
+        ## WILL NOW ALWAYS USE A STAR (WITH OR WITHOUT ENEMY AROUND)
+        # if self.isEnemy_closeby(ship):
+        ## PATH IS 1 LESS, SINCE WILL BE PADDED
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
+                          MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        matrix_path = pad_around(section.matrix)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        matrix_cost = section.matrix
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
+
+        if len(path) > 0:
+            start_coord = path[-1]
+            next_coord = path[-2]
+            start = Position(start_coord[1], start_coord[0])
+            destination = Position(next_coord[1], next_coord[0])
+            directions = self.get_directions_start_target(start, destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True)
+        else:
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=False)
+
+        return direction
+
     def isEnemy_closeby(self, ship):
         """
         CHECK IF AN ENEMY IS WITHIN THE PERIMETER (SECTION)
         """
-        section = Section(self.data.myMatrix.locations.enemyShips, ship.position, MyConstants.DEPOSIT_PERIMETER)
+        section = Section(self.data.myMatrix.locations.enemyShips, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
         perimeter = section.matrix
         r, c = np.where(perimeter == Matrix_val.ONE)
 

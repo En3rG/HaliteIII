@@ -76,7 +76,7 @@ class MyConstants():
                                                     ## V28: 0.80
 
     ## DEPOSIT
-    DEPOSIT_PERIMETER = 5
+    DEPOSIT_SEARCH_PERIMETER = 5
 
 
     ## HARVEST

@@ -31,8 +31,8 @@ def get_goal_in_section(matrix_path, center_section, start, goal, directions):
     :param directions: DIRECTIONS TOWARDS THE GOAL
     :return: POSITION OF THE GOAL IN THE SECTION
     """
-    r = min(MyConstants.DEPOSIT_PERIMETER, abs(start.y - goal.y))
-    c = min(MyConstants.DEPOSIT_PERIMETER, abs(start.x - goal.x))
+    r = min(MyConstants.DEPOSIT_SEARCH_PERIMETER, abs(start.y - goal.y))
+    c = min(MyConstants.DEPOSIT_SEARCH_PERIMETER, abs(start.x - goal.x))
 
     if Direction.North in directions:
         y = center_section.y - r
@@ -47,7 +47,7 @@ def get_goal_in_section(matrix_path, center_section, start, goal, directions):
     return Position(x, y)
 
 
-def a_star(matrix_path, matrix_cost, start_pos, goal_pos):
+def a_star(matrix_path, matrix_cost, start_pos, goal_pos, lowest_cost):
     """
     A* ALGORITHM TO GET THE BEST PATH FROM START TO GOAL
     CONSIDERING OBSTRUCTION AND COST ALONG THE WAY
@@ -58,16 +58,37 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos):
     :param goal_pos:
     :return:
     """
-    def heuristic(a, b, cost):
+    def heuristic(a, b, cost, lowest_cost):
         """
-        POINT SYSTEM BASED ON COST / DISTANCE
-        DISTANCE, IF TAKEN THE SQRT
-        ADDING SQUARED VALUE SINCE IF COST IS THE SAME, WILL GET HIGHER DISTANCE
-        EXAMPLE: 1000/7 > 1000/9, WHERE 7 AND 9 ARE DISTANCES (WHICH IS NOT TRUE).  7 SHOULD BE A BETTER HEURISTIC
+        :param a: POSITION A
+        :param b: POSITION B
+        :param cost: HALITE COST
+        :param lowest_cost: IF TRUE, USE HEURISTIC WITH LOWEST HALITE, IF FALSE, FIND MOST EXPENSIVE PATH (HIGH HALITE)
+        :return: POINTS
         """
-        d = ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
-        if d == 0: return 0
-        else: return (cost / d) + (d ** 2)
+        if lowest_cost:
+            d = ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
+
+            if d == 0:
+                return 0
+            else:
+                return (cost / d) + (d ** 2)
+
+            ## NEW WAY
+            ## THIS COULD POTENTIALLY PICK CHEAPEST PATH BUT WAY WAY LONGER??
+            # dy = abs(a[0] - b[0])
+            # dx = abs(a[1] - b[1])
+            # d = dx + dy
+            # return cost * d
+        else:
+            dy = abs(a[0] - b[0])
+            dx = abs(a[1] - b[1])
+            d = dx + dy
+
+            if d == 0:
+                return 0
+            else:
+                return -(cost / d)
 
 
     def isBadNeighbor(array, neighbor):
@@ -93,7 +114,7 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos):
     visited_cells = set()
     came_from = {}
     score_to_start = {start: 0}
-    score = {start: heuristic(start, goal, start_cost)}             ## FULL SCORE OF EACH CELL OR COORD. FROM START TO GOAL
+    score = {start: heuristic(start, goal, start_cost, lowest_cost)}             ## FULL SCORE OF EACH CELL OR COORD. FROM START TO GOAL
     myheap = []
 
     ## HEAP CONSIST OF SCORE, COORD
@@ -120,7 +141,7 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos):
                 continue
 
             neighbor_cost = matrix_cost[neighbor_cell[0]][neighbor_cell[1]]
-            curr_score_to_start = score_to_start[curr_cell] + heuristic(curr_cell, neighbor_cell, neighbor_cost)
+            curr_score_to_start = score_to_start[curr_cell] + heuristic(curr_cell, neighbor_cell, neighbor_cost, lowest_cost)
 
             if neighbor_cell in visited_cells and curr_score_to_start >= score_to_start.get(neighbor_cell, 0):  ## 0 DEFAULT VALUE
                 ## A BETTER SOLUTION EXIST TOWARDS THIS NEIGHBOR CELL
@@ -128,9 +149,9 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos):
 
             ## IF A BETTER score_to_start IS FOUND FOR THAT NEIGHBOR COORD OR NEIGHBOR COORD NOT IN HEAP
             if curr_score_to_start < score_to_start.get(neighbor_cell, 0) or neighbor_cell not in (i[1] for i in myheap):
-                came_from[neighbor_cell] = curr_cell                                                ## NEIGHBOR COORD CAME FROM CURRENT COORD
-                score_to_start[neighbor_cell] = curr_score_to_start                                 ## NEIGHBOR DISTANCE FROM START
-                score[neighbor_cell] = curr_score_to_start + heuristic(neighbor_cell, goal, 1000)   ## GSCORE PLUS DISTANCE TO GOAL
-                heapq.heappush(myheap, (score[neighbor_cell], neighbor_cell))                       ## PUSH NEIGHBOR TO HEAP
+                came_from[neighbor_cell] = curr_cell                                                            ## NEIGHBOR COORD CAME FROM CURRENT COORD
+                score_to_start[neighbor_cell] = curr_score_to_start                                             ## NEIGHBOR DISTANCE FROM START
+                score[neighbor_cell] = curr_score_to_start + heuristic(neighbor_cell, goal, 1000, lowest_cost)  ## GSCORE PLUS DISTANCE TO GOAL
+                heapq.heappush(myheap, (score[neighbor_cell], neighbor_cell))                                   ## PUSH NEIGHBOR TO HEAP
 
     return []

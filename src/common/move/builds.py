@@ -4,6 +4,8 @@ from src.common.halite_statistics import BuildType
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import populate_manhattan, get_coord_closest
 from src.common.points import BuildPoints
+from src.common.matrix.functions import get_coord_closest, pad_around, Section
+from src.common.astar import a_star, get_goal_in_section
 from src.common.classes import OrderedSet
 import numpy as np
 import logging
@@ -23,8 +25,6 @@ class Builds():
             self.mark_unsafe(ship, ship.position)
             self.data.mySets.ships_to_move.remove(ship.id)
 
-            self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
-
             ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
             if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[ship.position.y][ship.position.x] > 4000:
                 self.data.game.me.halite_amount -= (4000 - ship.halite_amount - self.data.myMatrix.halite.amount[ship.position.y][ship.position.x])
@@ -42,6 +42,7 @@ class Builds():
                                    MyConstants.DOCK_MANHATTAN)
             else:
                 ## NOT ENOUGH HALITE YET, STAY STILL
+                self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
                 direction = Direction.Still
                 command = ship.move(direction)
                 self.data.command_queue.append(command)
@@ -80,16 +81,17 @@ class Builds():
                 self.ships_building_towards_dock.setdefault(dock_coord, set())
 
                 if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
-                    self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+
 
                     ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
                     ## ALSO MAKE SURE ITS SAFE TO GO THERE
-                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 4000 \
+                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 5000 \
                             and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                         self.move_mark_unsafe(ship, directions[0])  ## DIRECTION IS A LIST OF DIRECTIONS
                     else:
                         ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
                         # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE
+                        self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
                         self.move_mark_unsafe(ship, Direction.Still)
 
                     ## SHIP COUNTER PER DOCK
@@ -125,10 +127,16 @@ class Builds():
                             dock_position = Position(dock_coord[1], dock_coord[0])
                             directions = self.get_directions_target(ship, dock_position)
 
-                            self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                            if self.data.game.me.halite_amount < 3000:
+                                self.data.myVars.isBuilding = True
 
                             self.data.mySets.ships_building.add(ship_id)
-                            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING)
+
+                            ## OLD WAY
+                            #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
+                            ## A STAR WAY
+                            direction = self.get_a_star_direction(ship, dock_position, directions)
+
                             self.move_mark_unsafe(ship, direction)
 
                             ## SHIP COUNTER PER DOCK
@@ -142,7 +150,29 @@ class Builds():
         return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
 
 
-    def get_move_points_building(self, ship, directions):
+    def get_a_star_direction(self, ship, dock_position, directions):
+        ## PATH IS 1 LESS, SINCE WILL BE PADDED
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        matrix_path = pad_around(section.matrix)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        matrix_cost = section.matrix
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
+
+        if len(path) > 0:
+            start_coord = path[-1]
+            next_coord = path[-2]
+            start = Position(start_coord[1], start_coord[0])
+            destination = Position(next_coord[1], next_coord[0])
+            directions = self.get_directions_start_target(start, destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True)
+        else:
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
+
+        return direction
+
+
+    def get_move_points_building(self, ship, directions, avoid_enemy):
         """
         GET POINTS FOR BULDING
         GET DIRECTION WITH LEAST COST
@@ -158,13 +188,22 @@ class Builds():
             ## POINTS FOR MOVING
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
+            enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            b = BuildPoints(safe, cost, direction)
+            b = BuildPoints(safe, enemy_occupied, potential_enemy_collision, cost, direction, avoid_enemy)
             points.append(b)
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(BuildPoints(safe=safe, cost=999, direction=Direction.Still))
+        enemy_occupied = self.data.myMatrix.locations.enemyShips[ship.position.y][ship.position.x]
+        potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+        points.append(BuildPoints(safe=safe,
+                                  enemy_occupied=enemy_occupied,
+                                  potential_enemy_collision=potential_enemy_collision,
+                                  cost=999,
+                                  direction=Direction.Still,
+                                  avoid_enemy=avoid_enemy))
 
         logging.debug(points)
 

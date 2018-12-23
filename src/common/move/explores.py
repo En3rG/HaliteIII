@@ -1,8 +1,10 @@
-from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, get_coord_max_closest
+from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, get_coord_max_closest, \
+                    pad_around, Section
 from hlt.positionals import Direction
 from src.common.points import ExploreShip, ExplorePoints
 from hlt.positionals import Position
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
+from src.common.astar import a_star, get_goal_in_section
 import heapq
 import numpy as np
 import logging
@@ -22,6 +24,7 @@ class Explores():
         ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
+
         directions = self.get_directions_target(ship, explore_destination)
         explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
@@ -33,7 +36,10 @@ class Explores():
             direction = harvest_direction
         else:
             destination = explore_destination
+            ## OLD WAY
             direction = explore_direction
+            ## A STAR WAY (SAME AS NOT DOING A STAR, WHY??)
+            # direction = self.get_a_star_direction(ship, explore_destination, directions)
 
         # self.mark_unsafe(ship, explore_destination)
         self.mark_taken_udpate_top_halite(destination)
@@ -50,6 +56,28 @@ class Explores():
             return None
         else:
             return s.destination
+
+
+    def get_a_star_direction(self, ship, target_position, directions):
+        ## PATH IS 1 LESS, SINCE WILL BE PADDED
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        matrix_path = pad_around(section.matrix)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        matrix_cost = section.matrix
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
+
+        if len(path) > 0:
+            start_coord = path[-1]
+            next_coord = path[-2]
+            start = Position(start_coord[1], start_coord[0])
+            destination = Position(next_coord[1], next_coord[0])
+            directions = self.get_directions_start_target(start, destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        else:
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+
+        return direction
 
 
     def mark_taken_udpate_top_halite(self, destination):

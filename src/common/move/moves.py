@@ -136,7 +136,7 @@ class Moves(abc.ABC):
         elif mode == MoveMode.DEPART:
             points = self.get_move_points_depart(ship, directions)
         elif mode == MoveMode.BUILDING:
-            points = self.get_move_points_building(ship, directions)
+            points = self.get_move_points_building(ship, directions, avoid_enemy)
         elif mode == MoveMode.ATTACKING:
             points = self.get_move_points_attacking(ship, directions)
         elif mode == MoveMode.SUPPORTING:
