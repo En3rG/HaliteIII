@@ -26,7 +26,7 @@ class Builds():
             self.data.mySets.ships_to_move.remove(ship.id)
 
             ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
-            if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[ship.position.y][ship.position.x] > 4000:
+            if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[ship.position.y][ship.position.x] >= 4000:
                 self.data.game.me.halite_amount -= (4000 - ship.halite_amount - self.data.myMatrix.halite.amount[ship.position.y][ship.position.x])
 
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
@@ -82,16 +82,17 @@ class Builds():
 
                 if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
 
+                    if self.data.game.me.halite_amount < 5000:
+                        self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
 
                     ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
                     ## ALSO MAKE SURE ITS SAFE TO GO THERE
-                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] > 5000 \
+                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] >= 4000 \
                             and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                         self.move_mark_unsafe(ship, directions[0])  ## DIRECTION IS A LIST OF DIRECTIONS
                     else:
                         ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
                         # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE
-                        self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
                         self.move_mark_unsafe(ship, Direction.Still)
 
                     ## SHIP COUNTER PER DOCK
@@ -127,7 +128,7 @@ class Builds():
                             dock_position = Position(dock_coord[1], dock_coord[0])
                             directions = self.get_directions_target(ship, dock_position)
 
-                            if self.data.game.me.halite_amount < 3000:
+                            if self.data.game.me.halite_amount < 5000:
                                 self.data.myVars.isBuilding = True
 
                             self.data.mySets.ships_building.add(ship_id)
