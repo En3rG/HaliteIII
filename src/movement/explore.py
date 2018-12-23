@@ -75,7 +75,7 @@ class Explore(Moves, Explores, Harvests):
                 if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
-                explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
@@ -90,7 +90,7 @@ class Explore(Moves, Explores, Harvests):
                 logging.debug("explore_destination {} -s.ratio {} harvest_destination {} harvest_ratio {}".format(explore_destination, -s.ratio, harvest_destination, harvest_ratio))
                 # self.mark_unsafe(ship, explore_destination)
                 self.mark_taken_udpate_top_halite(destination)
-                self.move_mark_unsafe(ship, direction, points)
+                self.move_mark_unsafe(ship, direction)
 
     def populate_heap(self, ship_id):
         ## FOR CLOSEST TOP HARVEST PER TURN

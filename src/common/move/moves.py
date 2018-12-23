@@ -20,7 +20,7 @@ class Moves(abc.ABC):
         self.prev_data = prev_data
 
 
-    def move_mark_unsafe(self, ship, direction, points):
+    def move_mark_unsafe(self, ship, direction):
         """
         GIVEN THE SHIP AND DIRECTION,
         POPULATE SAFE MATRIX, TAKING WRAPPING INTO ACCOUNT
@@ -53,9 +53,6 @@ class Moves(abc.ABC):
         self.remove_kicked(ship)
 
         command = ship.move(direction)
-
-        self.data.commands.set_ships_move(ship.id, command, direction, destination, points)
-        self.data.commands.set_coords_taken((destination.y, destination.x), ship.id)
 
         self.data.command_queue.append(command)
         logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
@@ -159,7 +156,7 @@ class Moves(abc.ABC):
             #return self.get_highest_harvest_move(ship)
             return avoid_collision_direction(self, ship, directions)
 
-        return best.direction, sorted(points, reverse=True)
+        return best.direction
 
 
     def get_directions_target(self, ship, destination):

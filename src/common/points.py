@@ -151,8 +151,7 @@ class RetreatPoints():
 
     shipyard > not occupied > least potential ally collisions
     """
-    def __init__(self, priority_direction, shipyard, safe, stuck, potential_ally_collision, direction):
-        self.priority_direction = priority_direction
+    def __init__(self, shipyard, safe, stuck, potential_ally_collision, direction):
         self.shipyard = shipyard
         self.safe = safe
         self.stuck = -stuck
@@ -161,11 +160,7 @@ class RetreatPoints():
 
     def __gt__(self, other):
         if isinstance(other, RetreatPoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.shipyard > other.shipyard:
+            if self.shipyard > other.shipyard:
                 return True
             elif self.shipyard < other.shipyard:
                 return False
@@ -188,11 +183,7 @@ class RetreatPoints():
 
     def __lt__(self, other):
         if isinstance(other, RetreatPoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.shipyard < other.shipyard:
+            if self.shipyard < other.shipyard:
                 return True
             elif self.shipyard > other.shipyard:
                 return False
@@ -214,9 +205,8 @@ class RetreatPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} shipyard: {} priority_direction: {} safe: {} stuck: {} potential_ally_collision: {} direction: {}".format(self.__class__.__name__,
+        return "{} shipyard: {} safe: {} stuck: {} potential_ally_collision: {} direction: {}".format(self.__class__.__name__,
                                                                                            self.shipyard,
-                                                                                           self.priority_direction,
                                                                                            self.safe,
                                                                                            self.stuck,
                                                                                            self.potential_ally_collision,
@@ -229,8 +219,7 @@ class DepositPoints():
 
     COMMENTED OUT ALLY COLLISION, WITH IT IT CAUSES A TRAFFIC JAM AT THE DOCK
     """
-    def __init__(self, priority_direction, safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction, avoid_enemy):
-        self.priority_direction = priority_direction
+    def __init__(self, safe, dock, enemy_occupied, potential_enemy_collision, potential_ally_collision, cost, direction, avoid_enemy):
         self.safe = safe
         self.dock = dock
         self.enemy_occupied = -enemy_occupied
@@ -242,11 +231,7 @@ class DepositPoints():
 
     def __gt__(self, other):
         if isinstance(other, DepositPoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.safe > other.safe:
+            if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
                 return False
@@ -277,11 +262,7 @@ class DepositPoints():
 
     def __lt__(self, other):
         if isinstance(other, DepositPoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.safe < other.safe:
+            if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
                 return False
@@ -311,9 +292,8 @@ class DepositPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {} avoid_enemy {}".format(
+        return "{} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {} avoid_enemy {}".format(
                                                                                         self.__class__.__name__,
-                                                                                        self.priority_direction,
                                                                                         self.safe,
                                                                                         self.dock,
                                                                                         self.enemy_occupied,
@@ -412,8 +392,7 @@ class ExplorePoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR EXPLORING
     """
-    def __init__(self, priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, data, avoid_enemy):
-        self.priority_direction = priority_direction
+    def __init__(self, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, data, avoid_enemy):
         self.safe = safe
         self.occupied = occupied
         self.enemy_occupied = -enemy_occupied
@@ -425,11 +404,7 @@ class ExplorePoints():
 
     def __gt__(self, other):
         if isinstance(other, ExplorePoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.safe > other.safe:
+            if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
                 return False
@@ -456,11 +431,7 @@ class ExplorePoints():
 
     def __lt__(self, other):
         if isinstance(other, ExplorePoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.safe < other.safe:
+            if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
                 return False
@@ -486,9 +457,8 @@ class ExplorePoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {} avoid_enemy {}".format(
+        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {} avoid_enemy {}".format(
             self.__class__.__name__,
-            self.priority_direction,
             self.safe,
             self.occupied,
             self.enemy_occupied,
@@ -569,19 +539,14 @@ class BuildPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR BUILDING
     """
-    def __init__(self, priority_direction, safe, cost, direction):
-        self.priority_direction = priority_direction
+    def __init__(self, safe, cost, direction):
         self.safe = safe
         self.cost = -cost
         self.direction = direction
 
     def __gt__(self, other):
         if isinstance(other, BuildPoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.safe > other.safe:
+            if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
                 return False
@@ -596,11 +561,7 @@ class BuildPoints():
 
     def __lt__(self, other):
         if isinstance(other, BuildPoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.safe < other.safe:
+            if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
                 return False
@@ -614,9 +575,8 @@ class BuildPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} cost: {} direction: {}".format(
+        return "{} safe: {} cost: {} direction: {}".format(
             self.__class__.__name__,
-            self.priority_direction,
             self.safe,
             self.cost,
             self.direction)
@@ -626,18 +586,13 @@ class AttackPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR ATTACKING
     """
-    def __init__(self, priority_direction, safe, direction):
-        self.priority_direction = priority_direction
+    def __init__(self, safe, direction):
         self.safe = safe
         self.direction = direction
 
     def __gt__(self, other):
         if isinstance(other, AttackPoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.safe > other.safe:
+            if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
                 return False
@@ -648,11 +603,7 @@ class AttackPoints():
 
     def __lt__(self, other):
         if isinstance(other, AttackPoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.safe < other.safe:
+            if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
                 return False
@@ -662,9 +613,8 @@ class AttackPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} direction: {}".format(
+        return "{} safe: {} direction: {}".format(
             self.__class__.__name__,
-            self.priority_direction,
             self.safe,
             self.direction)
 
@@ -673,18 +623,13 @@ class SupportPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR SUPPORTING
     """
-    def __init__(self, priority_direction, safe, direction):
-        self.priority_direction = priority_direction
+    def __init__(self, safe, direction):
         self.safe = safe
         self.direction = direction
 
     def __gt__(self, other):
         if isinstance(other, SupportPoints):
-            if self.priority_direction > other.priority_direction:
-                return True
-            elif self.priority_direction < other.priority_direction:
-                return False
-            elif self.safe > other.safe:
+            if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
                 return False
@@ -695,11 +640,7 @@ class SupportPoints():
 
     def __lt__(self, other):
         if isinstance(other, SupportPoints):
-            if self.priority_direction < other.priority_direction:
-                return True
-            elif self.priority_direction > other.priority_direction:
-                return False
-            elif self.safe < other.safe:
+            if self.safe < other.safe:
                 return True
             elif self.safe > other.safe:
                 return False
@@ -709,9 +650,8 @@ class SupportPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} priority_direction: {} safe: {} direction: {}".format(
+        return "{} safe: {} direction: {}".format(
             self.__class__.__name__,
-            self.priority_direction,
             self.safe,
             self.direction)
 

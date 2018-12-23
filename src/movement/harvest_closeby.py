@@ -66,7 +66,7 @@ class Harvest(Moves, Harvests, Explores):
                 canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
-                explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
@@ -77,7 +77,7 @@ class Harvest(Moves, Harvests, Explores):
                     
                     # self.mark_unsafe(ship, explore_destination)
                     self.mark_taken_udpate_top_halite(destination)
-                    self.move_mark_unsafe(ship, direction, points)
+                    self.move_mark_unsafe(ship, direction)
 
     def populate_heap(self, ship_id):
         if ship_id not in self.heap_set:

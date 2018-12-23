@@ -1,4 +1,6 @@
 from hlt.positionals import Direction
+from src.common.values import MyConstants
+from hlt.positionals import Position
 from src.common.matrix.functions import calculate_distance
 from src.common.values import Matrix_val
 import logging
@@ -16,6 +18,33 @@ def get_adjacent_directions(direction):
         return [Direction.East, Direction.West]
     elif direction == Direction.West:
         return [Direction.South, Direction.North]
+
+
+def get_goal_in_section(matrix_path, center_section, start, goal, directions):
+    """
+    GET POSITION OF GOAL IN SECTION, INSTEAD OF GOAL WHICH CAN BE PRETTY FAR
+
+    :param matrix_path: PATH WITH OBSTRUCTIONS
+    :param center_section: CENTER OF SECTION, WHERE A STAR WILL START
+    :param start: ACTUAL START POSITION OF SHIP
+    :param goal: ACTUAL GOAL POSITION OF SHIP
+    :param directions: DIRECTIONS TOWARDS THE GOAL
+    :return: POSITION OF THE GOAL IN THE SECTION
+    """
+    r = min(MyConstants.DEPOSIT_PERIMETER, abs(start.y - goal.y))
+    c = min(MyConstants.DEPOSIT_PERIMETER, abs(start.x - goal.x))
+
+    if Direction.North in directions:
+        y = center_section.y - r
+    else:
+        y = center_section.y + r
+
+    if Direction.West in directions:
+        x = center_section.x - c
+    else:
+        x = center_section.x + c
+
+    return Position(x, y)
 
 
 def a_star(matrix_path, matrix_cost, start_pos, goal_pos):

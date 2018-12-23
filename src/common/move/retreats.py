@@ -15,9 +15,9 @@ class Retreats():
             logging.debug(s)  ## FARTHEST SHIP OBJECT
 
             ship = self.data.game.me.get_ship(s.ship_id)
-            direction, points = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
+            direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
 
-            self.move_mark_unsafe(ship, direction, points)
+            self.move_mark_unsafe(ship, direction)
 
 
     def get_move_points_retreat(self, ship, directions):
@@ -29,8 +29,7 @@ class Retreats():
         :return:
         """
         ## IF OTHER ARE UNSAFE, PICK THIS DIRECTION (STILL)
-        points = [RetreatPoints(priority_direction=1,
-                                shipyard=0,
+        points = [RetreatPoints(shipyard=0,
                                 safe=1,
                                 stuck=0,
                                 potential_ally_collision=-999,
@@ -39,8 +38,6 @@ class Retreats():
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
 
-            priority_direction = 1 if direction in directions else 0
-
             destination = self.get_destination(ship, direction)
 
             shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
@@ -48,7 +45,7 @@ class Retreats():
             potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
             stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
 
-            c = RetreatPoints(priority_direction, shipyard, safe, stuck, potential_ally_collision, direction)
+            c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)
 
         logging.debug(points)

@@ -61,16 +61,15 @@ class Attacks():
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
             ## POINTS FOR MOVING
-            priority_direction = 1 if direction in directions else 0
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
 
-            a = AttackPoints(priority_direction, safe, direction)
+            a = AttackPoints(safe, direction)
             points.append(a)
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(AttackPoints(priority_direction=1, safe=safe, direction=Direction.Still))
+        points.append(AttackPoints(safe=safe, direction=Direction.Still))
 
         logging.debug(points)
 
@@ -90,16 +89,15 @@ class Attacks():
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
             ## POINTS FOR MOVING
-            priority_direction = 1 if direction in directions else 0
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
 
-            s = SupportPoints(priority_direction, safe, direction)
+            s = SupportPoints(safe, direction)
             points.append(s)
 
         ## POINTS FOR STAYING
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
-        points.append(SupportPoints(priority_direction=1, safe=safe, direction=Direction.Still))
+        points.append(SupportPoints(safe=safe, direction=Direction.Still))
 
         logging.debug(points)
 

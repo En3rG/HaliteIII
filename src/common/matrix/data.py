@@ -8,40 +8,8 @@ from src.common.matrix.functions import populate_manhattan, get_n_largest_values
 from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
 from src.common.classes import OrderedSet
 from src.common.print import print_matrix
-from src.movement.optimizer import optimize_moves
 import copy
 import abc
-
-
-
-
-
-## NO LONGER USED
-# class Sectioned():
-#     """
-#     MAP DIVIDED INTO SECTIONS
-#
-#     OBSOLETE????
-#     """
-#     def __init__(self, map_height, map_width):
-#         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
-#         self.distances = {}  ## ONLY FILLED IN INIT
-
-
-## NO LONGER USED
-# class Depletion():
-#     """
-#     USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
-#
-#     OBSOLETE????
-#     """
-#     def __init__(self, map_height, map_width):
-#         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
-#         self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
-#         self.total_turns = np.zeros((map_height, map_width), dtype=np.int16)
-#         self.max_matrix = np.zeros((map_height, map_width), dtype=np.int16)
-#         self.max_matrix.fill(1)
-#         self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)
 
 
 class CellAverage():
@@ -78,17 +46,18 @@ class Locations():
         ## SHIPS
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
-        self.myShipsID.fill(-1) ## CANT FIND SHIP ID 0 IF ZEROES
+        self.myShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
-        self.enemyShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
+        self.enemyShipsID.fill(-1)
         self.enemyShipsOwner = np.zeros((map_height, map_width), dtype=np.int16)
-        self.enemyShipsOwner.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
+        self.enemyShipsOwner.fill(-1)
         self.shipCargo = np.zeros((map_height, map_width), dtype=np.int16)
 
+        ## ATTACK
+        ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
         self.engage_enemy = {}
         for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
-            ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
             self.engage_enemy[i] = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.engage_influence = np.zeros((map_height, map_width), dtype=np.int16)
@@ -108,7 +77,6 @@ class Locations():
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.dock_placement = np.zeros((map_height, map_width), dtype=np.int16)
-
 
 
 class Distances():
@@ -175,48 +143,9 @@ class HaliteInfo():
         self.halite_carried = 0
 
 
-class Action():
-    def __init__(self, command, direction, destination, points):
-        self.command = command
-        self.direction = direction
-        self.destination = destination
-        self.points = points
-
-    def __repr__(self):
-        return "{} command: {} direction: {} destination: {} points: {}".format(
-            self.__class__.__name__,
-            self.command,
-            self.direction,
-            self.destination,
-            self.points)
-
-
-class Commands():
-    def __init__(self, data):
-        self.data = data
-        self.command_queue = None
-        self.ships_moves = {}
-        self.coords_taken = {}
-
-    def get_command_queue(self):
-        """
-        SET/RETURN COMMAND QUEUE
-        """
-        optimize_moves(self)
-
-        return [ action.command for ship_id, action in self.ships_moves.items() ]
-
-    def set_ships_move(self, ship_id, command, direction, destination, points):
-        self.ships_moves.setdefault(ship_id, Action(command, direction, destination, points))
-
-    def set_coords_taken(self, coord, ship_id):
-        self.coords_taken.setdefault(coord, set()).add(ship_id)
-
-
 class Data(abc.ABC):
     def __init__(self, game):
         self.game = game
-        self.commands = Commands(self)
         self.mySets = MySets(game)
         self.myVars = MyVars(self, game)
         self.myDicts = MyDicts()
@@ -609,3 +538,29 @@ class Data(abc.ABC):
 
 
 
+## NO LONGER USED
+# class Sectioned():
+#     """
+#     MAP DIVIDED INTO SECTIONS
+#
+#     OBSOLETE????
+#     """
+#     def __init__(self, map_height, map_width):
+#         self.halite = np.zeros((map_height // MyConstants.SECTION_SIZE , map_width // MyConstants.SECTION_SIZE), dtype=np.int16)
+#         self.distances = {}  ## ONLY FILLED IN INIT
+
+
+## NO LONGER USED
+# class Depletion():
+#     """
+#     USED TO ANALYZE HOW MANY TURNS TO DEPLETE THE HALITE IN THE ENTIRE MAP
+#
+#     OBSOLETE????
+#     """
+#     def __init__(self, map_height, map_width):
+#         self.harvest_turns = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.shipyard_distances = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.total_turns = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.max_matrix = np.zeros((map_height, map_width), dtype=np.int16)
+#         self.max_matrix.fill(1)
+#         self.harvest_area = np.zeros((map_height, map_width), dtype=np.int16)

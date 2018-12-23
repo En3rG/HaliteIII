@@ -23,7 +23,7 @@ class Explores():
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
         directions = self.get_directions_target(ship, explore_destination)
-        explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
 
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
@@ -37,7 +37,7 @@ class Explores():
 
         # self.mark_unsafe(ship, explore_destination)
         self.mark_taken_udpate_top_halite(destination)
-        self.move_mark_unsafe(ship, direction, points)
+        self.move_mark_unsafe(ship, direction)
 
 
     def isDestination_untaken(self, s):
@@ -110,7 +110,6 @@ class Explores():
 
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
-            priority_direction = 1 if direction in directions else 0
 
             destination = self.get_destination(ship, direction)
 
@@ -120,7 +119,7 @@ class Explores():
             enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
-            c = ExplorePoints(priority_direction, safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data, avoid_enemy)
+            c = ExplorePoints(safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data, avoid_enemy)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
@@ -128,8 +127,7 @@ class Explores():
         enemy_occupied = self.data.myMatrix.locations.enemyShips[ship.position.y][ship.position.x]
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
 
-        points.append(ExplorePoints(priority_direction=1,
-                                    safe=safe,
+        points.append(ExplorePoints(safe=safe,
                                     occupied=occupied,
                                     enemy_occupied=enemy_occupied,
                                     potential_enemy_collision=potential_enemy_collision,

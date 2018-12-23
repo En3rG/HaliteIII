@@ -67,7 +67,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                     logging.debug(s)
 
                     first_ship = self.data.game.me._ships.get(s.ship_id)
-                    direction, points = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
+                    direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
                     if direction != Direction.Still:
                     ## IF STAYING STILL, NO NEED TO MOVE
@@ -75,7 +75,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                     ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
                         destination = self.get_destination(first_ship, direction)
                         self.mark_taken_udpate_top_halite(destination)
-                        self.move_mark_unsafe(first_ship, direction, points)
+                        self.move_mark_unsafe(first_ship, direction)
 
                         logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
 
@@ -83,10 +83,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
                             if support_id in self.data.mySets.ships_to_move:            ## DONT MOVE SHIPS THAT ALREADY MOVED
                                 support_ship = self.data.game.me._ships.get(support_id)
                                 support_directions = self.get_directions_target(support_ship, first_ship.position)
-                                direction, points = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
+                                direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
                                 destination = self.get_destination(support_ship, direction)
                                 self.mark_taken_udpate_top_halite(destination)
-                                self.move_mark_unsafe(support_ship, direction, points)
+                                self.move_mark_unsafe(support_ship, direction)
 
 
     def populate_heap(self, ship_id):
