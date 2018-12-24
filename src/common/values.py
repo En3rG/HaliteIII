@@ -73,7 +73,7 @@ class MyConstants():
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
-    ALLOW_ATTACK_TURNS = 0.80                       ## 0 MEANS NEVER ATTACKING
+    ALLOW_ATTACK_TURNS = 0.85                       ## 0 MEANS NEVER ATTACKING
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 

@@ -26,7 +26,7 @@ IF BEST IS TO STAY AND HARVEST IS 0, MUST DO SOMETHING ELSE
 
 class Harvest(Moves, Harvests, Explores):
     """
-    HARVEST RIGHT NOW OR NEXT TURN
+    HARVEST
     """
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)

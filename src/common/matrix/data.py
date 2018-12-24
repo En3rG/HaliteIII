@@ -126,9 +126,6 @@ class MyVars():
         self.harvest_percentile = 0
         self.isBuilding = False
         self.support_gain_ratio = 1.20 if (len(game.players) == 2) else 1.20                  ## RATIO OF GAIN BEFORE SUPPORTING
-        self.allowAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_ATTACK_TURNS) \
-                           and (len(game.players) == 2) \
-                           and len(data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING
 
 
 class MyDicts():

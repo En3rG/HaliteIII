@@ -186,6 +186,47 @@ class ExploreShip:
                                                            self.cargo)
 
 
+class KamikazeShip:
+    """
+    USED TO DETERMINE CLOSEST SHIP WITH LOWEST CARGO TO KAMIKAZE HARVEST (POTENTIALLY)
+    """
+    def __init__(self, cargo, id, explore_destination):
+        self.cargo = cargo
+        self.ship_id = id
+        self.explore_destination = explore_destination
+
+    def __gt__(self, other):
+        if isinstance(other, KamikazeShip):
+            if self.cargo >= other.cargo:
+                return True
+            elif self.cargo < other.cargo:
+                return False
+            elif self.ship_id >= other.ship_id:
+                return True
+            elif self.ship_id < other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, KamikazeShip):
+            if self.cargo <= other.cargo:
+                return True
+            elif self.cargo > other.cargo:
+                return False
+            elif self.ship_id <= other.ship_id:
+                return True
+            elif self.ship_id > other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} Ship id: {} cargo: {}".format(self.__class__.__name__,
+                                                           self.ship_id,
+                                                           self.cargo)
+
+
 
 class RetreatPoints():
     """
