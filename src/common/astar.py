@@ -67,19 +67,20 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos, lowest_cost):
         :return: POINTS
         """
         if lowest_cost:
-            d = ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
-
-            if d == 0:
-                return 0
-            else:
-                return (cost / d) + (d ** 2)
+            ## OLD WAY
+            # d = ((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
+            #
+            # if d == 0:
+            #     return 0
+            # else:
+            #     return (cost / d) + (d ** 2)
 
             ## NEW WAY
-            ## THIS COULD POTENTIALLY PICK CHEAPEST PATH BUT WAY WAY LONGER??
-            # dy = abs(a[0] - b[0])
-            # dx = abs(a[1] - b[1])
-            # d = dx + dy
-            # return cost * d
+            ## WEIGHTED TO PREVENT LONG CHEAP PATHS
+            dy = abs(a[0] - b[0])
+            dx = abs(a[1] - b[1])
+            d = dx + dy
+            return (cost * 0.0015) + (d * 0.9985)
         else:
             dy = abs(a[0] - b[0])
             dx = abs(a[1] - b[1])
