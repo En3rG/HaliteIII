@@ -1,7 +1,8 @@
 from src.common.print import print_heading, print_matrix
 from src.common.move.moves import Moves
 from src.common.move.builds import Builds
-
+from src.common.values import MyConstants
+from hlt import constants
 
 
 """
@@ -29,7 +30,11 @@ class Build(Moves, Builds):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        if self.data.myVars.allowBuild:
+        allowBuild = self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_BUILDING_TURNS \
+                                 and self.data.myVars.ratio_left_halite > MyConstants.STOP_BUILDING_HALITE_LEFT \
+                                 and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING
+
+        if allowBuild:
             self.building_now()
             self.building_later()
             self.go_towards_building()

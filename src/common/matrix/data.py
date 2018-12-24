@@ -118,13 +118,12 @@ class MySets():
 
 class MyVars():
     def __init__(self, data, game):
+        self.ratio_left_halite = 0
         self.total_halite = 0
         self.average_halite = 0
         self.median_halite = 0
         self.harvest_percentile = 0
         self.isBuilding = False
-        self.allowBuild = False
-        self.allowSpawn = False
         self.support_gain_ratio = 1.20 if (len(game.players) == 2) else 1.20                  ## RATIO OF GAIN BEFORE SUPPORTING
         self.allowAttack = (game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_ATTACK_TURNS) \
                            and (len(game.players) == 2) \
@@ -168,6 +167,9 @@ class Data(abc.ABC):
         self.myMatrix.halite.amount = np.array(halites, dtype=np.int16)
 
         self.myVars.total_halite = self.myMatrix.halite.amount.sum()
+
+        if getattr(self, 'init_data', None):  ## IF THIS IS NONE, ITS AT GETINITDATA
+            self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
 
     def populate_myShipyard_docks(self):
@@ -432,48 +434,6 @@ class Data(abc.ABC):
         """
         r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
         self.init_data.myMatrix.locations.dock_placement[r, c] = 0
-
-
-    def set_spawn_build_time(self):
-        """
-        SET SPAWNING TO TRUE IF TURN NUMBER IS BELOW THE MAX TURN PERCENT (BASED ON MAP SIZE AND NUM PLAYERS)
-        ALSO BASED ON RATIO OF REMAINING HALITE FROM TOTAL STARTING VALUE
-        """
-
-        max_turn_percent = None
-
-        if len(self.game.players) == 2:
-            if self.game.game_map.height == 32:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
-            elif self.game.game_map.height == 40:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
-            elif self.game.game_map.height == 48:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
-            elif self.game.game_map.height == 56:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
-            elif self.game.game_map.height == 64:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
-
-        else: ## 4 PLAYERS
-            if self.game.game_map.height == 32:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
-            elif self.game.game_map.height == 40:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
-            elif self.game.game_map.height == 48:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
-            elif self.game.game_map.height == 56:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
-            elif self.game.game_map.height == 64:
-                max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
-
-        ratio_left = self.myVars.total_halite / self.starting_halite
-
-        self.myVars.allowSpawn = self.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                                and ratio_left > MyConstants.STOP_SPAWNING_HALITE_LEFT
-
-        self.myVars.allowBuild = self.game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_BUILDING_TURNS \
-                                and ratio_left > MyConstants.STOP_BUILDING_HALITE_LEFT \
-                                and len(self.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING
 
 
     ## NO LONGER USED
