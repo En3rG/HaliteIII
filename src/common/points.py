@@ -91,6 +91,48 @@ class SupportShip:
         return "{} Ship id: {} num_support: {}".format(self.__class__.__name__, self.ship_id, self.num_support)
 
 
+
+
+class BuildShip:
+    """
+    USED TO DETERMINE CLOSEST SHIP FOR BUILDING WITH HIGHEST HALITE
+    """
+    def __init__(self, cargo, id):
+        self.cargo = -cargo
+        self.ship_id = id
+
+    def __gt__(self, other):
+        if isinstance(other, BuildShip):
+            if self.cargo >= other.cargo:
+                return True
+            elif self.cargo < other.cargo:
+                return False
+            elif self.ship_id >= other.ship_id:
+                return True
+            elif self.ship_id < other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, BuildShip):
+            if self.cargo <= other.cargo:
+                return True
+            elif self.cargo > other.cargo:
+                return False
+            elif self.ship_id <= other.ship_id:
+                return True
+            elif self.ship_id > other.ship_id:
+                return False
+
+        return NotImplemented
+
+    def __repr__(self):
+        return "{} Ship id: {} cargo: {}".format(self.__class__.__name__,
+                                                           self.ship_id,
+                                                           self.cargo)
+
+
 class ExploreShip:
     """
     USED TO DETERMINE CLOSEST SHIP FOR EXPLORING WITH HIGHEST

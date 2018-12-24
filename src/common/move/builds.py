@@ -3,12 +3,13 @@ from hlt.positionals import Direction
 from src.common.halite_statistics import BuildType
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import populate_manhattan, get_coord_closest
-from src.common.points import BuildPoints
+from src.common.points import BuildPoints, BuildShip
 from src.common.matrix.functions import get_coord_closest, pad_around, Section
 from src.common.astar import a_star, get_goal_in_section
 from src.common.classes import OrderedSet
 import numpy as np
 import logging
+import heapq
 
 class Builds():
     def building_now(self):
@@ -103,6 +104,8 @@ class Builds():
         """
         MOVE SHIPS TOWARD BUILDING DOCK
         """
+        heap_halite = []
+
         if MyConstants.DOCK_MANHATTAN > 2:
             for i in range(MyConstants.DOCK_MANHATTAN - 2, 0, -1):  ## MOVES SHIPS CLOSEST TO DOCK FIRST
                 r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
@@ -113,7 +116,16 @@ class Builds():
 
                 for ship_id in ships_going_dock:
                     ship = self.data.game.me._ships.get(ship_id)
+                    cargo = ship.halite_amount
+                    s = BuildShip(cargo, ship_id)
+                    heapq.heappush(heap_halite, s)
 
+
+                while heap_halite:
+                    s = heapq.heappop(heap_halite)
+                    logging.debug(s)
+
+                    ship = self.data.game.me._ships.get(s.ship_id)
                     curr_cell = (ship.position.y, ship.position.x)
                     dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
                                                                   self.data.init_data.myMatrix.locations.dock_placement,
@@ -121,7 +133,8 @@ class Builds():
                                                                   Inequality.EQUAL)
 
                     ## dock_coord WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
-                    if dock_coord and (ship.halite_amount == 1000 or ship_id in self.prev_data.ships_building):
+                    #if dock_coord and (ship.halite_amount >= 1000 or ship_id in self.prev_data.ships_building):
+                    if dock_coord and ship.halite_amount >= 600:
                         self.ships_building_towards_dock.setdefault(dock_coord, set())
 
                         if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():

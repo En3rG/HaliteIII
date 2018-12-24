@@ -60,6 +60,7 @@ class MyConstants():
 
                                                     ## USED TO BE:
                                                     ## V19: 20
+    MIN_DIST_BTW_ENEMY_DOCKS = 22
     MIN_DIST_BTW_DOCKS = 12                         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
                                                     ## USED TO BE:
                                                     ## V19: 12
