@@ -97,6 +97,7 @@ class Matrix():
         self.distances = Distances(map_height, map_width)
         self.locations = Locations(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
+        self.dock_averages = np.zeros((map_height, map_width), dtype=np.int16)
 
         ## NO LONGER USED
         # self.sectioned = Sectioned(map_height, map_width)
@@ -433,7 +434,35 @@ class Data(abc.ABC):
         REMEMBER, DOCK PLACEMENT IS ONLY CALCULATED IN INIT_DATA
         """
         r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
-        self.init_data.myMatrix.locations.dock_placement[r, c] = 0
+        self.init_data.myMatrix.locations.dock_placement[r, c] = Matrix_val.ZERO
+
+        self.populate_dock_averages()
+
+        ## ALSO UPDATE DOCK PLACEMENT WHERE AVERAGE IS TOO LOW NOW
+        indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+        for y, x in indexes:
+            original_average = self.init_data.myMatrix.dock_averages[y][x]
+            current_average = self.myMatrix.dock_averages[y][x]
+
+            if current_average <= original_average * MyConstants.DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
+                self.init_data.myMatrix.locations.dock_placement[r, c] = Matrix_val.ZERO
+
+
+
+    def populate_dock_averages(self):
+        """
+        POPULATE AVERAGE OF EACH DOCKS (TO BE BUILT)
+        """
+        if getattr(self, 'init_data', None):
+            indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+
+        else: ## init_data IS NONE, ITS AT GETINITDATA
+            indexes = np.argwhere(self.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+
+        for y, x in indexes:
+            self.myMatrix.dock_averages[y][x] = get_average_manhattan(self.myMatrix.halite.amount,
+                                                                     Position(x, y),
+                                                                     MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
 
     ## NO LONGER USED

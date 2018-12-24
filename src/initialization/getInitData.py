@@ -1,7 +1,7 @@
 from src.common.matrix.data import Data
 from src.common.print import print_matrix
 from src.common.matrix.functions import Section, populate_manhattan, get_index_highest_val, get_coord_closest, \
-    get_n_largest_values, get_cell_averages, get_n_max_values, calculate_distance
+    get_n_largest_values, get_cell_averages, get_n_max_values, calculate_distance, get_average_manhattan
 from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
 import numpy as np
@@ -48,6 +48,7 @@ class GetInitData(Data):
     def populate_dock_placement(self):
         self.get_top_N_averages()
         self.final_dock_placement()
+        self.populate_dock_averages()
 
 
     def get_top_N_averages(self):
@@ -227,6 +228,8 @@ class GetInitData(Data):
             coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
 
         print_matrix("Final dock placement", self.myMatrix.locations.dock_placement)
+
+
 
 
 
