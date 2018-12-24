@@ -118,11 +118,18 @@ class GetInitData(Data):
         ## POPULATE AROUND ENEMY SHIPYARD
         for id, player in self.game.players.items():
             if id != self.game.me.id:
-                populate_manhattan(self.unavailable_area,
-                                   Matrix_val.UNAVAILABLE,
-                                   player.shipyard.position,
-                                   MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
-                                   cummulative=False)
+                if len(self.game.players) == 2:
+                    populate_manhattan(self.unavailable_area,
+                                       Matrix_val.UNAVAILABLE,
+                                       player.shipyard.position,
+                                       MyConstants.MIN_DIST_BTW_DOCKS,
+                                       cummulative=False)
+                else:
+                    populate_manhattan(self.unavailable_area,
+                                       Matrix_val.UNAVAILABLE,
+                                       player.shipyard.position,
+                                       MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
+                                       cummulative=False)
 
 
 
