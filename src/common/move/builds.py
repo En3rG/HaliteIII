@@ -18,46 +18,46 @@ class Builds():
         """
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
         ships_on_docks = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
-
         ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
         for ship_id in ships_building:
             ship = self.data.game.me._ships.get(ship_id)
-            self.mark_unsafe(ship, ship.position)
-            self.data.mySets.ships_to_move.remove(ship.id)
+            cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
 
-            ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
-            if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[ship.position.y][ship.position.x] >= 4000:
-                self.data.game.me.halite_amount -= (4000 - ship.halite_amount - self.data.myMatrix.halite.amount[ship.position.y][ship.position.x])
-
+            if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000:
+                ## HAVE ENOUGH HALITE TO BUILD DOCK
+                self.data.game.me.halite_amount -= (4000 - ship.halite_amount - cell_halite_amount)
                 logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
                 self.data.halite_stats.record_spent(BuildType.DOCK)
                 command = ship.make_dropoff()
                 self.data.command_queue.append(command)
 
                 ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
-                # self.data.init_data.myMatrix.locations.dock_placement[ship.position.y][ship.position.x] = 0
                 populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
                                    Matrix_val.ZERO,
                                    ship.position,
                                    MyConstants.DOCK_MANHATTAN)
             else:
                 ## NOT ENOUGH HALITE YET, STAY STILL
-                self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
+                self.data.myVars.isBuilding = True                                                                      ## PREVENT SPAWNING SHIPS
                 direction = Direction.Still
                 command = ship.move(direction)
                 self.data.command_queue.append(command)
 
+            ## RECORD INFO ALSO SHIP COUNTER PER DOCK
             dock_coord = (ship.position.y, ship.position.x)
             self.ships_building_towards_dock.setdefault(dock_coord, set())
             self.ships_building_towards_dock[dock_coord].add(ship.id)
+            self.mark_unsafe(ship, ship.position)
+            self.data.mySets.ships_to_move.remove(ship.id)
+
 
 
     def building_later(self):
         """
         MOVE SHIPS RIGHT NEXT TO DOCK POSITION
         """
-        i = MyConstants.DOCK_MANHATTAN - 1  ## CURRENTLY RIGHT NEXT TO THE DOCK
+        i = MyConstants.DOCK_MANHATTAN - 1                                                                              ## CURRENTLY RIGHT NEXT TO THE DOCK
 
         r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
         matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
@@ -67,37 +67,31 @@ class Builds():
 
         for ship_id in ships_going_dock:
             ship = self.data.game.me._ships.get(ship_id)
+            dock_coord = self.get_dock_coord(ship)                                                                      ## DOCK COORD IS NONE IF ENEMY BUILT THERE
+            self.ships_building_towards_dock.setdefault(dock_coord, set())
 
-            ## GET DOCK POSITION
-            curr_cell = (ship.position.y, ship.position.x)
-            dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
-                                                     self.data.init_data.myMatrix.locations.dock_placement,
-                                                     self.data.init_data.myMatrix.distances.cell[curr_cell],
-                                                     Inequality.EQUAL)
+            if dock_coord \
+                and len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK \
+                and self.withinLimit_ships():
 
-            if dock_coord:  ## THIS WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
+                if self.data.game.me.halite_amount < 5000:
+                    self.data.myVars.isBuilding = True                                                                  ## PREVENT SPAWNING SHIPS
+
                 dock_position = Position(dock_coord[1], dock_coord[0])
                 directions = self.get_directions_target(ship, dock_position)
+                dock_halite_amount = self.data.myMatrix.halite.amount[dock_position.y][dock_position.x]
 
-                self.ships_building_towards_dock.setdefault(dock_coord, set())
+                if ship.halite_amount + self.data.game.me.halite_amount + dock_halite_amount >= 4000 \
+                        and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
+                    ## ENOUGH HALITE TO BUILD
+                    self.move_mark_unsafe(ship, directions[0])                                                          ## DIRECTION IS A LIST OF DIRECTIONS
+                else:
+                    ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
+                    # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE
+                    self.move_mark_unsafe(ship, Direction.Still)
 
-                if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
-
-                    if self.data.game.me.halite_amount < 5000:
-                        self.data.myVars.isBuilding = True  ## SET TO TRUE, SO THAT IF WE DONT HAVE ENOUGH HALITE NOW, WILL NOT SPAWN SHIPS STILL
-
-                    ## TAKE INTO ACCOUNT SHIP.HALITE_AMOUNT, DOCK HALITE AMOUNT, PLUS CURRENT PLAYER HALITE AMOUNT
-                    ## ALSO MAKE SURE ITS SAFE TO GO THERE
-                    if ship.halite_amount + self.data.game.me.halite_amount + self.data.myMatrix.halite.amount[dock_position.y][dock_position.x] >= 4000 \
-                            and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
-                        self.move_mark_unsafe(ship, directions[0])  ## DIRECTION IS A LIST OF DIRECTIONS
-                    else:
-                        ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
-                        # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE
-                        self.move_mark_unsafe(ship, Direction.Still)
-
-                    ## SHIP COUNTER PER DOCK
-                    self.ships_building_towards_dock[dock_coord].add(ship.id)
+                ## SHIP COUNTER PER DOCK
+                self.ships_building_towards_dock[dock_coord].add(ship.id)
 
 
     def go_towards_building(self):
@@ -107,66 +101,71 @@ class Builds():
         heap_halite = []
 
         if MyConstants.DOCK_MANHATTAN > 2:
-            for i in range(MyConstants.DOCK_MANHATTAN - 2, 0, -1):  ## MOVES SHIPS CLOSEST TO DOCK FIRST
+            for i in range(MyConstants.DOCK_MANHATTAN - 2, 0, -1):                                                      ## MOVES SHIPS CLOSEST TO DOCK FIRST
                 r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
                 matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
                 ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
                 logging.debug("ship going to dock: {} at i {}".format(ships_going_dock, i))
 
+                ## POPULATE HEAP
                 for ship_id in ships_going_dock:
                     ship = self.data.game.me._ships.get(ship_id)
-                    cargo = ship.halite_amount
-                    s = BuildShip(cargo, ship_id)
+                    s = BuildShip(ship.halite_amount, ship_id)
                     heapq.heappush(heap_halite, s)
-
 
                 while heap_halite:
                     s = heapq.heappop(heap_halite)
                     logging.debug(s)
 
                     ship = self.data.game.me._ships.get(s.ship_id)
-                    curr_cell = (ship.position.y, ship.position.x)
-                    dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
-                                                                  self.data.init_data.myMatrix.locations.dock_placement,
-                                                                  self.data.init_data.myMatrix.distances.cell[curr_cell],
-                                                                  Inequality.EQUAL)
+                    dock_coord = self.get_dock_coord(ship)                                                              ## DOCK COORD IS NONE IF ENEMY BUILT THERE
+                    self.ships_building_towards_dock.setdefault(dock_coord, set())
 
-                    ## dock_coord WILL BE NONE IF ENEMY CREATED A DOCK IN OUR DOCK LOCATION
                     #if dock_coord and (ship.halite_amount >= 1000 or ship_id in self.prev_data.ships_building):
-                    if dock_coord and ship.halite_amount >= 600:
-                        self.ships_building_towards_dock.setdefault(dock_coord, set())
+                    if dock_coord and ship.halite_amount >= 600 \
+                        and len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK \
+                        and self.withinLimit_ships():
 
-                        if len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK and self.withinLimit_ships():
-                            dock_position = Position(dock_coord[1], dock_coord[0])
-                            directions = self.get_directions_target(ship, dock_position)
+                        dock_position = Position(dock_coord[1], dock_coord[0])
+                        directions = self.get_directions_target(ship, dock_position)
 
-                            if self.data.game.me.halite_amount < 5000:
-                                self.data.myVars.isBuilding = True
+                        if self.data.game.me.halite_amount < 5000:
+                            self.data.myVars.isBuilding = True                                                          ## PREVENT SPAWNING SHIPS
 
-                            self.data.mySets.ships_building.add(ship_id)
+                        ## OLD WAY
+                        #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
+                        ## A STAR WAY
+                        direction = self.get_a_star_direction(ship, dock_position, directions)
 
-                            ## OLD WAY
-                            #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
-                            ## A STAR WAY
-                            direction = self.get_a_star_direction(ship, dock_position, directions)
+                        ## RECORD INFO ALSO SHIP COUNTER PER DOCK
+                        self.data.mySets.ships_building.add(ship_id)
+                        self.ships_building_towards_dock[dock_coord].add(ship.id)
+                        self.move_mark_unsafe(ship, direction)
 
-                            self.move_mark_unsafe(ship, direction)
 
-                            ## SHIP COUNTER PER DOCK
-                            self.ships_building_towards_dock[dock_coord].add(ship.id)
+    def get_dock_coord(self, ship):
+        curr_cell = (ship.position.y, ship.position.x)
+        dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
+                                                      self.data.init_data.myMatrix.locations.dock_placement,
+                                                      self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                      Inequality.EQUAL)
+
+        return dock_coord
 
 
     def withinLimit_ships(self):
         """
         CHECK IF SHIPS BUILDING IS WITHIN PERCENT LIMIT
         """
-        return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
+        num_ships_allowed_to_build = len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
+        return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= num_ships_allowed_to_build
 
 
     def get_a_star_direction(self, ship, dock_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions,
+                          ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
         matrix_path = pad_around(section.matrix)
         section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
         matrix_cost = section.matrix

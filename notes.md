@@ -1,6 +1,18 @@
 # Notes to consider
 
 
+## TO DO FOR IMPROVEMENT
+- BETTER TIMING FOR WHEN TO BUILD/SAVE
+- BETTER TIMING FOR WHEN TO STOP SPAWNING
+- BETTER TIMING WHEN TO STOP BUILDING DOCKS
+- BETTER TIMING TO WHEN TO DEPOSIT (EVEN NOT FULL)
+- BETTER ATTACK (TRAP HIGH CARGO ENEMY SHIPS)
+- BETTER HARVEST (WHEN NEXT TO HIGH HALITE, MAY JUST SIT THERE)
+
+- IMPROVE RETREAT? (AVOID HIGH HALITE?) (STILL HARVEST IF CLOSE TO DOCKS?)
+
+
+
 ## Machine Learning
 * Training
 * Predicting
@@ -65,15 +77,7 @@
 * COST TO LEAVE = 10% (IF SHIP DOESNT HAVE ENOUGH, IT CANNOT MOVE!!!)
 * COST TO LEAVE IS HARVESTING = 75% of previous cost
 
-###### ------------------------------------- DATA STRUCTURE
 
-MoveShips
-    - Moves
-        - Data
-            -Matrices
-
-
-###### ------------------------------------- HISTORY
 
 
 
