@@ -26,11 +26,10 @@ class Explore(Moves, Explores, Harvests):
         Moves.__init__(self, data, prev_data)
 
         self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
-        self.heap_dist = []
+        self.heap_explore = []
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
 
         self.taken_destinations = set()
-
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
@@ -55,7 +54,7 @@ class Explore(Moves, Explores, Harvests):
                 self.populate_heap(ship_id)
 
 
-        while self.heap_dist:
+        while self.heap_explore:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.mySets.ships_kicked:
                 ship_kicked = self.data.mySets.ships_kicked.pop()
@@ -64,7 +63,7 @@ class Explore(Moves, Explores, Harvests):
                     #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, EVEN WHEN VERY FAR
                     self.populate_heap(ship_kicked)
 
-            s = heapq.heappop(self.heap_dist)                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            s = heapq.heappop(self.heap_explore)                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
             logging.debug(s)                                        ## EXPLORE SHIP OBJECT
 
             ship = self.data.game.me._ships.get(s.ship_id)
@@ -100,7 +99,7 @@ class Explore(Moves, Explores, Harvests):
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
             s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
-            heapq.heappush(self.heap_dist, s)
+            heapq.heappush(self.heap_explore, s)
 
 
 

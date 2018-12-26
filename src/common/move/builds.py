@@ -84,7 +84,8 @@ class Builds():
                 if ship.halite_amount + self.data.game.me.halite_amount + dock_halite_amount >= 4000 \
                         and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                     ## ENOUGH HALITE TO BUILD
-                    self.move_mark_unsafe(ship, directions[0])                                                          ## DIRECTION IS A LIST OF DIRECTIONS
+                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True)
+                    self.move_mark_unsafe(ship, direction)                                                          ## DIRECTION IS A LIST OF DIRECTIONS
                 else:
                     ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
                     # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE

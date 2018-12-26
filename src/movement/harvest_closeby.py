@@ -32,7 +32,7 @@ class Harvest(Moves, Harvests, Explores):
         Moves.__init__(self, data, prev_data)
 
         self.heap_set = set()
-        self.heap_dist = []
+        self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
@@ -56,8 +56,8 @@ class Harvest(Moves, Harvests, Explores):
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             self.populate_heap(ship_id)
 
-        while self.heap_dist:
-            s = heapq.heappop(self.heap_dist)
+        while self.heap_explore:
+            s = heapq.heappop(self.heap_explore)
             logging.debug(s)
 
             ship = self.data.game.me._ships.get(s.ship_id)
@@ -86,7 +86,7 @@ class Harvest(Moves, Harvests, Explores):
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
             s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
-            heapq.heappush(self.heap_dist, s)
+            heapq.heappush(self.heap_explore, s)
 
 
 

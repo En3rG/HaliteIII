@@ -19,7 +19,7 @@ class Influence(Moves, Explores, Harvests):
         Moves.__init__(self, data, prev_data)
 
         self.heap_set = set()
-        self.heap_dist = []
+        self.heap_explore = []
 
         self.taken_destinations = set()
 
@@ -42,7 +42,7 @@ class Influence(Moves, Explores, Harvests):
         for ship_id in ships_influencing:
             self.populate_heap(ship_id)
 
-        while self.heap_dist:
+        while self.heap_explore:
             ## MOVE KICKED SHIPS FIRST (IF ANY)
             while self.data.mySets.ships_kicked:
                 ship_kicked = self.data.mySets.ships_kicked.pop()
@@ -51,7 +51,7 @@ class Influence(Moves, Explores, Harvests):
                     #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, PUT BACK TO HEAP
                     self.populate_heap(ship_kicked)
 
-            s = heapq.heappop(self.heap_dist)   ## MOVE CLOSEST TO ENEMY?, TO PREVENT COLLISIONS
+            s = heapq.heappop(self.heap_explore)   ## MOVE CLOSEST TO ENEMY?, TO PREVENT COLLISIONS
             logging.debug(s)                    ## EXPLORE SHIP OBJECT
 
             ship = self.data.game.me._ships.get(s.ship_id)
@@ -124,4 +124,4 @@ class Influence(Moves, Explores, Harvests):
 
             logging.debug("ship id: {} max_ratio {} destination {}".format(ship_id, max_ratio, destination))
             s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
-            heapq.heappush(self.heap_dist, s)
+            heapq.heappush(self.heap_explore, s)
