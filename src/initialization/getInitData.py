@@ -121,7 +121,7 @@ class GetInitData(Data):
                 populate_manhattan(self.unavailable_area,
                                    Matrix_val.UNAVAILABLE,
                                    player.shipyard.position,
-                                   MyConstants.MIN_DIST_BTW_DOCKS,
+                                   MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
                                    cummulative=False)
 
 
