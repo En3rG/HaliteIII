@@ -65,25 +65,11 @@ class Deposit(Moves, Deposits, Explores):
     def move_ships(self):
         print_heading("Moving depositing ships......")
 
-        ## SHIPS JUST HIT MAX
-        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
-            ship = self.data.game.me._ships.get(ship_id)
+        ## MOVE SHIPS THAT ARE FULL OR HAVE ENOUGH CARGO
+        self.check_depositing_now()
 
-            if ship.is_full:
-                self.populate_heap_dist(ship)
-            elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO:
-                self.populate_heap(ship_id)                                                                     ## SEE IF ENOUGH TO GO HOME
-
-        ## SHIPS RETURNING PREVIOUSLY (HIT MAX)
-        if self.prev_data:
-            for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
-                ship = self.data.game.me._ships.get(ship_id)
-
-                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:                     ## SHIP ALREADY IN DOCK
-                    self.populate_heap_dist(ship)
-
-        ## CHECK EACH SHIPS IN HEAP EXPLORE
-        self.check_if_enoughCargo()
+        ## MOVE SHIPS DEPOSITING PREVIOUSLY
+        self.check_depositing_before()
 
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
@@ -101,7 +87,36 @@ class Deposit(Moves, Deposits, Explores):
                 self.depositNow(ship, s.dock_position, s.directions)
 
 
-    def check_if_enoughCargo(self):
+    def check_depositing_now(self):
+        """
+        POPULATE HEAP DIST AND HEAP FOR EXPLORE PURPOSES
+        """
+        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
+            ship = self.data.game.me._ships.get(ship_id)
+
+            if ship.is_full:                                                                                            ## SHIPS JUST HIT MAX
+                self.populate_heap_dist(ship)
+            elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO:                                            ## MIGHT BE ENOUGH
+                self.populate_heap(ship_id)
+
+        ## CHECK EACH SHIP IN HEAP EXPLORE, IF DEPOSITING NOW
+        self.verify_depositing_now()
+
+
+    def check_depositing_before(self):
+        """
+        POPULATE HEAP REGARDING SHIPS DEPOSITING BEFORE
+        """
+        if self.prev_data:
+            for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
+                ship = self.data.game.me._ships.get(ship_id)
+
+                if ship and (
+                ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:  ## SHIP ALREADY IN DOCK
+                    self.populate_heap_dist(ship)
+
+
+    def verify_depositing_now(self):
         """
         CHECK IF SHIPS IN HEAP EXPLORE IS ENOUGH TO GO HOME
         """
