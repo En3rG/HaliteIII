@@ -48,7 +48,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
     def move_ships(self):
         print_heading("Moving attack ships......")
 
-        allowAttack = (self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_ATTACK_TURNS) \
+        allowAttack = (constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_UPPER_LIMIT) \
                            and (len(self.data.game.players) == 2) \
                            and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING
 
