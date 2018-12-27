@@ -57,7 +57,7 @@ class Deposits():
         return len(r) >= 1
 
 
-    def get_move_points_returning(self, ship, directions, avoid_enemy, get_move_points_returning):
+    def get_move_points_returning(self, ship, directions, avoid_enemy, avoid_potential_enemy):
         """
         GET POINTS FOR RETURNING
 
@@ -76,7 +76,7 @@ class Deposits():
                                 cost=999,
                                 direction=Direction.Still,
                                 avoid_enemy=avoid_enemy,
-                                get_move_points_returning=get_move_points_returning)]
+                                avoid_potential_enemy=avoid_potential_enemy)]
 
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
@@ -98,7 +98,7 @@ class Deposits():
                               cost,
                               direction,
                               avoid_enemy=avoid_enemy,
-                              get_move_points_returning=get_move_points_returning)
+                              avoid_potential_enemy=avoid_potential_enemy)
             points.append(c)
 
         logging.debug(points)

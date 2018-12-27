@@ -223,9 +223,10 @@ class KamikazeShip:
         return NotImplemented
 
     def __repr__(self):
-        return "{} Ship id: {} cargo: {}".format(self.__class__.__name__,
+        return "{} Ship id: {} cargo: {} support_ships {}".format(self.__class__.__name__,
                                                            self.ship_id,
-                                                           self.cargo)
+                                                           self.cargo,
+                                                           self.support_ships)
 
 
 
@@ -378,7 +379,8 @@ class DepositPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} cost: {} direction: {} avoid_enemy {}".format(
+        return "{} safe: {} dock: {} enemy_occupied: {} potential_enemy_collision: {} potential_ally_collision: {} " \
+               "cost: {} direction: {} avoid_enemy {} avoid_potential_enemy {}".format(
                                                                                         self.__class__.__name__,
                                                                                         self.safe,
                                                                                         self.dock,
@@ -387,7 +389,8 @@ class DepositPoints():
                                                                                         self.potential_ally_collision,
                                                                                         self.cost,
                                                                                         self.direction,
-                                                                                        self.avoid_enemy)
+                                                                                        self.avoid_enemy,
+                                                                                        self.avoid_potential_enemy)
 
 
 class HarvestPoints():
@@ -465,7 +468,8 @@ class HarvestPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} harvest: {} direction: {} avoid_enemy {}".format(
+        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} harvest: {} direction: {} " \
+               "avoid_enemy {} avoid_potential_enemy {}".format(
                                                                                 self.__class__.__name__,
                                                                                 self.safe,
                                                                                 self.occupied,
@@ -473,7 +477,8 @@ class HarvestPoints():
                                                                                 self.potential_enemy_collision,
                                                                                 self.harvest,
                                                                                 self.direction,
-                                                                                self.avoid_enemy)
+                                                                                self.avoid_enemy,
+                                                                                self.avoid_potential_enemy)
 
 
 class ExplorePoints():
@@ -548,7 +553,8 @@ class ExplorePoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {} avoid_enemy {}".format(
+        return "{} safe: {} occupied: {} enemy_occupied: {} potential_collision: {} cost: {} direction: {} " \
+               "avoid_enemy {} avoid_potential_enemy {}".format(
             self.__class__.__name__,
             self.safe,
             self.occupied,
@@ -556,7 +562,8 @@ class ExplorePoints():
             self.potential_enemy_collision,
             self.cost,
             self.direction,
-            self.avoid_enemy)
+            self.avoid_enemy,
+            self.avoid_potential_enemy)
 
 
 class CollisionPoints():
@@ -687,11 +694,13 @@ class BuildPoints():
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} cost: {} direction: {}".format(
+        return "{} safe: {} cost: {} direction: {} avoid_enemy {} avoid_potential_enemy {}".format(
             self.__class__.__name__,
             self.safe,
             self.cost,
-            self.direction)
+            self.direction,
+            self.avoid_enemy,
+            self.avoid_potential_enemy)
 
 
 class AttackPoints():

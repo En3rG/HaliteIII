@@ -1,4 +1,4 @@
-from src.common.print import print_heading
+from src.common.print import print_heading, print_matrix
 from src.common.move.moves import Moves
 from src.common.move.attacks import Attacks
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
@@ -49,17 +49,19 @@ class Attack(Moves, Attacks, Harvests, Explores):
         print_heading("Moving attack ships......")
 
         allowAttack = (constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_UPPER_LIMIT) \
-                           and (len(self.data.game.players) == 2) \
                            and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING
 
 
         ## MOVE SHIPS CLOSEST TO ENEMY FIRST (WITH ITS SUPPORT SHIP)
         if allowAttack:
+            considered_prev_i = OrderedSet()                                                                            ## USED TO NOT CONSIDER PREVIOUS i
+
             for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE):                                                       ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
                 matrixIDs = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
                 r, c = np.where(matrixIDs > Matrix_val.ZERO)
-                ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
+                ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c]) - considered_prev_i
                 ships_attacking = ships_engaging & self.data.mySets.ships_to_move
+                considered_prev_i.update(ships_attacking)
                 self.considered_already.update(ships_attacking)
 
                 self.heap_kamikaze = []
@@ -117,7 +119,6 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 if harvest_destination == s.explore_destination:
                     self.move_mark_unsafe(ship, harvest_direction)
-                    logging.debug("kamikaze ship id {}".format(s.ship_id))
 
                     for support_id in s.support_ships:
                         if support_id in self.data.mySets.ships_to_move:
@@ -164,8 +165,9 @@ class Attack(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-
-        if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and len(potential_support_IDs) > num_enemy_ships:
+        if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+                and len(potential_support_IDs) > num_enemy_ships \
+                and (len(self.data.game.players) == 2):
         #if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
