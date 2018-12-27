@@ -19,14 +19,16 @@ class Explores():
         ship = self.data.game.me._ships.get(ship_id)
 
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-        if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
+        if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS,
+                                                                                    kicked=False, moveNow=False)
 
         ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
 
         directions = self.get_directions_target(ship, explore_destination)
-        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=True)
+        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+                                                avoid_enemy=True, avoid_potential_enemy=True)
 
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
@@ -73,9 +75,11 @@ class Explores():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=True)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+                                            avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=False)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+                                            avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 
@@ -114,11 +118,11 @@ class Explores():
         """
         GET HIGHEST HARVEST PER TURN RATIO (MATRIX) FOR SPECIFIC SHIP
         """
-        available_harvest = self.harvest_matrix * self.taken_matrix             ## REMOVES CELL THAT ARE ALREADY TAKEN
-        distance_to = self.data.init_data.myMatrix.distances.cell[curr_cell]    ## WILL CONTAIN DISTANCES TO EACH CELL
-        distances = distance_to + self.data.myMatrix.distances.closest_dock     ## DISTANCE TO THAT CELL + DISTANCE TO GO HOME
+        available_harvest = self.harvest_matrix * self.taken_matrix                                                     ## REMOVES CELL THAT ARE ALREADY TAKEN
+        distance_to = self.data.init_data.myMatrix.distances.cell[curr_cell]                                            ## WILL CONTAIN DISTANCES TO EACH CELL
+        distances = distance_to + self.data.myMatrix.distances.closest_dock                                             ## DISTANCE TO THAT CELL + DISTANCE TO GO HOME
 
-        # harvest_per_turn_matrix = available_harvest / distances                    ## RATIO: HARVEST PER TURN
+        # harvest_per_turn_matrix = available_harvest / distances                                                       ## RATIO: HARVEST PER TURN
         ## CAUSES AN ERROR WHEN DISTANCES HAS ZERO
         ## TO HANDLE ERROR (WILL BE REPLACED WITH ZERO)
         harvest_per_turn_ratio_matrix = np.divide(available_harvest, distances, out=np.zeros_like(available_harvest), where=distances != 0)

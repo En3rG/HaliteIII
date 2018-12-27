@@ -82,7 +82,7 @@ class Deposit(Moves, Deposits, Explores):
                 self.move_mark_unsafe(ship, direction)
 
             s = heapq.heappop(self.heap_dist)
-            if s.ship_id in self.data.mySets.ships_to_move:    ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
+            if s.ship_id in self.data.mySets.ships_to_move:                                                             ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
                 ship = self.data.game.me._ships.get(s.ship_id)
                 self.depositNow(ship, s.dock_position, s.directions)
 
@@ -111,7 +111,7 @@ class Deposit(Moves, Deposits, Explores):
             for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
                 ship = self.data.game.me._ships.get(ship_id)
 
-                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:  ## SHIP ALREADY IN DOCK
+                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:                     ## SHIP ALREADY IN DOCK
                     self.populate_heap_dist(ship)
 
 

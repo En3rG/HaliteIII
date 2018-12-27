@@ -262,7 +262,7 @@ class RetreatPoints():
             elif self.potential_ally_collision < other.potential_ally_collision:
                 return False
             else:
-                return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -285,7 +285,7 @@ class RetreatPoints():
             elif self.potential_ally_collision > other.potential_ally_collision:
                 return False
             else:
-                return False ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -343,7 +343,7 @@ class DepositPoints():
             elif self.cost < other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -374,7 +374,7 @@ class DepositPoints():
             elif self.cost > other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -436,7 +436,7 @@ class HarvestPoints():
             elif self.harvest < other.harvest:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -463,7 +463,7 @@ class HarvestPoints():
             elif self.harvest > other.harvest:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -521,7 +521,7 @@ class ExplorePoints():
             elif self.cost < other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -548,7 +548,7 @@ class ExplorePoints():
             elif self.cost > other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -596,7 +596,7 @@ class CollisionPoints():
             elif self.harvest < other.harvest:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -619,7 +619,7 @@ class CollisionPoints():
             elif self.harvest > other.harvest:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -666,7 +666,7 @@ class BuildPoints():
             elif self.cost < other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -689,7 +689,7 @@ class BuildPoints():
             elif self.cost > other.cost:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -718,7 +718,7 @@ class AttackPoints():
             elif self.safe < other.safe:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -729,7 +729,7 @@ class AttackPoints():
             elif self.safe > other.safe:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -755,7 +755,7 @@ class SupportPoints():
             elif self.safe < other.safe:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 
@@ -766,7 +766,7 @@ class SupportPoints():
             elif self.safe > other.safe:
                 return False
             else:
-                return False  ## OTHER PROPERTY NOT ABOVE IS NEGLECTED
+                return False
 
         return NotImplemented
 

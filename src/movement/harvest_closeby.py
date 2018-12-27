@@ -1,7 +1,7 @@
 from src.common.move.moves import Moves
 from src.common.move.harvests import Harvests
 from src.common.print import print_heading
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 from src.common.values import MyConstants
 from src.common.points import ExploreShip
 from src.common.values import MoveMode, Matrix_val
@@ -41,7 +41,7 @@ class Harvest(Moves, Harvests, Explores):
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
-        self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
+        self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
         r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
         self.taken_matrix[r, c] = Matrix_val.ZERO
 

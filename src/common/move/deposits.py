@@ -40,9 +40,11 @@ class Deposits():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True, avoid_potential_enemy=True)
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT,
+                                            avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True, avoid_potential_enemy=False)
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT,
+                                            avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 

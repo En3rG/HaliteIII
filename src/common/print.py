@@ -10,9 +10,9 @@ def print_matrix(text, matrix):
     :param matrix: MATRIX TO PRINT
     :return:
     """
-    np.set_printoptions(threshold=np.inf, linewidth=np.inf)         ## SET NUMPY PRINT THRESHOLD TO INFINITY
+    np.set_printoptions(threshold=np.inf, linewidth=np.inf)                                                             ## SET NUMPY PRINT THRESHOLD TO INFINITY
     logging.debug("Print matrix {}: \n{}".format(text, matrix))
-    np.set_printoptions(threshold=10)                               ## SET NUMPY PRINT THRESHOLD TO 10
+    np.set_printoptions(threshold=10)                                                                                   ## SET NUMPY PRINT THRESHOLD TO 10
 
 
 def print_heading(text):

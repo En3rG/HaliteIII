@@ -2,7 +2,7 @@ import logging
 from hlt.positionals import Direction
 from src.common.values import MyConstants, MoveMode
 from src.common.points import CollisionPoints
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 
 def avoid_collision_direction(Moves, ship, directions):
     """
@@ -32,7 +32,7 @@ def get_move_points_collision(Moves, ship, directions):
     except:
         directions_set = OrderedSet()
 
-    for direction in MyConstants.DIRECTIONS:  ## HAS NO STILL (KICKED, NEED TO MOVE)
+    for direction in MyConstants.DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)
 
         safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]

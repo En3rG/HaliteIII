@@ -33,10 +33,10 @@ class Explore(Moves, Explores, Harvests):
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
+            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)                           ## WORST THAN JUST DOING HARVEST
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
-        self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
+        self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
         r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
         self.taken_matrix[r, c] = Matrix_val.ZERO
 
@@ -47,7 +47,7 @@ class Explore(Moves, Explores, Harvests):
         print_heading("Moving exploring ships......")
 
         ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
-        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)  ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
+        ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)                                           ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
         for ship_id in ships:
             ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
             if ship_id in self.data.mySets.ships_to_move:
@@ -63,15 +63,18 @@ class Explore(Moves, Explores, Harvests):
                     #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, EVEN WHEN VERY FAR
                     self.populate_heap(ship_kicked)
 
-            s = heapq.heappop(self.heap_explore)                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
-            logging.debug(s)                                        ## EXPLORE SHIP OBJECT
+            s = heapq.heappop(self.heap_explore)                                                                        ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+            logging.debug(s)                                                                                            ## EXPLORE SHIP OBJECT
 
             ship = self.data.game.me._ships.get(s.ship_id)
             explore_destination = self.isDestination_untaken(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
-                if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS, kicked=False, moveNow=False)
+                if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
+                                                                                            MyConstants.DIRECTIONS,
+                                                                                            kicked=False,
+                                                                                            moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
                 explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)

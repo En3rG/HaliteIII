@@ -80,7 +80,7 @@ class Halite_stats():
         :param data: DATA THAT IS UPDATED
         :return:
         """
-        self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))  ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID
+        self.ships_stat.setdefault(ship.id, Ship_stat(ship.id))                                                         ## IF DOESNT EXIST YET, CREATE THE RECORD WITH ID
         self.ships_stat[ship.id].set_halite(ship.halite_amount)
 
         ## HARVESTING
@@ -131,7 +131,7 @@ class Halite_stats():
         for ship_id in ships_died:
             ship = prev_data.me._ships.get(ship_id)
             logging.debug("Ship died id: {} Ship: {}".format(ship_id, ship))
-            self.ships_stat[ship.id].halite_dropped = ship.halite_amount ## NOT ACCURATE BECAUSE IF SHIP MOVED, WILL BE LESS
+            self.ships_stat[ship.id].halite_dropped = ship.halite_amount                                                ## NOT ACCURATE BECAUSE IF SHIP MOVED, WILL BE LESS
             self.ships_stat[ship.id].set_halite(0)
 
             self.total_dropped += ship.halite_amount

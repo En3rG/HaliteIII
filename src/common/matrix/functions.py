@@ -91,7 +91,7 @@ def get_distance_matrix(start_tuple, data):
     height = data.game.game_map.height
     width = data.game.game_map.width
 
-    start = Position(start_tuple[1], start_tuple[0])  ## REMEMBER Position(x, y)
+    start = Position(start_tuple[1], start_tuple[0])                                                                    ## REMEMBER Position(x, y)
     distance_matrix = np.zeros((height, width), dtype=np.int16)
 
     for y in range(height):
@@ -263,7 +263,7 @@ def move_populate_manhattan(matrix, old_loc, new_loc, dist):
             y_ = (y + old_loc.y) % size
             x_ = (x + old_loc.x) % size
 
-            matrix[y_, x_] -= 1 ## REMOVE VALUE
+            matrix[y_, x_] -= 1                                                                                         ## REMOVE VALUE
 
     ## ADD TO NEW LOCATION
     size, size = matrix.shape
@@ -272,7 +272,7 @@ def move_populate_manhattan(matrix, old_loc, new_loc, dist):
             y_ = (y + new_loc.y) % size
             x_ = (x + new_loc.x) % size
 
-            matrix[y_, x_] += 1 ## ADD VALUE
+            matrix[y_, x_] += 1                                                                                         ## ADD VALUE
 
 
 def get_average_manhattan(matrix, loc, dist):
@@ -313,14 +313,14 @@ def get_coord_max_closest(value_matrix, distance_matrix):
     GET VALUE AND INDEX OF THE HIGHEST VALUE IN THE MATRIX
     IF THERE ARE MULTIPLE HIGHEST VALUE, RETURN THE ONE WITH LEAST DISTANCE VALUE
     """
-    max_value = np.nanmax(value_matrix)                         ## MAX VALUE.
-                                                                ## USING NANMAX SINCE SOMETIMES THE VALUE MATRIX
-                                                                ## WILL CONTAIN A NAN (WHEN 0 DIVIDED BY SOMETHING)
-    r, c = np.where(value_matrix == max_value)                  ## INDEXES OF WHERE MAX VALUE ARE
-    distances = distance_matrix[r, c]                           ## VALUE OF DISTANCES WHERE MAX VALUES ARE LOCATED
-    min_distance = distances.min()                              ## MIN DISTANCE VALUE
-    ld_indx = np.flatnonzero(distances == min_distance)         ## INDEX OF MIN DISTANCE
-    max_idx = value_matrix[r[ld_indx], c[ld_indx]].argmax()     ## INDEX OF WHERE MAX VALUE & LEAST DISTANCE IS
+    max_value = np.nanmax(value_matrix)                                                                                 ## MAX VALUE.
+                                                                                                                        ## USING NANMAX SINCE SOMETIMES THE VALUE MATRIX
+                                                                                                                        ## WILL CONTAIN A NAN (WHEN 0 DIVIDED BY SOMETHING)
+    r, c = np.where(value_matrix == max_value)                                                                          ## INDEXES OF WHERE MAX VALUE ARE
+    distances = distance_matrix[r, c]                                                                                   ## VALUE OF DISTANCES WHERE MAX VALUES ARE LOCATED
+    min_distance = distances.min()                                                                                      ## MIN DISTANCE VALUE
+    ld_indx = np.flatnonzero(distances == min_distance)                                                                 ## INDEX OF MIN DISTANCE
+    max_idx = value_matrix[r[ld_indx], c[ld_indx]].argmax()                                                             ## INDEX OF WHERE MAX VALUE & LEAST DISTANCE IS
 
     return max_value, (r[ld_indx][max_idx], c[ld_indx][max_idx])
 
@@ -353,7 +353,7 @@ def largest_indices(matrix, n):
     """Returns the n largest indices from a numpy array."""
     flat = matrix.flatten()
     indices = np.argpartition(flat, -n)[-n:]
-    indices = indices[np.argsort(-flat[indices])]  ## SORT FROM HIGHEST TO LOWEST
+    indices = indices[np.argsort(-flat[indices])]                                                                       ## SORT FROM HIGHEST TO LOWEST
     return np.unravel_index(indices, matrix.shape)
 
 

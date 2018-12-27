@@ -42,11 +42,12 @@ class Moves(abc.ABC):
 
         self.move_occupied(ship, direction)
 
-        move_populate_manhattan(self.data.myMatrix.locations.potential_ally_collisions, ship.position, destination, MyConstants.DIRECT_NEIGHBOR_DISTANCE)
+        move_populate_manhattan(self.data.myMatrix.locations.potential_ally_collisions, ship.position,
+                                destination, MyConstants.DIRECT_NEIGHBOR_DISTANCE)
 
         self.data.halite_stats.record_data(ship, destination, self.data)
 
-        if ship.id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id) ## PREVENT POTENTIAL KEY ERROR
+        if ship.id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)                    ## PREVENT POTENTIAL KEY ERROR
 
         self.check_kicked(ship, direction)
 
@@ -55,16 +56,19 @@ class Moves(abc.ABC):
         command = ship.move(direction)
 
         self.data.command_queue.append(command)
-        logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id, direction, ship.position, destination))
+        logging.debug("=======>>>> Ship id: <<< {} >>> moving {} from {} to {}".format(ship.id,
+                                                                                       direction,
+                                                                                       ship.position,
+                                                                                       destination))
 
 
     def mark_unsafe(self, ship, position):
         """
         MARK POSITION PROVIDED WITH UNSAFE
         """
-        self.data.myDicts.positions_taken.setdefault((position.y, position.x), set()).add(ship.id) ## KEY AS COORD, VALUE SHIP ID
-                                                                                                   ## USED TO DETERMINE ALLY COLLISIONS
-                                                                                                   ## IF MULTIPLE SHIP IDs WENT HERE
+        self.data.myDicts.positions_taken.setdefault((position.y, position.x), set()).add(ship.id)                      ## KEY AS COORD, VALUE SHIP ID
+                                                                                                                        ## USED TO DETERMINE ALLY COLLISIONS
+                                                                                                                        ## IF MULTIPLE SHIP IDs WENT HERE
         self.data.myMatrix.locations.safe[position.y][position.x] = Matrix_val.UNSAFE
 
 
@@ -213,7 +217,7 @@ class Moves(abc.ABC):
         x, y = closest_location[1], closest_location[0]
         directions = GameMap._get_target_direction(start, Position(x, y))
 
-        clean_directions = [x for x in directions if x != None]  ## CAN HAVE A NONE
+        clean_directions = [x for x in directions if x != None]                                                         ## CAN HAVE A NONE
 
         return clean_directions
 
@@ -254,13 +258,13 @@ class Moves(abc.ABC):
     #     :return:
     #     """
     #     logging.debug("Getting highest harvest move for ship id: {}".format(ship.id))
-    #     harvest = Section(self.data.myMatrix.halite.harvest, ship.position, size=1)         ## SECTION OF HARVEST MATRIX
-    #     leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]       ## COST TO LEAVE CURRENT CELL
-    #     cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                             ## APPLY COST TO DIRECT NEIGHBORS
-    #     harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF                 ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
-    #     actual_harvest = harvest_matrix - cost_matrix                                       ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
-    #     safe = Section(self.data.myMatrix.locations.safe, ship.position, size=1)            ## SECTION SAFE
-    #     safe_harvest = actual_harvest * safe.matrix                                         ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
+    #     harvest = Section(self.data.myMatrix.halite.harvest, ship.position, size=1)                                   ## SECTION OF HARVEST MATRIX
+    #     leave_cost = self.data.myMatrix.halite.cost[ship.position.y][ship.position.x]                                 ## COST TO LEAVE CURRENT CELL
+    #     cost_matrix = MyConstants.DIRECT_NEIGHBORS * leave_cost                                                       ## APPLY COST TO DIRECT NEIGHBORS
+    #     harvest_matrix = harvest.matrix * MyConstants.DIRECT_NEIGHBORS_SELF                                           ## HARVEST MATRIX OF JUST NEIGHBORS AND SELF, REST 0
+    #     actual_harvest = harvest_matrix - cost_matrix                                                                 ## DEDUCT LEAVE COST TO DIRECT NEIGHBORS
+    #     safe = Section(self.data.myMatrix.locations.safe, ship.position, size=1)                                      ## SECTION SAFE
+    #     safe_harvest = actual_harvest * safe.matrix                                                                   ## UNSAFE WILL BE NEGATIVE SO WIL BE LOW PRIORITY
     #
     #     max_index = get_index_highest_val(safe_harvest)
     #

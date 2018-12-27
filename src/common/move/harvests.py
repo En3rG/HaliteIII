@@ -13,7 +13,8 @@ class Harvests():
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
+        direction = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST,
+                                        avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
         if self.isHarvestingNow(direction, ship):
             harvesting = True
             if moveNow: self.move_mark_unsafe(ship, direction)
@@ -39,7 +40,8 @@ class Harvests():
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, directions, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
+        direction = self.best_direction(ship, directions, mode=MoveMode.HARVEST,
+                                        avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
         if self.isHarvestingLater(ship, direction):
             harvesting = True
             if moveNow: self.move_mark_unsafe(ship, direction)

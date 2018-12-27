@@ -22,7 +22,7 @@ class Start(Moves, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
+        self.heap_set = set()                                                                                           ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
         self.heap_dist = []
 
         self.taken_destinations = set()
@@ -31,10 +31,10 @@ class Start(Moves, Harvests, Explores):
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
             self.harvest_matrix = copy.deepcopy(
-                self.data.myMatrix.halite.harvest_with_bonus)  ## WORST THAN JUST DOING HARVEST
+                self.data.myMatrix.halite.harvest_with_bonus)                                                           ## WORST THAN JUST DOING HARVEST
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
-        self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
+        self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
         r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
         self.taken_matrix[r, c] = Matrix_val.ZERO
 
@@ -43,7 +43,7 @@ class Start(Moves, Harvests, Explores):
     def move_ships(self):
         print_heading("Moving start moves......")
 
-        if self.data.game.turn_number <= 6:  ## SHIPS SHOULD MOVE OUT ON TURNS 2, 3, 4, 5, 6
+        if self.data.game.turn_number <= 6:                                                                             ## SHIPS SHOULD MOVE OUT ON TURNS 2, 3, 4, 5, 6
 
             ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)
 
@@ -68,7 +68,7 @@ class Start(Moves, Harvests, Explores):
                         #self.exploreNow(ship_kicked)
                         self.populate_heap(ship_kicked)
 
-                s = heapq.heappop(self.heap_dist)  ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
+                s = heapq.heappop(self.heap_dist)                                                                       ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
                 logging.debug(s)  ## EXPLORE SHIP OBJECT
 
                 self.move_ship(s)

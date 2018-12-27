@@ -74,7 +74,7 @@ class GetInitData(Data):
                 index_top_ave = self.get_closest_to_shipyard(indexes)
 
                 loc_top_ave = (index_top_ave[0], index_top_ave[1])
-                pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])  ## Position(x, y)
+                pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])                                                  ## Position(x, y)
 
                 if self.unavailable_area[pos_top_ave.y][pos_top_ave.x] != Matrix_val.UNAVAILABLE:
                     ## SET THE SURROUNDING TO UNAVAILABLE
@@ -156,7 +156,7 @@ class GetInitData(Data):
         for ind in indexes:
             loc = (loc_top_ave[0] + (ind[0] - section_halite.center.y), loc_top_ave[1] + (ind[1] - section_halite.center.x))
 
-            loc_normalized = (loc[0] % self.game.game_map.height, loc[1] % self.game.game_map.width)  ## CONSIDER WHEN OUT OF BOUNDS
+            loc_normalized = (loc[0] % self.game.game_map.height, loc[1] % self.game.game_map.width)                    ## CONSIDER WHEN OUT OF BOUNDS
             pos_normalized = Position(loc_normalized[1], loc_normalized[0])
 
             dist_shipyard = calculate_distance(self.game.me.shipyard.position,

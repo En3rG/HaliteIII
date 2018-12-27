@@ -6,7 +6,7 @@ from src.common.matrix.functions import populate_manhattan, get_coord_closest
 from src.common.points import BuildPoints, BuildShip
 from src.common.matrix.functions import get_coord_closest, pad_around, Section
 from src.common.astar import a_star, get_goal_in_section
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 import numpy as np
 import logging
 import heapq
@@ -84,7 +84,8 @@ class Builds():
                 if ship.halite_amount + self.data.game.me.halite_amount + dock_halite_amount >= 4000 \
                         and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                     ## ENOUGH HALITE TO BUILD
-                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=False)
+                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING,
+                                                    avoid_enemy=True, avoid_potential_enemy=False)
                     self.move_mark_unsafe(ship, direction)                                                              ## DIRECTION IS A LIST OF DIRECTIONS
                 else:
                     ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
@@ -124,7 +125,7 @@ class Builds():
                     self.ships_building_towards_dock.setdefault(dock_coord, set())
 
                     #if dock_coord and (ship.halite_amount >= 1000 or ship_id in self.prev_data.ships_building):
-                    if dock_coord and ship.halite_amount >= 600 \
+                    if dock_coord and ship.halite_amount >= MyConstants.HALITE_TOWARDS_BUILDING \
                         and len(self.ships_building_towards_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK \
                         and self.withinLimit_ships():
 
@@ -179,9 +180,11 @@ class Builds():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=True)
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING,
+                                            avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=False)
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING,
+                                            avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 
@@ -205,7 +208,8 @@ class Builds():
             enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            b = BuildPoints(safe, enemy_occupied, potential_enemy_collision, cost, direction, avoid_enemy, avoid_potential_enemy)
+            b = BuildPoints(safe, enemy_occupied, potential_enemy_collision, cost, direction,
+                            avoid_enemy, avoid_potential_enemy)
             points.append(b)
 
         ## POINTS FOR STAYING

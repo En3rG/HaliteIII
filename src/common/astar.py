@@ -109,7 +109,7 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos, lowest_cost):
     visited_cells = set()
     came_from = {}
     score_to_start = {start: 0}
-    score = {start: heuristic(start, goal, start_cost, lowest_cost)}             ## FULL SCORE OF EACH CELL OR COORD. FROM START TO GOAL
+    score = {start: heuristic(start, goal, start_cost, lowest_cost)}                                                    ## FULL SCORE OF EACH CELL OR COORD. FROM START TO GOAL
     myheap = []
 
     ## HEAP CONSIST OF SCORE, COORD
@@ -118,13 +118,13 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos, lowest_cost):
     while myheap:
         curr_score, curr_cell = heapq.heappop(myheap)
 
-        if curr_cell == goal:                                       ## GOAL REACHED, GET PATH
+        if curr_cell == goal:                                                                                           ## GOAL REACHED, GET PATH
             data_cells = []
             while curr_cell in came_from:
                 data_cells.append(curr_cell)
                 curr_cell = came_from[curr_cell]
-            data_cells.append(start)                                ## APPEND STARTING LOCATION
-            return data_cells                                       ## START COORD WILL BE AT THE END, GOAL AT FIRST!
+            data_cells.append(start)                                                                                    ## APPEND STARTING LOCATION
+            return data_cells                                                                                           ## START COORD WILL BE AT THE END, GOAL AT FIRST!
 
         visited_cells.add(curr_cell)
 
@@ -138,15 +138,15 @@ def a_star(matrix_path, matrix_cost, start_pos, goal_pos, lowest_cost):
             neighbor_cost = matrix_cost[neighbor_cell[0]][neighbor_cell[1]]
             curr_score_to_start = score_to_start[curr_cell] + heuristic(curr_cell, neighbor_cell, neighbor_cost, lowest_cost)
 
-            if neighbor_cell in visited_cells and curr_score_to_start >= score_to_start.get(neighbor_cell, 0):  ## 0 DEFAULT VALUE
+            if neighbor_cell in visited_cells and curr_score_to_start >= score_to_start.get(neighbor_cell, 0):          ## 0 DEFAULT VALUE
                 ## A BETTER SOLUTION EXIST TOWARDS THIS NEIGHBOR CELL
                 continue
 
             ## IF A BETTER score_to_start IS FOUND FOR THAT NEIGHBOR COORD OR NEIGHBOR COORD NOT IN HEAP
             if curr_score_to_start < score_to_start.get(neighbor_cell, 0) or neighbor_cell not in (i[1] for i in myheap):
-                came_from[neighbor_cell] = curr_cell                                                            ## NEIGHBOR COORD CAME FROM CURRENT COORD
-                score_to_start[neighbor_cell] = curr_score_to_start                                             ## NEIGHBOR DISTANCE FROM START
-                score[neighbor_cell] = curr_score_to_start + heuristic(neighbor_cell, goal, 1000, lowest_cost)  ## GSCORE PLUS DISTANCE TO GOAL
-                heapq.heappush(myheap, (score[neighbor_cell], neighbor_cell))                                   ## PUSH NEIGHBOR TO HEAP
+                came_from[neighbor_cell] = curr_cell                                                                    ## NEIGHBOR COORD CAME FROM CURRENT COORD
+                score_to_start[neighbor_cell] = curr_score_to_start                                                     ## NEIGHBOR DISTANCE FROM START
+                score[neighbor_cell] = curr_score_to_start + heuristic(neighbor_cell, goal, 1000, lowest_cost)          ## GSCORE PLUS DISTANCE TO GOAL
+                heapq.heappush(myheap, (score[neighbor_cell], neighbor_cell))                                           ## PUSH NEIGHBOR TO HEAP
 
     return []

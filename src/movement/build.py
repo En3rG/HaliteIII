@@ -23,7 +23,7 @@ class Build(Moves, Builds):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        self.ships_building_towards_dock = {} ## KEY AS DOCK COORD, VALUES ARE SHIP IDs GOING THERE
+        self.ships_building_towards_dock = {}                                                                           ## KEY AS DOCK COORD, VALUES ARE SHIP IDs GOING THERE
         self.move_ships()
 
 

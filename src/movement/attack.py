@@ -3,7 +3,7 @@ from src.common.move.moves import Moves
 from src.common.move.attacks import Attacks
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from hlt.positionals import Direction
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 from src.common.move.harvests import Harvests
 from src.common.move.explores import Explores
 from src.common.points import SupportShip, SupportPoints, AttackPoints, KamikazeShip
@@ -65,7 +65,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 self.considered_already.update(ships_attacking)
 
                 self.heap_kamikaze = []
-                self.heap_support = []                                                                             ## RESET PER ITERATION
+                self.heap_support = []                                                                                  ## RESET PER ITERATION
 
                 for ship_id in ships_attacking:
                     self.populate_heap(ship_id, i)
@@ -149,7 +149,8 @@ class Attack(Moves, Attacks, Harvests, Explores):
         enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
-        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False, avoid_enemy=True, avoid_potential_enemy=True)
+        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False,
+                                                              avoid_enemy=True, avoid_potential_enemy=True)
         if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
                                                                                      MyConstants.DIRECTIONS,
                                                                                      kicked=False,
@@ -175,7 +176,8 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 support_ship = self.data.game.me._ships.get(support_id)
                 support_distance = calculate_distance(support_ship.position, enemy_position, self.data)
 
-                canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False, avoid_enemy=True, avoid_potential_enemy=True)
+                canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False,
+                                                                      avoid_enemy=True, avoid_potential_enemy=True)
                 if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
                                                                                              MyConstants.DIRECTIONS,
                                                                                              kicked=False,

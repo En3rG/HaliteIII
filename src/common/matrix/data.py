@@ -6,7 +6,7 @@ from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
 from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
 import copy
 import abc
@@ -46,7 +46,7 @@ class Locations():
         ## SHIPS
         self.myShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.myShipsID = np.zeros((map_height, map_width), dtype=np.int16)
-        self.myShipsID.fill(-1)  ## CANT FIND SHIP ID 0 IF ZEROES
+        self.myShipsID.fill(-1)                                                                                         ## CANT FIND SHIP ID 0 IF ZEROES
         self.enemyShips = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsID.fill(-1)
@@ -55,9 +55,8 @@ class Locations():
         self.shipCargo = np.zeros((map_height, map_width), dtype=np.int16)
 
         ## ATTACK
-        ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
         self.engage_enemy = {}
-        for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
+        for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):                                                       ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
             self.engage_enemy[i] = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.engage_influence = np.zeros((map_height, map_width), dtype=np.int16)
@@ -67,7 +66,7 @@ class Locations():
         self.stuck = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.safe = np.zeros((map_height, map_width), dtype=np.int16)
-        self.safe.fill(1)  ## FILLED WITH 1, -1 FOR UNSAFE
+        self.safe.fill(1)                                                                                               ## FILLED WITH 1, -1 FOR UNSAFE
 
         ## OCCUPIED IS DIFFERENT FROM MYSHIPS LOCATIONS BECAUSE IT GETS UPDATED
         ## AS THE SHIP MOVES, WHERE AS MYSHIPS IS THE STARTING LOCATIONS OF THE SHIPS
@@ -84,7 +83,7 @@ class Distances():
     CONTAINS DISTANCES MATRIXES
     """
     def __init__(self, map_height, map_width):
-        self.cell = {}              ## ONLY FILLED IN INIT
+        self.cell = {}                                                                                                  ## ONLY FILLED IN INIT
         self.closest_dock = None
 
 
@@ -106,9 +105,9 @@ class Matrix():
 
 class MySets():
     def __init__(self, game):
-        self.ships_all = OrderedSet(game.me._ships.keys())                  ## ALL SHIPS
-        self.ships_to_move = OrderedSet(sorted(game.me._ships.keys()))      ## SHIPS TO MOVE (SORTING TO MATCH ORDER ONLINE)
-        self.ships_returning = OrderedSet()                                 ## SHIPS RETURNING HALITE
+        self.ships_all = OrderedSet(game.me._ships.keys())                                                              ## ALL SHIPS
+        self.ships_to_move = OrderedSet(sorted(game.me._ships.keys()))                                                  ## SHIPS TO MOVE (SORTING TO MATCH ORDER ONLINE)
+        self.ships_returning = OrderedSet()                                                                             ## SHIPS RETURNING HALITE
         self.ships_kicked = OrderedSet()
         self.ships_died = set()
         self.ships_ally_collision = set()
@@ -125,7 +124,7 @@ class MyVars():
         self.median_halite = 0
         self.harvest_percentile = 0
         self.isBuilding = False
-        self.support_gain_ratio = 1.20 if (len(game.players) == 2) else 1.20                  ## RATIO OF GAIN BEFORE SUPPORTING
+        self.support_gain_ratio = 1.20 if (len(game.players) == 2) else 1.20                                            ## RATIO OF GAIN BEFORE SUPPORTING
 
 
 class MyDicts():
@@ -149,7 +148,7 @@ class Data(abc.ABC):
         self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
 
-    @abc.abstractmethod  ## MUST BE DEFINED BY CHILD CLASS
+    @abc.abstractmethod                                                                                                 ## MUST BE DEFINED BY CHILD CLASS
     def update_matrix(self):
         """
         WILL CONTAIN WHICH MATRICES NEED TO BE UPDATED
@@ -166,7 +165,7 @@ class Data(abc.ABC):
 
         self.myVars.total_halite = self.myMatrix.halite.amount.sum()
 
-        if getattr(self, 'init_data', None):  ## IF THIS IS NONE, ITS AT GETINITDATA
+        if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
             self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
 
@@ -195,15 +194,14 @@ class Data(abc.ABC):
         POPULATE DISTANCE MATRIX TO ALL DOCKS
         RETURNS DISTANCES OF EACH CELLS TO DOCKS (BEST SCENARIO, BASED ON CLOSEST DOCK)
         """
-        if getattr(self, 'init_data', None): ## IF THIS IS NONE, ITS AT GETINITDATA
+        if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
             distance_matrixes = []
 
             ## GATHER EACH OF THE DOCK DISTANCES MATRIX
             for dock_coord in self.mySets.dock_coords:
                 distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
-            self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)  ## COMBINE AND GET LEAST DISTANCE
-            return
+            self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)                               ## COMBINE AND GET LEAST DISTANCE
 
 
     def populate_enemyShipyard_docks(self):
@@ -310,8 +308,8 @@ class Data(abc.ABC):
         POPULATE MATRIX COST TO LEAVE EACH CELL
         """
         cost = self.myMatrix.halite.amount * 0.1
-        #self.myMatrix.halite.cost = np.round(cost)           ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
-        self.myMatrix.halite.cost = myRound(cost)             ## THUS MAKING MY OWN SO IT WILL ROUND UP FOR XX.5
+        #self.myMatrix.halite.cost = np.round(cost)                                                                     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
+        self.myMatrix.halite.cost = myRound(cost)                                                                       ## THUS MAKING MY OWN SO IT WILL ROUND UP FOR XX.5
 
 
     def populate_harvest(self):
@@ -320,7 +318,7 @@ class Data(abc.ABC):
         DOES NOT CONSIDER INFLUENCE
         """
         harvest = self.myMatrix.halite.amount * 0.25
-        #self.myMatrix.halite.harvest = np.round(harvest)     ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
+        #self.myMatrix.halite.harvest = np.round(harvest)                                                               ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
         self.myMatrix.halite.harvest = myRound(harvest)
 
         self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
@@ -348,7 +346,7 @@ class Data(abc.ABC):
                 # self.myMatrix.distances.cell[curr_cell] = get_distance_matrix(curr_cell, height, width)
                 # print_matrix("Distances (1) on {}".format(curr_cell), self.myMatrix.distances.cell[curr_cell])
 
-                self.myMatrix.distances.cell[curr_cell] = shift_matrix(r, c, base_matrix) ## SHIFTING/ROLLING SO NO RECALCULATION NEEDED
+                self.myMatrix.distances.cell[curr_cell] = shift_matrix(r, c, base_matrix)                               ## SHIFTING/ROLLING SO NO RECALCULATION NEEDED
                 # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances.cell[curr_cell])
 
 
@@ -453,7 +451,7 @@ class Data(abc.ABC):
         if getattr(self, 'init_data', None):
             indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
 
-        else: ## init_data IS NONE, ITS AT GETINITDATA
+        else:                                                                                                           ## init_data IS NONE, ITS AT GETINITDATA
             indexes = np.argwhere(self.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
 
         for y, x in indexes:

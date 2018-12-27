@@ -11,8 +11,8 @@ class OrderedSet(collections.MutableSet):
 
     def __init__(self, iterable=None):
         self.end = end = []
-        end += [None, end, end]         # sentinel node for doubly linked list
-        self.map = {}                   # key --> [key, prev, next]
+        end += [None, end, end]                                                                                         ## sentinel node for doubly linked list
+        self.map = {}                                                                                                   ## key --> [key, prev, next]
         if iterable is not None:
             self |= iterable
 
@@ -65,5 +65,5 @@ class OrderedSet(collections.MutableSet):
             return len(self) == len(other) and list(self) == list(other)
         return set(self) == set(other)
 
-    def update(self, other):    ## ADDED UPDATE
-        self |= other           ## UNION
+    def update(self, other):                                                                                            ## ADDED UPDATE
+        self |= other                                                                                                   ## UNION

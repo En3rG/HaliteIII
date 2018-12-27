@@ -43,7 +43,7 @@ class Retreats():
             shipyard = self.data.myMatrix.locations.myDocks[destination.y][destination.x]
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
             potential_ally_collision = self.data.myMatrix.locations.potential_ally_collisions[destination.y][destination.x]
-            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]  ## STUCK BASED ON SHIPS CURRENT POSITION
+            stuck = self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x]                                ## STUCK BASED ON SHIPS CURRENT POSITION
 
             c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)

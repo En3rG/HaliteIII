@@ -1,6 +1,6 @@
 from src.common.print import print_heading, print_matrix
 from src.common.move.moves import Moves
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 from src.common.move.explores import Explores
 from src.common.move.harvests import Harvests
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
@@ -25,7 +25,7 @@ class Influence(Moves, Explores, Harvests):
 
         self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
-        self.taken_matrix.fill(1)  ## ZERO WILL BE FOR TAKEN CELL
+        self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
         r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
         self.taken_matrix[r, c] = Matrix_val.ZERO
 
@@ -51,8 +51,8 @@ class Influence(Moves, Explores, Harvests):
                     #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, PUT BACK TO HEAP
                     self.populate_heap(ship_kicked)
 
-            s = heapq.heappop(self.heap_explore)   ## MOVE CLOSEST TO ENEMY?, TO PREVENT COLLISIONS
-            logging.debug(s)                    ## EXPLORE SHIP OBJECT
+            s = heapq.heappop(self.heap_explore)                                                                        ## MOVE CLOSEST TO ENEMY?, TO PREVENT COLLISIONS
+            logging.debug(s)                                                                                            ## EXPLORE SHIP OBJECT
 
             ship = self.data.game.me._ships.get(s.ship_id)
             explore_destination = self.isDestination_untaken(s)
@@ -89,7 +89,8 @@ class Influence(Moves, Explores, Harvests):
 
     def get_a_star_direction(self, ship, target_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
+                          MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
         matrix_path = pad_around(section.matrix)
         section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
         matrix_cost = section.matrix

@@ -1,4 +1,4 @@
-from src.common.classes import OrderedSet
+from src.common.orderedSet import OrderedSet
 from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt.positionals import Position
 from src.common.points import SupportShip, SupportPoints, AttackPoints
@@ -59,8 +59,6 @@ class Attacks():
         points = []
 
         for direction in directions:
-            # for direction in MyConstants.DIRECTIONS:
-            ## POINTS FOR MOVING
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
 
@@ -87,8 +85,6 @@ class Attacks():
         points = []
 
         for direction in directions:
-            # for direction in MyConstants.DIRECTIONS:
-            ## POINTS FOR MOVING
             destination = self.get_destination(ship, direction)
             safe = self.data.myMatrix.locations.safe[destination.y][destination.x]
 

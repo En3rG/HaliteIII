@@ -27,7 +27,8 @@ import logging
 class PrevData():
     """
     USED TO MINIMIZE THE SIZE OF PREVIOUS DATA WHEN COPIED
-    SHOULD ONLY CONTAIN NECESSARY INFORMATION FROM DATA
+    SHOULD ONLY CONTAIN NECESSARY INFORMATION FROM DATA THAT
+    ARE NEEDED FOR THE NEXT TURN
     """
     def __init__(self, data):
         self.me = data.game.me
