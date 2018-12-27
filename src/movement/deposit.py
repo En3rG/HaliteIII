@@ -65,11 +65,11 @@ class Deposit(Moves, Deposits, Explores):
     def move_ships(self):
         print_heading("Moving depositing ships......")
 
-        ## MOVE SHIPS THAT ARE FULL OR HAVE ENOUGH CARGO
-        self.check_depositing_now()
-
         ## MOVE SHIPS DEPOSITING PREVIOUSLY
         self.check_depositing_previously()
+
+        ## MOVE SHIPS THAT ARE FULL OR HAVE ENOUGH CARGO
+        self.check_depositing_now()
 
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
@@ -96,11 +96,11 @@ class Deposit(Moves, Deposits, Explores):
 
             if ship.is_full:                                                                                            ## SHIPS JUST HIT MAX
                 self.populate_heap_dist(ship)
-            elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO:                                            ## MIGHT BE ENOUGH
-                self.populate_heap(ship_id)
+
+            self.populate_heap(ship_id)
 
         ## CHECK EACH SHIP IN HEAP EXPLORE, IF DEPOSITING NOW
-        self.verify_depositing_now()
+        self.verify_can_depositing_now()
 
 
     def check_depositing_previously(self):
@@ -111,12 +111,11 @@ class Deposit(Moves, Deposits, Explores):
             for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
                 ship = self.data.game.me._ships.get(ship_id)
 
-                if ship and (
-                ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:  ## SHIP ALREADY IN DOCK
+                if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:  ## SHIP ALREADY IN DOCK
                     self.populate_heap_dist(ship)
 
 
-    def verify_depositing_now(self):
+    def verify_can_depositing_now(self):
         """
         CHECK IF SHIPS IN HEAP EXPLORE IS ENOUGH TO GO HOME
         """
@@ -130,13 +129,13 @@ class Deposit(Moves, Deposits, Explores):
                 current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
                 target_harvest = self.data.myMatrix.halite.harvest[explore_destination.y][explore_destination.x]
 
-                if ship.halite_amount + (current_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000:
-                    self.mark_taken_udpate_top_halite(ship.position)
-                    self.populate_heap_dist(ship)
+                if ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO \
+                    and (ship.halite_amount + (current_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000 \
+                        or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
+                        self.populate_heap_dist(ship)
 
-                elif ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000:
+                else:
                     self.mark_taken_udpate_top_halite(explore_destination)
-                    self.populate_heap_dist(ship)
 
 
 
