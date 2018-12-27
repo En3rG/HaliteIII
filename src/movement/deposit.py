@@ -69,7 +69,7 @@ class Deposit(Moves, Deposits, Explores):
         self.check_depositing_now()
 
         ## MOVE SHIPS DEPOSITING PREVIOUSLY
-        self.check_depositing_before()
+        self.check_depositing_previously()
 
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
@@ -103,7 +103,7 @@ class Deposit(Moves, Deposits, Explores):
         self.verify_depositing_now()
 
 
-    def check_depositing_before(self):
+    def check_depositing_previously(self):
         """
         POPULATE HEAP REGARDING SHIPS DEPOSITING BEFORE
         """

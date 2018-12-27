@@ -26,7 +26,7 @@ class Explores():
 
 
         directions = self.get_directions_target(ship, explore_destination)
-        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=True)
 
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
@@ -73,9 +73,9 @@ class Explores():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 
@@ -126,7 +126,7 @@ class Explores():
         return harvest_per_turn_ratio_matrix
 
 
-    def get_move_points_explore(self, ship, directions, avoid_enemy):
+    def get_move_points_explore(self, ship, directions, avoid_enemy, avoid_potential_enemy):
         """
         GET POINTS FOR MOVING EXPLORING SHIPS
 
@@ -147,7 +147,8 @@ class Explores():
             enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
 
-            c = ExplorePoints(safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data, avoid_enemy)
+            c = ExplorePoints(safe, occupied, enemy_occupied, potential_enemy_collision, cost, direction, self.data,
+                              avoid_enemy, avoid_potential_enemy)
             points.append(c)
 
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
@@ -162,7 +163,8 @@ class Explores():
                                     cost=999,
                                     direction=Direction.Still,
                                     data=self.data,
-                                    avoid_enemy=avoid_enemy))
+                                    avoid_enemy=avoid_enemy,
+                                    avoid_potential_enemy=avoid_potential_enemy))
 
         logging.debug(points)
 

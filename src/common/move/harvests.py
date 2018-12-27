@@ -5,7 +5,7 @@ from src.common.values import MyConstants, MoveMode, Matrix_val
 
 
 class Harvests():
-    def check_harvestNow(self, ship_id, moveNow=True, avoid_enemy=True):
+    def check_harvestNow(self, ship_id, moveNow=True, avoid_enemy=True, avoid_potential_enemy=True):
         """
         CHECK IF SHIP WILL HARVEST NOW, IF SO, MOVE IT
         """
@@ -13,7 +13,7 @@ class Harvests():
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy)
+        direction = self.best_direction(ship, MyConstants.DIRECTIONS, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
         if self.isHarvestingNow(direction, ship):
             harvesting = True
             if moveNow: self.move_mark_unsafe(ship, direction)
@@ -31,7 +31,7 @@ class Harvests():
             return True
 
 
-    def check_harvestLater(self, ship_id, directions, kicked=False, moveNow=True, avoid_enemy=True):
+    def check_harvestLater(self, ship_id, directions, kicked=False, moveNow=True, avoid_enemy=True, avoid_potential_enemy=True):
         """
         CHECK IF WILL HARVEST LATER, IF SO, MOVE IT
         """
@@ -39,7 +39,7 @@ class Harvests():
         ship = self.data.game.me._ships.get(ship_id)
 
         # direction = self.get_highest_harvest_move(ship)
-        direction = self.best_direction(ship, directions, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy)
+        direction = self.best_direction(ship, directions, mode=MoveMode.HARVEST, avoid_enemy=avoid_enemy, avoid_potential_enemy=avoid_potential_enemy)
         if self.isHarvestingLater(ship, direction):
             harvesting = True
             if moveNow: self.move_mark_unsafe(ship, direction)
@@ -79,7 +79,7 @@ class Harvests():
         return unsafe_num == 4
 
 
-    def get_move_points_harvest(self, ship, directions, avoid_enemy):
+    def get_move_points_harvest(self, ship, directions, avoid_enemy, avoid_potential_enemy):
         """
         GET POINTS FOR HARVESTING
 
@@ -89,11 +89,11 @@ class Harvests():
         """
         points = []
         leave_cost, harvest_stay = self.get_harvest(ship, Direction.Still)
-        self.set_harvestPoints(ship, Direction.Still, harvest_stay, points, avoid_enemy)
+        self.set_harvestPoints(ship, Direction.Still, harvest_stay, points, avoid_enemy, avoid_potential_enemy)
 
         for direction in directions:
             cost, harvest = self.get_harvest(ship, direction, leave_cost, harvest_stay)
-            self.set_harvestPoints(ship, direction, harvest, points, avoid_enemy)
+            self.set_harvestPoints(ship, direction, harvest, points, avoid_enemy, avoid_potential_enemy)
 
         logging.debug(points)
 
@@ -116,7 +116,7 @@ class Harvests():
         return cost, harvest_with_bonus
 
 
-    def set_harvestPoints(self, ship, direction, harvest, points, avoid_enemy):
+    def set_harvestPoints(self, ship, direction, harvest, points, avoid_enemy, avoid_potential_enemy):
         """
         GATHER POINTS WITH DIRECTION PROVIDED
 
@@ -130,5 +130,6 @@ class Harvests():
         occupied = 0 if self.data.myMatrix.locations.occupied[destination.y][destination.x] >= -1 else -1
         enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
 
-        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, self.data, avoid_enemy)
+        c = HarvestPoints(safe, occupied, enemy_occupied, potential_enemy_collision, harvest, direction, self.data,
+                          avoid_enemy, avoid_potential_enemy)
         points.append(c)

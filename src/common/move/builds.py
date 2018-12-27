@@ -84,7 +84,7 @@ class Builds():
                 if ship.halite_amount + self.data.game.me.halite_amount + dock_halite_amount >= 4000 \
                         and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                     ## ENOUGH HALITE TO BUILD
-                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True)
+                    direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=False)
                     self.move_mark_unsafe(ship, direction)                                                          ## DIRECTION IS A LIST OF DIRECTIONS
                 else:
                     ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
@@ -135,7 +135,7 @@ class Builds():
                             self.data.myVars.isBuilding = True                                                          ## PREVENT SPAWNING SHIPS
 
                         ## OLD WAY
-                        #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
+                        #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False, avoid_potential_enemy=False)
                         ## A STAR WAY
                         direction = self.get_a_star_direction(ship, dock_position, directions)
 
@@ -179,14 +179,14 @@ class Builds():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True)
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False)
+            direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 
 
-    def get_move_points_building(self, ship, directions, avoid_enemy):
+    def get_move_points_building(self, ship, directions, avoid_enemy, avoid_potential_enemy):
         """
         GET POINTS FOR BULDING
         GET DIRECTION WITH LEAST COST
@@ -205,7 +205,7 @@ class Builds():
             enemy_occupied = self.data.myMatrix.locations.enemyShips[destination.y][destination.x]
             potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[destination.y][destination.x]
             cost = self.data.myMatrix.halite.cost[destination.y][destination.x]
-            b = BuildPoints(safe, enemy_occupied, potential_enemy_collision, cost, direction, avoid_enemy)
+            b = BuildPoints(safe, enemy_occupied, potential_enemy_collision, cost, direction, avoid_enemy, avoid_potential_enemy)
             points.append(b)
 
         ## POINTS FOR STAYING
@@ -217,7 +217,8 @@ class Builds():
                                   potential_enemy_collision=potential_enemy_collision,
                                   cost=999,
                                   direction=Direction.Still,
-                                  avoid_enemy=avoid_enemy))
+                                  avoid_enemy=avoid_enemy,
+                                  avoid_potential_enemy=avoid_potential_enemy))
 
         logging.debug(points)
 

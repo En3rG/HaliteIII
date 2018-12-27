@@ -103,7 +103,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                     if s.ship_id in self.data.mySets.ships_to_move:
                         canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS,
-                                                                                kicked=False, moveNow=False, avoid_enemy=False)
+                                                                                kicked=False, moveNow=False, avoid_enemy=False, avoid_potential_enemy=False)
                         harvest_destination = self.get_destination(ship, harvest_direction)
                         if harvest_destination == s.explore_destination:
                             self.move_mark_unsafe(ship, harvest_direction)                                              ## MOVE SHIP
@@ -129,12 +129,13 @@ class Attack(Moves, Attacks, Harvests, Explores):
         enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
-        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False, avoid_enemy=True)
+        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False, avoid_enemy=True, avoid_potential_enemy=True)
         if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
                                                                                      MyConstants.DIRECTIONS,
                                                                                      kicked=False,
                                                                                      moveNow=False,
-                                                                                     avoid_enemy=True)
+                                                                                     avoid_enemy=True,
+																					 avoid_potential_enemy=True)
 
         matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
 
@@ -153,12 +154,13 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 support_ship = self.data.game.me._ships.get(support_id)
                 support_distance = calculate_distance(support_ship.position, enemy_position, self.data)
 
-                canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False, avoid_enemy=True)
+                canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False, avoid_enemy=True, avoid_potential_enemy=True)
                 if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
                                                                                              MyConstants.DIRECTIONS,
                                                                                              kicked=False,
                                                                                              moveNow=False,
-                                                                                             avoid_enemy=True)
+                                                                                             avoid_enemy=True,
+																							 avoid_potential_enemy=True)
 
                 matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(support_ship)
 

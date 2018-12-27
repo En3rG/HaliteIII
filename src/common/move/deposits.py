@@ -40,9 +40,9 @@ class Deposits():
             start = Position(start_coord[1], start_coord[0])
             destination = Position(next_coord[1], next_coord[0])
             directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True)
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True, avoid_potential_enemy=True)
         else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=False)
+            direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT, avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
 
@@ -57,7 +57,7 @@ class Deposits():
         return len(r) >= 1
 
 
-    def get_move_points_returning(self, ship, directions, avoid_enemy):
+    def get_move_points_returning(self, ship, directions, avoid_enemy, get_move_points_returning):
         """
         GET POINTS FOR RETURNING
 
@@ -75,7 +75,8 @@ class Deposits():
                                 potential_ally_collision=potential_ally_collision,
                                 cost=999,
                                 direction=Direction.Still,
-                                avoid_enemy=avoid_enemy)]
+                                avoid_enemy=avoid_enemy,
+                                get_move_points_returning=get_move_points_returning)]
 
         for direction in directions:
             # for direction in MyConstants.DIRECTIONS:
@@ -96,7 +97,8 @@ class Deposits():
                               potential_ally_collision,
                               cost,
                               direction,
-                              avoid_enemy=avoid_enemy)
+                              avoid_enemy=avoid_enemy,
+                              get_move_points_returning=get_move_points_returning)
             points.append(c)
 
         logging.debug(points)
