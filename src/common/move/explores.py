@@ -12,40 +12,40 @@ from src.common.print import print_matrix
 from collections import deque
 
 class Explores():
-    def exploreNow(self, ship_id):
-        """
-        SHIP IS EXPLORING, PERFORM NECESSARY STEPS
-        """
-        ship = self.data.game.me._ships.get(ship_id)
-
-        canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-        if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS,
-                                                                                    kicked=False, moveNow=False)
-
-        ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
-        matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
-
-
-        directions = self.get_directions_target(ship, explore_destination)
-        explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-                                                avoid_enemy=True, avoid_potential_enemy=True)
-
-        harvest_destination = self.get_destination(ship, harvest_direction)
-        harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
-
-        if canHarvest and max_ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
-            destination = harvest_destination
-            direction = harvest_direction
-        else:
-            destination = explore_destination
-            ## OLD WAY
-            direction = explore_direction
-            ## A STAR WAY (SAME AS NOT DOING A STAR, WHY??)
-            # direction = self.get_a_star_direction(ship, explore_destination, directions)
-
-        # self.mark_unsafe(ship, explore_destination)
-        self.mark_taken_udpate_top_halite(destination)
-        self.move_mark_unsafe(ship, direction)
+    # def exploreNow(self, ship_id):
+    #     """
+    #     SHIP IS EXPLORING, PERFORM NECESSARY STEPS
+    #     """
+    #     ship = self.data.game.me._ships.get(ship_id)
+    #
+    #     canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
+    #     if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS,
+    #                                                                                 kicked=False, moveNow=False)
+    #
+    #     ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
+    #     matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
+    #
+    #
+    #     directions = self.get_directions_target(ship, explore_destination)
+    #     explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+    #                                             avoid_enemy=True, avoid_potential_enemy=True)
+    #
+    #     harvest_destination = self.get_destination(ship, harvest_direction)
+    #     harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
+    #
+    #     if canHarvest and max_ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+    #         destination = harvest_destination
+    #         direction = harvest_direction
+    #     else:
+    #         destination = explore_destination
+    #         ## OLD WAY
+    #         direction = explore_direction
+    #         ## A STAR WAY (SAME AS NOT DOING A STAR, WHY??)
+    #         # direction = self.get_a_star_direction(ship, explore_destination, directions)
+    #
+    #     # self.mark_unsafe(ship, explore_destination)
+    #     self.mark_taken_udpate_top_halite(destination)
+    #     self.move_mark_unsafe(ship, direction)
 
 
     def isDestination_untaken(self, s):
@@ -58,30 +58,6 @@ class Explores():
             return None
         else:
             return s.destination
-
-
-    def get_a_star_direction(self, ship, target_position, directions):
-        ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
-        matrix_path = pad_around(section.matrix)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
-        matrix_cost = section.matrix
-        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
-        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
-
-        if len(path) > 1:
-            start_coord = path[-1]
-            next_coord = path[-2]
-            start = Position(start_coord[1], start_coord[0])
-            destination = Position(next_coord[1], next_coord[0])
-            directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-                                            avoid_enemy=True, avoid_potential_enemy=True)
-        else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-                                            avoid_enemy=True, avoid_potential_enemy=False)
-
-        return direction
 
 
     def mark_taken_udpate_top_halite(self, destination):
