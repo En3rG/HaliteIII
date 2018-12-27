@@ -24,7 +24,7 @@ class Retreat(Moves, Retreats):
 
         self.turns_left = constants.MAX_TURNS - data.game.turn_number
         self.heap_dist = []
-        self.farthest_ship = FarthestShip(0, 0, 0, None)
+        self.farthest_ship = FarthestShip(0, 0, 0, None, None)
 
         self.check_retreat()
 
@@ -55,10 +55,10 @@ class Retreat(Moves, Retreats):
                                                        self.data.myMatrix.locations.myDocks,
                                                        self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                        Inequality.EQUAL)
-            position = Position(coord[1], coord[0])
-            directions = self.get_directions_target(ship, position)
+            dock_position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, dock_position)
             num_directions = len(directions)
-            s = FarthestShip(distance, num_directions, ship.id, directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions, dock_position)
             self.farthest_ship = max(s, self.farthest_ship)
             heapq.heappush(self.heap_dist, s)
 

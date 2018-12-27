@@ -37,9 +37,9 @@ class Influence(Moves, Explores, Harvests):
         matrixIDs = self.data.myMatrix.locations.engage_influence * self.data.myMatrix.locations.myShipsID
         r, c = np.where(matrixIDs > Matrix_val.ZERO)
         ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
-        ships_influencing = ships_engaging & self.data.mySets.ships_to_move
+        ships_influenced = ships_engaging & self.data.mySets.ships_to_move
 
-        for ship_id in ships_influencing:
+        for ship_id in ships_influenced:
             self.populate_heap(ship_id)
 
         while self.heap_explore:
@@ -96,7 +96,6 @@ class Influence(Moves, Explores, Harvests):
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
-        logging.debug("path: {}".format(path))
 
         if len(path) == 1:
             direction = Direction.Still
@@ -123,6 +122,5 @@ class Influence(Moves, Explores, Harvests):
             ship = self.data.game.me._ships.get(ship_id)
             matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
 
-            logging.debug("ship id: {} max_ratio {} destination {}".format(ship_id, max_ratio, destination))
             s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
             heapq.heappush(self.heap_explore, s)

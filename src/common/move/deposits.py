@@ -34,7 +34,7 @@ class Deposits():
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
 
-        if len(path) > 0:
+        if len(path) > 1:
             start_coord = path[-1]
             next_coord = path[-2]
             start = Position(start_coord[1], start_coord[0])
