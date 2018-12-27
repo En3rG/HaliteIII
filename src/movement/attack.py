@@ -68,46 +68,65 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 for ship_id in ships_attacking:
                     self.populate_heap(ship_id, i)
 
-                while self.heap_support:
-                    s = heapq.heappop(self.heap_support)
-                    logging.debug(s)
+                ## MOVE ATTACK/SUPPORT SHIPS
+                self.move_attack_suppport()
 
-                    first_ship = self.data.game.me._ships.get(s.ship_id)
-                    direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
+                ## MOVE KAMIKAZE SHIPS
+                self.move_kamikaze()
 
-                    if direction != Direction.Still:
-                    ## IF STAYING STILL, NO NEED TO MOVE
-                    ## FIRST SHIP WILL JUST HARVEST/EXPLORE
-                    ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
-                        destination = self.get_destination(first_ship, direction)
+
+    def move_attack_suppport(self):
+        while self.heap_support:
+            s = heapq.heappop(self.heap_support)
+            logging.debug(s)
+
+            first_ship = self.data.game.me._ships.get(s.ship_id)
+            direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
+
+            if direction != Direction.Still:
+                ## IF STAYING STILL, NO NEED TO MOVE
+                ## FIRST SHIP WILL JUST HARVEST/EXPLORE
+                ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
+                destination = self.get_destination(first_ship, direction)
+                self.mark_taken_udpate_top_halite(destination)
+                self.move_mark_unsafe(first_ship, direction)
+
+                logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
+
+                for support_id in s.support_ships:
+                    if support_id in self.data.mySets.ships_to_move:
+                        support_ship = self.data.game.me._ships.get(support_id)
+                        support_directions = self.get_directions_target(support_ship, first_ship.position)
+                        direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
+                        destination = self.get_destination(support_ship, direction)
                         self.mark_taken_udpate_top_halite(destination)
-                        self.move_mark_unsafe(first_ship, direction)
-
-                        logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
-
-                        for support_id in sorted(s.support_ships):                                                      ## ADD SORTED TO HAVE SAME ORDER ONLINE
-                            if support_id in self.data.mySets.ships_to_move:                                            ## DONT MOVE SHIPS THAT ALREADY MOVED
-                                support_ship = self.data.game.me._ships.get(support_id)
-                                support_directions = self.get_directions_target(support_ship, first_ship.position)
-                                direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
-                                destination = self.get_destination(support_ship, direction)
-                                self.mark_taken_udpate_top_halite(destination)
-                                self.move_mark_unsafe(support_ship, direction)
+                        self.move_mark_unsafe(support_ship, direction)
 
 
-                while self.heap_kamikaze:
-                    s = heapq.heappop(self.heap_kamikaze)
-                    logging.debug(s)
+    def move_kamikaze(self):
+        while self.heap_kamikaze:
+            s = heapq.heappop(self.heap_kamikaze)
+            logging.debug(s)
 
-                    ship = self.data.game.me._ships.get(s.ship_id)
+            ship = self.data.game.me._ships.get(s.ship_id)
 
-                    if s.ship_id in self.data.mySets.ships_to_move:
-                        canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS,
-                                                                                kicked=False, moveNow=False, avoid_enemy=False, avoid_potential_enemy=False)
-                        harvest_destination = self.get_destination(ship, harvest_direction)
-                        if harvest_destination == s.explore_destination:
-                            self.move_mark_unsafe(ship, harvest_direction)                                              ## MOVE SHIP
-                            logging.debug("kamikaze ship id {}".format(s.ship_id))
+            if s.ship_id in self.data.mySets.ships_to_move:
+                canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS,
+                                                                        kicked=False, moveNow=False, avoid_enemy=False,
+                                                                        avoid_potential_enemy=False)
+                harvest_destination = self.get_destination(ship, harvest_direction)
+                if harvest_destination == s.explore_destination:
+                    self.move_mark_unsafe(ship, harvest_direction)
+                    logging.debug("kamikaze ship id {}".format(s.ship_id))
+
+                    for support_id in s.support_ships:
+                        if support_id in self.data.mySets.ships_to_move:
+                            support_ship = self.data.game.me._ships.get(support_id)
+                            support_directions = self.get_directions_target(support_ship, ship.position)
+                            direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
+                            destination = self.get_destination(support_ship, direction)
+                            self.mark_taken_udpate_top_halite(destination)
+                            self.move_mark_unsafe(support_ship, direction)
 
 
     def populate_heap(self, ship_id, i):
@@ -186,8 +205,15 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 heapq.heappush(self.heap_support, s)
 
         elif i == 2:
-            s = KamikazeShip(ship.halite_amount, ship.id, explore_destination)
+            support_ships = OrderedSet()
+            for support_id in sorted(potential_support_IDs):
+                if support_id in self.data.mySets.ships_to_move:
+                    support_ships.add(support_id)
+
+            s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
             heapq.heappush(self.heap_kamikaze, s)
+
+
 
 
 

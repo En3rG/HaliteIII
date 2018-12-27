@@ -85,7 +85,7 @@ class Builds():
                         and self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] != Matrix_val.UNSAFE:
                     ## ENOUGH HALITE TO BUILD
                     direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=True, avoid_potential_enemy=False)
-                    self.move_mark_unsafe(ship, direction)                                                          ## DIRECTION IS A LIST OF DIRECTIONS
+                    self.move_mark_unsafe(ship, direction)                                                              ## DIRECTION IS A LIST OF DIRECTIONS
                 else:
                     ## POPULATE UNSAFE AROUND DOCK SO NO OTHER SHIPS WILL GO TOWARDS IT
                     # self.data.myMatrix.locations.safe[dock_position.y][dock_position.x] = Matrix_val.UNSAFE
