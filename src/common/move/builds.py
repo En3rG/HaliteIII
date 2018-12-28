@@ -24,32 +24,33 @@ class Builds():
             ship = self.data.game.me._ships.get(ship_id)
             cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
 
-            if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000:
-                ## HAVE ENOUGH HALITE TO BUILD DOCK
-                self.data.game.me.halite_amount -= (4000 - ship.halite_amount - cell_halite_amount)
-                logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
-                self.data.halite_stats.record_spent(BuildType.DOCK)
-                command = ship.make_dropoff()
-                self.data.command_queue.append(command)
+            if self.withinLimit_ships():
+                if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000:
+                    ## HAVE ENOUGH HALITE TO BUILD DOCK
+                    self.data.game.me.halite_amount -= (4000 - ship.halite_amount - cell_halite_amount)
+                    logging.debug("Shid id: {} building dock at position: {}".format(ship.id, ship.position))
+                    self.data.halite_stats.record_spent(BuildType.DOCK)
+                    command = ship.make_dropoff()
+                    self.data.command_queue.append(command)
 
-                ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
-                populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
-                                   Matrix_val.ZERO,
-                                   ship.position,
-                                   MyConstants.DOCK_MANHATTAN)
-            else:
-                ## NOT ENOUGH HALITE YET, STAY STILL
-                self.data.myVars.isBuilding = True                                                                      ## PREVENT SPAWNING SHIPS
-                direction = Direction.Still
-                command = ship.move(direction)
-                self.data.command_queue.append(command)
+                    ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
+                    populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
+                                       Matrix_val.ZERO,
+                                       ship.position,
+                                       MyConstants.DOCK_MANHATTAN)
+                else:
+                    ## NOT ENOUGH HALITE YET, STAY STILL
+                    self.data.myVars.isBuilding = True                                                                      ## PREVENT SPAWNING SHIPS
+                    direction = Direction.Still
+                    command = ship.move(direction)
+                    self.data.command_queue.append(command)
 
-            ## RECORD INFO ALSO SHIP COUNTER PER DOCK
-            dock_coord = (ship.position.y, ship.position.x)
-            self.ships_building_towards_dock.setdefault(dock_coord, set())
-            self.ships_building_towards_dock[dock_coord].add(ship.id)
-            self.mark_unsafe(ship, ship.position)
-            self.data.mySets.ships_to_move.remove(ship.id)
+                ## RECORD INFO ALSO SHIP COUNTER PER DOCK
+                dock_coord = (ship.position.y, ship.position.x)
+                self.ships_building_towards_dock.setdefault(dock_coord, set())
+                self.ships_building_towards_dock[dock_coord].add(ship.id)
+                self.mark_unsafe(ship, ship.position)
+                self.data.mySets.ships_to_move.remove(ship.id)
 
 
 
@@ -160,8 +161,11 @@ class Builds():
         """
         CHECK IF SHIPS BUILDING IS WITHIN PERCENT LIMIT
         """
-        num_ships_allowed_to_build = len(self.data.mySets.ships_all) * MyConstants.SHIPS_BUILDING_PERCENT
-        return sum([len(x) for x in self.ships_building_towards_dock.values()]) <= num_ships_allowed_to_build
+        num_ships = len(self.data.mySets.ships_all)
+        num_ships_allowed = num_ships * MyConstants.SHIPS_BUILDING_PERCENT
+        num_ships_building = sum([len(x) for x in self.ships_building_towards_dock.values()])
+        num_docks = len(self.data.mySets.dock_coords)
+        return (num_ships_building <= num_ships_allowed) and ( ( num_ships / (num_docks + num_ships_building)) >= MyConstants.SHIPS_PER_DOCK_RATIO)
 
 
     def get_a_star_direction(self, ship, dock_position, directions):

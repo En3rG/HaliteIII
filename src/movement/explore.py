@@ -86,6 +86,34 @@ class Explore(Moves, Explores, Harvests):
                 self.move_mark_unsafe(ship, direction)
 
 
+    def get_a_star_direction(self, ship, target_position, directions):
+        ## PATH IS 1 LESS, SINCE WILL BE PADDED
+        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
+                          MyConstants.EXPLORE_SEARCH_PERIMETER - 1)
+        matrix_path = pad_around(section.matrix)
+        section = Section(self.data.myMatrix.halite.amount, ship.position,
+                          MyConstants.EXPLORE_SEARCH_PERIMETER)
+        matrix_cost = section.matrix
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position,
+                                            directions)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
+
+        logging.debug("path: {}".format(path))
+        if len(path) > 1:
+            start_coord = path[-1]
+            next_coord = path[-2]
+            start = Position(start_coord[1], start_coord[0])
+            destination = Position(next_coord[1], next_coord[0])
+            directions = self.get_directions_start_target(start, destination)
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+                                            avoid_enemy=True, avoid_potential_enemy=True)
+        else:
+            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
+                                            avoid_enemy=True, avoid_potential_enemy=False)
+
+        return direction
+
+
     ## OLD WAY
     # def move_ships(self):
     #     print_heading("Moving exploring ships......")
@@ -154,30 +182,7 @@ class Explore(Moves, Explores, Harvests):
     #         heapq.heappush(self.heap_explore, s)
 
 
-    def get_a_star_direction(self, ship, target_position, directions):
-        ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.EXPLORE_SEARCH_PERIMETER - 1)
-        matrix_path = pad_around(section.matrix)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.EXPLORE_SEARCH_PERIMETER)
-        matrix_cost = section.matrix
-        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
-        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
 
-        logging.debug("path: {}".format(path))
-        if len(path) > 1:
-            start_coord = path[-1]
-            next_coord = path[-2]
-            start = Position(start_coord[1], start_coord[0])
-            destination = Position(next_coord[1], next_coord[0])
-            directions = self.get_directions_start_target(start, destination)
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-                                            avoid_enemy=True, avoid_potential_enemy=True)
-        else:
-            direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-                                            avoid_enemy=True, avoid_potential_enemy=False)
-
-        return direction
 
 
 
