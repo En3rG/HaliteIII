@@ -131,6 +131,11 @@ class MyDicts():
     def __init__(self):
         self.players_halite = {}
         self.positions_taken = {}
+        self.explore_ship = {}
+
+class MyLists():
+    def __init__(self):
+        self.explore_target = []
 
 
 class HaliteInfo():
@@ -145,6 +150,7 @@ class Data(abc.ABC):
         self.mySets = MySets(game)
         self.myVars = MyVars(self, game)
         self.myDicts = MyDicts()
+        self.myLists = MyLists()
         self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
 

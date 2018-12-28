@@ -10,6 +10,7 @@ from src.movement.explore import Explore
 from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
+from src.movement.exploreTarget import ExploreTarget
 from src.movement.attack import Attack
 from src.movement.harass import Harass
 from src.movement.build import Build
@@ -82,6 +83,8 @@ while True:
 
     ## HARASS SHIPS
     F = Harass(data, prev_data)
+
+    M = ExploreTarget(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)
