@@ -81,6 +81,6 @@ class Retreats():
             c = RetreatPoints(shipyard, safe, stuck, potential_ally_collision, direction)
             points.append(c)
 
-        logging.debug(points)
+        # logging.debug(points)
 
         return points

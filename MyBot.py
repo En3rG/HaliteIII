@@ -7,7 +7,7 @@ from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
 from src.movement.influence import Influence
 from src.movement.explore import Explore
-from src.movement.harvest_closeby import Harvest
+from src.movement.harvest import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
@@ -73,7 +73,7 @@ while True:
     ## DEPOSIT SHIPS
     E = Deposit(data, prev_data)
 
-    ## GET EACH SHIP'S EXPLORE TARGET
+    ## GET EACH SHIP'S TARGET
     M = ExploreTarget(data, prev_data)
     N = EnemyTarget(data, prev_data)
 

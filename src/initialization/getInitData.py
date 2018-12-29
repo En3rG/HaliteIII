@@ -5,6 +5,7 @@ from src.common.matrix.functions import Section, populate_manhattan, get_index_h
 from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
 from src.common.matrix.classes import Option
+from src.common.print import print_heading
 import numpy as np
 import logging
 import copy
@@ -19,6 +20,9 @@ TO DO !!!
 class GetInitData(Data):
     def __init__(self, game):
         super().__init__(game)
+
+        print_heading("Gathering Initialized data......")
+
         self.unavailable_area = np.zeros((game.game_map.height, game.game_map.width), dtype=np.float16)
         self.update_matrix()
 

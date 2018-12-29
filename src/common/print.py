@@ -22,6 +22,6 @@ def print_heading(text):
     :param text:
     :return:
     """
-    logging.debug("---------------------------------------")
+    logging.debug("=======================================")
     logging.debug("{}".format(text))
     logging.debug("---------------------------------------")

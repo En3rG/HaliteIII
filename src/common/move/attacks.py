@@ -69,7 +69,7 @@ class Attacks():
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
         points.append(AttackPoints(safe=safe, direction=Direction.Still))
 
-        logging.debug(points)
+        # logging.debug(points)
 
         return points
 
@@ -95,6 +95,6 @@ class Attacks():
         safe = self.data.myMatrix.locations.safe[ship.position.y][ship.position.x]
         points.append(SupportPoints(safe=safe, direction=Direction.Still))
 
-        logging.debug(points)
+        # logging.debug(points)
 
         return points

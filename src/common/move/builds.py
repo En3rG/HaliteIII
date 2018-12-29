@@ -234,6 +234,6 @@ class Builds():
                                   avoid_enemy=avoid_enemy,
                                   avoid_potential_enemy=avoid_potential_enemy))
 
-        logging.debug(points)
+        # logging.debug(points)
 
         return points

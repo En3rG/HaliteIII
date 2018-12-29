@@ -5,13 +5,16 @@ import logging
 class GetData(Data):
     def __init__(self, game, init_data, prev_data, halite_stats):
         super().__init__(game)
+
+        print_heading("Gathering data......")
+
         self.halite_stats = halite_stats
         self.init_data = init_data
         self.command_queue = []
         self.starting_halite = init_data.myVars.total_halite
         self.count_ships_died(prev_data)                                                                                 ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
-        print_heading("All ships [{} total]: {}".format(len(self.mySets.ships_all), self.mySets.ships_all))
+        logging.debug("All ships [{} total]: {}".format(len(self.mySets.ships_all), self.mySets.ships_all))
 
         self.update_matrix()
 
