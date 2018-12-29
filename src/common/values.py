@@ -49,14 +49,14 @@ class MyConstants():
     TOP_N = 20                                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
     ALLOW_BUILDING_TURNS = 0.70                     ## USED TO BE:
                                                     ## V28: 0.70
-    STOP_BUILDING_HALITE_LEFT = 0.30
-    NUM_SHIPS_BEFORE_BUILDING = 12
+    STOP_BUILDING_HALITE_LEFT = 0.40
+    NUM_SHIPS_BEFORE_BUILDING = 10
     DOCK_HALITE_AVERAGE = 0.50                      ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
-    HALITE_TOWARDS_BUILDING = 600
+    HALITE_TOWARDS_BUILDING = 0
 
     SHIPS_PER_DOCK_RATIO = 7
     SHIPS_BUILDING_PERCENT = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
-    SHIPS_BUILDING_PER_DOCK = 2                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
+    SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
     DOCK_MANHATTAN = 7                             ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
                                                     ## USED TO BE:
                                                     ## V28: 2
@@ -76,15 +76,15 @@ class MyConstants():
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
-    ATTACK_TURNS_UPPER_LIMIT = 0.85
-    ATTACK_TURNS_LOWER_LIMIT = 0.00
+    ATTACK_TURNS_UPPER_LIMIT = 0.90
+    ATTACK_TURNS_LOWER_LIMIT = 0.50
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
     ## DEPOSIT
     DEPOSIT_SEARCH_PERIMETER = 5
-    POTENTIALLY_ENOUGH_CARGO = 800                  ## MAYBE ENOUGH TO GO HOME
-    DEPOSIT_HARVEST_CHECK_PERCENT = 0.75            ## ONLY TAKES PERCENTAGE OF HARVEST INTO ACCOUNT, BUT IF ITS OVER 1000 ALREADY, GO HOME
+    POTENTIALLY_ENOUGH_CARGO = 900                  ## MAYBE ENOUGH TO GO HOME
+    DEPOSIT_HARVEST_CHECK_PERCENT = 0.50            ## ONLY TAKES PERCENTAGE OF HARVEST INTO ACCOUNT, BUT IF ITS OVER 1000 ALREADY, GO HOME
 
 
     ## EXPLORE
@@ -94,7 +94,7 @@ class MyConstants():
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
     HARVEST_RATIO_TO_EXPLORE = 3
-    HARVEST_ABOVE_PERCENTILE = 35                   ## USED TO BE:
+    HARVEST_ABOVE_PERCENTILE = 40                   ## USED TO BE:
                                                     ## V28: 35
 
 
@@ -104,7 +104,7 @@ class MyConstants():
                                                     ## 0 MEANS ALWAYS WILL USE IT
 
     ## SPAWNING
-    STOP_SPAWNING_HALITE_LEFT = 0.40                ## USED TO BE:
+    STOP_SPAWNING_HALITE_LEFT = 0.50                ## USED TO BE:
                                                     ## V28: 0.40
     ALLOW_SPAWNING_2P_32_TURNS = 0.63
     ALLOW_SPAWNING_2P_40_TURNS = 0.66
