@@ -219,7 +219,8 @@ class Data(abc.ABC):
         distance_matrixes = [self.myMatrix.distances.closest_dock]
 
         for dock_coord in self.myDicts.ships_building_dock.keys():
-            distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
+            if dock_coord:
+                distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
         self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
 
