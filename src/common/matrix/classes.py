@@ -1,15 +1,16 @@
 import numpy as np
-import logging
-from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
-from hlt import constants
-from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
-    get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
 from src.common.orderedSet import OrderedSet
-from src.common.print import print_matrix
-import copy
-import abc
+
+
+class Option():
+    """
+    USED FOR POPULATE MANHATTAN OPTIONS
+    """
+    REGULAR = "regular"
+    CUMMULATIVE = "cummulative"
+    MINIMUM = "minimum"
+    MAXIMUM = "maximum"
 
 
 class CellAverage():
@@ -75,6 +76,7 @@ class Locations():
 
         self.potential_ally_collisions = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
+        self.potential_enemy_cargo = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.dock_placement = np.zeros((map_height, map_width), dtype=np.int16)
 

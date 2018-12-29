@@ -7,6 +7,7 @@ from src.common.points import BuildPoints, BuildShip
 from src.common.matrix.functions import get_coord_closest, pad_around, Section
 from src.common.astar import a_star, get_goal_in_section
 from src.common.orderedSet import OrderedSet
+from src.common.matrix.classes import Option
 import numpy as np
 import logging
 import heapq
@@ -38,7 +39,7 @@ class Builds():
                     populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
                                        Matrix_val.ZERO,
                                        ship.position,
-                                       MyConstants.DOCK_MANHATTAN)
+                                       MyConstants.DOCK_MANHATTAN, Option.REGULAR)
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
                     self.data.myVars.dontSpawn = True                                                                      ## PREVENT SPAWNING SHIPS

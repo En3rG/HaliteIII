@@ -3,6 +3,7 @@ from hlt.game_map import GameMap
 from hlt.positionals import Position
 from hlt.positionals import Direction
 import abc
+from src.common.matrix.classes import Option
 import itertools
 from src.common.values import MoveMode, MyConstants, Matrix_val
 from src.common.matrix.functions import Section, move_populate_manhattan, get_index_highest_val

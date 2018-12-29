@@ -2,6 +2,7 @@ import numpy as np
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from src.common.print import print_matrix
+from src.common.matrix.classes import Option
 import logging
 
 class Section():
@@ -216,7 +217,7 @@ def count_manhattan(matrix, val, position, dist):
     return count
 
 
-def populate_manhattan(matrix, val, position, dist, cummulative=False):
+def populate_manhattan(matrix, val, position, dist, option):
     """
     POPULATE AREA IN MATRIX PROVIDED (BASED ON DISTANCE FROM ORIGIN OR LOC)
 
@@ -234,10 +235,14 @@ def populate_manhattan(matrix, val, position, dist, cummulative=False):
             y_ = (y + position.y) % size
             x_ = (x + position.x) % size
 
-            if cummulative:
-                matrix[y_, x_] += val
-            else:
+            if option == Option.REGULAR:
                 matrix[y_, x_] = val
+            elif option == Option.CUMMULATIVE:
+                matrix[y_, x_] += val
+            elif option == Option.MINIMUM:
+                matrix[y_, x_] = min(val, matrix[y_, x_])
+            elif option == Option.MAXIMUM:
+                matrix[y_, x_] = max(val, matrix[y_, x_])
 
 
 def move_populate_manhattan(matrix, old_loc, new_loc, dist):

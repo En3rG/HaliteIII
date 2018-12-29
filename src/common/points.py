@@ -311,7 +311,7 @@ class DepositPoints():
         self.enemy_occupied = -enemy_occupied
         self.potential_enemy_collision = potential_enemy_collision
         self.potential_ally_collision = potential_ally_collision
-        self.cost = -cost  ## NEGATIVE BECAUSE WE WANT THE LEAST COST
+        self.cost = -cost                                                                                               ## NEGATIVE BECAUSE WE WANT THE LEAST COST
         self.direction = direction
         self.avoid_enemy = avoid_enemy
         self.avoid_potential_enemy = avoid_potential_enemy

@@ -9,6 +9,7 @@ from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistance
 from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
 from src.common.matrix.classes import *
+from src.common.matrix.classes import Option
 import copy
 import abc
 
@@ -140,7 +141,7 @@ class Data(abc.ABC):
                                Matrix_val.POTENTIAL_COLLISION,
                                ship.position,
                                MyConstants.DIRECT_NEIGHBOR_DISTANCE,
-                               cummulative=True)
+                               Option.CUMMULATIVE)
 
             ## POPULATE STUCK SHIPS
             if self.myMatrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:
@@ -180,26 +181,32 @@ class Data(abc.ABC):
                                        Matrix_val.ONE,
                                        ship.position,
                                        constants.INSPIRATION_RADIUS,
-                                       cummulative=True)
+                                       Option.CUMMULATIVE)
 
                     populate_manhattan(self.myMatrix.locations.potential_enemy_collisions,
                                        Matrix_val.POTENTIAL_COLLISION,
                                        ship.position,
                                        MyConstants.DIRECT_NEIGHBOR_DISTANCE,
-                                       cummulative=True)
+                                       Option.CUMMULATIVE)
+
+                    populate_manhattan(self.myMatrix.locations.potential_enemy_cargo,
+                                       ship.halite_amount,
+                                       ship.position,
+                                       MyConstants.DIRECT_NEIGHBOR_DISTANCE,
+                                       Option.MINIMUM)
 
                     populate_manhattan(self.myMatrix.locations.engage_influence,
                                        Matrix_val.ONE,
                                        ship.position,
                                        MyConstants.ENGAGE_INFLUENCE_DISTANCE,
-                                       cummulative=False)
+                                       Option.REGULAR)
 
                     for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
                         populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
                                            Matrix_val.ONE,
                                            ship.position,
                                            dist,
-                                           cummulative=False)
+                                           Option.REGULAR)
 
 
     def populate_cost(self):
