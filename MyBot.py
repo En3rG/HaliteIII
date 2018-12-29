@@ -11,6 +11,7 @@ from src.movement.harvest_closeby import Harvest
 from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
+from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
 from src.movement.build import Build
 from src.movement.start import Start
@@ -74,6 +75,7 @@ while True:
 
     ## GET EACH SHIP'S EXPLORE TARGET
     M = ExploreTarget(data, prev_data)
+    N = EnemyTarget(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)

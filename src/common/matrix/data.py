@@ -53,6 +53,7 @@ class Locations():
         self.enemyShipsOwner = np.zeros((map_height, map_width), dtype=np.int16)
         self.enemyShipsOwner.fill(-1)
         self.shipCargo = np.zeros((map_height, map_width), dtype=np.int16)
+        self.enemyCargo = np.zeros((map_height, map_width), dtype=np.int16)
 
         ## ATTACK
         self.engage_enemy = {}
@@ -133,11 +134,13 @@ class MyDicts():
         self.players_halite = {}
         self.positions_taken = {}
         self.explore_ship = {}
+        self.explore_enemy_ship = {}
         self.ships_building_dock = {}
 
 class MyLists():
     def __init__(self):
         self.explore_target = []
+        self.enemy_target = []
 
 
 class HaliteInfo():
@@ -301,6 +304,7 @@ class Data(abc.ABC):
                     self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
                     self.myMatrix.locations.enemyShipsOwner[ship.position.y][ship.position.x] = id
                     self.myMatrix.locations.shipCargo[ship.position.y][ship.position.x] = ship.halite_amount
+                    self.myMatrix.locations.enemyCargo[ship.position.y][ship.position.x] = ship.halite_amount
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.myMatrix.locations.influenced = fill_circle(self.myMatrix.locations.influenced,
