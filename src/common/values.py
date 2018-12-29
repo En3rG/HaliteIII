@@ -81,6 +81,9 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
+    SUPPORT_GAIN_RATIO_2P = 1.20
+    SUPPORT_GAIN_RATIO_4P = 1.20
+
     ## DEPOSIT
     DEPOSIT_SEARCH_PERIMETER = 5
     POTENTIALLY_ENOUGH_CARGO = 900                  ## MAYBE ENOUGH TO GO HOME

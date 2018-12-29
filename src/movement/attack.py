@@ -146,7 +146,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
         potential_support_IDs = potential_support - {-1} - self.considered_already                                      ## myShipsID contains -1
         num_enemy_ships = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE,
                                           enemy_position, MyConstants.ENEMY_BACKUP_DISTANCE)
-        enemy_halite = self.data.myMatrix.locations.shipCargo[enemy_position.y][enemy_position.x]
+        enemy_halite = self.data.myMatrix.locations.shipsCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False,
