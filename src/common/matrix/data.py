@@ -212,10 +212,11 @@ class Data(abc.ABC):
             self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)                               ## COMBINE AND GET LEAST DISTANCE
 
 
-    def update_distance_docks(self):
+    def forecast_distance_docks(self):
         """
         UPDATE DISTANCE DOCKS (USED TO FORECAST THAT A DOCK IS GETTING BUILT THERE)
         """
+        ## FORECASTS
         distance_matrixes = [self.myMatrix.distances.closest_dock]
 
         for dock_coord in self.myDicts.ships_building_dock.keys():
@@ -223,6 +224,16 @@ class Data(abc.ABC):
                 distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
         self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
+
+        ## PRETENDS DOCKS ARE ALL THERE
+        # distance_matrixes = [self.myMatrix.distances.closest_dock]
+        #
+        # indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+        # for y, x in indexes:
+        #     dock_coord = (y, x)
+        #     distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
+        #
+        # self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
 
 
     def populate_enemyShipyard_docks(self):

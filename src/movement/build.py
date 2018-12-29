@@ -27,7 +27,8 @@ class Build(Moves, Builds):
         self.move_ships()
 
         if self.data.myVars.isBuilding:
-            self.data.update_distance_docks()
+            self.data.forecast_distance_docks()
+        # self.data.forecast_distance_docks()
 
 
     def move_ships(self):
