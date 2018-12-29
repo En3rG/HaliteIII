@@ -12,18 +12,13 @@ from src.movement.spawn import spawn_ships
 from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.attack import Attack
-from src.movement.harass import Harass
 from src.movement.build import Build
 from src.movement.start import Start
 from src.common.halite_statistics import Halite_stats
 from src.common.print import print_heading
 import copy
-
-## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
-import hlt
-
-## REGULAR STDOUT (PRINT STATEMENTS) ARE RESERVED FOR ENGINE-BOT COMMUNICATION.
-import logging
+import hlt                                                                                                              ## IMPORT THE HALITE SDK, WHICH WILL LET YOU INTERACT WITH THE GAME.
+import logging                                                                                                          ## REGULAR STDOUT (PRINT STATEMENTS) ARE RESERVED FOR ENGINE-BOT COMMUNICATION.
 
 class PrevData():
     """
@@ -41,14 +36,10 @@ class PrevData():
 
 """ <<<Game Begin>>> """
 
-## THIS GAME OBJECT CONTAINS THE INITIAL GAME STATE.
-game = hlt.Game()
+game = hlt.Game()                                                                                                       ## THIS GAME OBJECT CONTAINS THE INITIAL GAME STATE.
 
-## AT THIS POINT GAME VARIABLE IS POPULATED WITH INITIAL MAP DATA
-## THIS IS A GOOD PLACE TO DO COMPUTATIONALLY EXPENSIVE START-UP PRE-PROCESING (30 secs)
-init_data = GetInitData(game)
+init_data = GetInitData(game)                                                                                           ## CAN HAVE UP TO 30 SECONDS INITIALIZATION TIME
 
-## AS SOON AS YOU CALL "ready" FUNCTION BELOW, THE 2 SECOND PER TURN TIMER WILL START.,
 game.ready("En3rG")
 
 logging.info("Successfully created bot! My Player ID is {}.".format(game.my_id))
@@ -81,9 +72,7 @@ while True:
     ## DEPOSIT SHIPS
     E = Deposit(data, prev_data)
 
-    ## HARASS SHIPS
-    F = Harass(data, prev_data)
-
+    ## GET EACH SHIP'S EXPLORE TARGET
     M = ExploreTarget(data, prev_data)
 
     ## HARVEST SHIPS

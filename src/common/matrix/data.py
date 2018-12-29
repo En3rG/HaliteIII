@@ -124,6 +124,7 @@ class MyVars():
         self.median_halite = 0
         self.harvest_percentile = 0
         self.isBuilding = False
+        self.dontSpawn = False
         self.support_gain_ratio = 1.20 if (len(game.players) == 2) else 1.20                                            ## RATIO OF GAIN BEFORE SUPPORTING
 
 
@@ -132,6 +133,7 @@ class MyDicts():
         self.players_halite = {}
         self.positions_taken = {}
         self.explore_ship = {}
+        self.ships_building_dock = {}
 
 class MyLists():
     def __init__(self):
@@ -208,6 +210,18 @@ class Data(abc.ABC):
                 distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
             self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)                               ## COMBINE AND GET LEAST DISTANCE
+
+
+    def update_distance_docks(self):
+        """
+        UPDATE DISTANCE DOCKS (USED TO FORECAST THAT A DOCK IS GETTING BUILT THERE)
+        """
+        distance_matrixes = [self.myMatrix.distances.closest_dock]
+
+        for dock_coord in self.myDicts.ships_building_dock.keys():
+            distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
+
+        self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
 
 
     def populate_enemyShipyard_docks(self):

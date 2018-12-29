@@ -50,6 +50,7 @@ class Harvest(Moves, Harvests, Explores):
         self.move_ships()
 
 
+    ## NOT RECALCULATING EXPLORE TARGETS
     def move_ships(self):
         print_heading("Moving harvesting (now) ships......")
         ## MOVE SHIPS (THAT WILL HARVEST NOW)

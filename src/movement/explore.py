@@ -46,6 +46,7 @@ class Explore(Moves, Explores, Harvests):
 
         self.move_ships()
 
+    ## NOT RECALCULATING EXPLORE TARGETS
     def move_ships(self):
         print_heading("Moving exploring ships......")
 
@@ -96,7 +97,7 @@ class Explore(Moves, Explores, Harvests):
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position,
                                             directions)
-        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
+        path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
 
         logging.debug("path: {}".format(path))
         if len(path) > 1:
