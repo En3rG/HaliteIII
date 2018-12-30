@@ -20,7 +20,8 @@ class Snipe(Moves, Explores, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        allowSnipe = constants.MAX_TURNS * MyConstants.SNIPE_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.SNIPE_TURNS_UPPER_LIMIT
+        allowSnipe = (constants.MAX_TURNS * MyConstants.SNIPE_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.SNIPE_TURNS_UPPER_LIMIT) \
+                       and len(data.game.players) == 2
 
         if allowSnipe:
             self.move_ships()
