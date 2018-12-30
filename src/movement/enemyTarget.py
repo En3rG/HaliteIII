@@ -6,6 +6,7 @@ from src.common.values import MyConstants
 from src.common.points import ExploreShip
 from src.common.values import MoveMode, Matrix_val
 from src.common.move.explores import Explores
+from src.common.matrix.vectorized import myRound
 from hlt import constants
 import heapq
 import logging
@@ -28,7 +29,8 @@ class EnemyTarget(Moves, Harvests, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
-        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.locations.enemyCargo)
+        harvest = self.data.myMatrix.locations.enemyCargo * 0.25
+        self.harvest_matrix = myRound(harvest)
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
@@ -52,9 +54,9 @@ class EnemyTarget(Moves, Harvests, Explores):
             explore_destination = self.isDestination_untaken(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
-                self.data.myDicts.explore_enemy_ship.setdefault(s.ship_id, None)
-                self.data.myDicts.explore_enemy_ship[s.ship_id] = s
-                self.data.myLists.enemy_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
+                self.data.myDicts.snipe_ship.setdefault(s.ship_id, None)
+                self.data.myDicts.snipe_ship[s.ship_id] = s
+                self.data.myLists.snipe_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
                 self.mark_taken_udpate_top_halite(explore_destination)
 
 

@@ -137,13 +137,13 @@ class MyDicts():
         self.players_halite = {}
         self.positions_taken = {}
         self.explore_ship = {}
-        self.explore_enemy_ship = {}
+        self.snipe_ship = {}
         self.ships_building_dock = {}
 
 class MyLists():
     def __init__(self):
         self.explore_target = []
-        self.enemy_target = []
+        self.snipe_target = []
 
 
 class HaliteInfo():

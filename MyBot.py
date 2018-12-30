@@ -13,6 +13,7 @@ from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
+from src.movement.snipe import Snipe
 from src.movement.build import Build
 from src.movement.start import Start
 from src.common.halite_statistics import Halite_stats
@@ -85,6 +86,9 @@ while True:
 
     ## INFLUENCE SHIPS
     K = Influence(data, prev_data)
+
+    ## TARGET ENEMY SHIP
+    O = Snipe(data, prev_data)
 
     ## EXPLORE SHIPS
     I = Explore(data, prev_data)

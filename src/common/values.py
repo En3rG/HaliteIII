@@ -81,6 +81,7 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
+    ## SUPPORT
     SUPPORT_GAIN_RATIO_2P = 1.20
     SUPPORT_GAIN_RATIO_4P = 1.20
 
@@ -92,6 +93,11 @@ class MyConstants():
 
     ## EXPLORE
     EXPLORE_SEARCH_PERIMETER = 5
+
+    ## SNIPE
+    EXPLORE_RATIO_TO_SNIPE = 4
+    SNIPE_TURNS_UPPER_LIMIT = 1.00
+    SNIPE_TURNS_LOWER_LIMIT = 0.00
 
     ## HARVEST
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
