@@ -175,8 +175,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
         if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
-                and len(potential_support_IDs) > num_enemy_ships \
-                and (len(self.data.game.players) == 2):
+                and len(potential_support_IDs) > num_enemy_ships:
+                #and (len(self.data.game.players) == 2):
         #if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
