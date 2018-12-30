@@ -13,6 +13,7 @@ from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
+from src.movement.attack2 import Attack2
 from src.movement.snipe import Snipe
 from src.movement.build import Build
 from src.movement.start import Start
@@ -82,7 +83,8 @@ while True:
     H = Harvest(data, prev_data)
 
     ## ATTACK SHIPS
-    G = Attack(data, prev_data)
+    #G = Attack(data, prev_data)
+    P = Attack2(data, prev_data)
 
     ## INFLUENCE SHIPS
     K = Influence(data, prev_data)

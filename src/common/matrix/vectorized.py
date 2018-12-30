@@ -34,13 +34,24 @@ def bonusArea(harvest, influence):
 myBonusArea = np.vectorize(bonusArea)
 
 
-def minDockDistances(*args):
+def minValueMatrix(*args):
     """
-    POPULATE DISTANCES TO DOCKS/SHIPYARD GIVEN ALL DISTANCE MATRICES PER DOCKS/SHIPYARD
+    GET THE SMALLEST VALUE IN THE GIVEN MATRICES
+
+    USED POPULATE DISTANCES TO DOCKS/SHIPYARD GIVEN ALL DISTANCE MATRICES PER DOCKS/SHIPYARD
     """
     return min(args)
 
-myMinDockDistances = np.vectorize(minDockDistances)
+myMinValueMatrix = np.vectorize(minValueMatrix)
+
+
+def maxValueMatrix(*args):
+    """
+    GET THE LARGEST VALUE IN THE GIVEN MATRICES
+    """
+    return max(args)
+
+myMaxValueMatrix = np.vectorize(maxValueMatrix)
 
 
 ## NO LONGER USED

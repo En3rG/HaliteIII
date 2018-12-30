@@ -5,7 +5,7 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myBonusArea, myMinDockDistances
+from src.common.matrix.vectorized import myRound, myBonusArea, myMinValueMatrix
 from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
 from src.common.matrix.classes import *
@@ -76,7 +76,7 @@ class Data(abc.ABC):
             for dock_coord in self.mySets.dock_coords:
                 distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
-            self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)                               ## COMBINE AND GET LEAST DISTANCE
+            self.myMatrix.distances.closest_dock = myMinValueMatrix(*distance_matrixes)                                 ## COMBINE AND GET LEAST DISTANCE
 
 
     def forecast_distance_docks(self):
@@ -90,7 +90,7 @@ class Data(abc.ABC):
             if dock_coord:
                 distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
 
-        self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
+        self.myMatrix.distances.closest_dock = myMinValueMatrix(*distance_matrixes)
 
         ## PRETENDS DOCKS ARE ALL THERE
         # distance_matrixes = [self.myMatrix.distances.closest_dock]
@@ -100,7 +100,7 @@ class Data(abc.ABC):
         #     dock_coord = (y, x)
         #     distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
         #
-        # self.myMatrix.distances.closest_dock = myMinDockDistances(*distance_matrixes)
+        # self.myMatrix.distances.closest_dock = myMinValueMatrix(*distance_matrixes)
 
 
     def populate_enemyShipyard_docks(self):
@@ -168,7 +168,7 @@ class Data(abc.ABC):
                     self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
                     self.myMatrix.locations.enemyShipsOwner[ship.position.y][ship.position.x] = id
                     self.myMatrix.locations.shipsCargo[ship.position.y][ship.position.x] = ship.halite_amount
-                    self.myMatrix.locations.enemyCargo[ship.position.y][ship.position.x] = ship.halite_amount
+                    self.myMatrix.halite.enemyCargo[ship.position.y][ship.position.x] = ship.halite_amount
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.myMatrix.locations.influenced = fill_circle(self.myMatrix.locations.influenced,
@@ -230,6 +230,12 @@ class Data(abc.ABC):
         self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
 
         self.myMatrix.halite.harvest_with_bonus = self.myMatrix.halite.harvest + self.myMatrix.halite.bonus
+
+        ## POPULATE ENEMY CARGO, HARVEST, WITH BONUS
+        harvest = self.myMatrix.halite.enemyCargo * 0.25
+        self.myMatrix.halite.enemyCargo_harvest = myRound(harvest)
+        bonus = myBonusArea(self.myMatrix.halite.enemyCargo_harvest, self.myMatrix.locations.influenced)
+        self.myMatrix.halite.enemyCargo_harvest_with_bonus = self.myMatrix.halite.enemyCargo_harvest + bonus
 
 
     def populate_cell_distances(self):

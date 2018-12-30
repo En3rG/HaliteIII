@@ -41,9 +41,9 @@ class Snipe(Moves, Explores, Harvests):
 
                 directions = self.get_directions_target(ship, snipe_destination)
                 ## OLD WAY
-                snipe_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                #snipe_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
                 ## USING ASTAR
-                #explore_direction = self.get_a_star_direction(ship, explore_destination, directions)
+                snipe_direction = self.get_a_star_direction(ship, explore_destination, directions)
 
 
                 if -target.ratio > -explore_target.ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
@@ -64,11 +64,9 @@ class Snipe(Moves, Explores, Harvests):
         section = Section(self.data.myMatrix.halite.amount, ship.position,
                           MyConstants.EXPLORE_SEARCH_PERIMETER)
         matrix_cost = section.matrix
-        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position,
-                                            directions)
+        goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
 
-        logging.debug("path: {}".format(path))
         if len(path) > 1:
             start_coord = path[-1]
             next_coord = path[-2]

@@ -6,7 +6,6 @@ from src.common.values import MyConstants
 from src.common.points import ExploreShip
 from src.common.values import MoveMode, Matrix_val
 from src.common.move.explores import Explores
-from src.common.matrix.vectorized import myRound
 from hlt import constants
 import heapq
 import logging
@@ -29,8 +28,7 @@ class EnemyTarget(Moves, Harvests, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
-        harvest = self.data.myMatrix.locations.enemyCargo * 0.25
-        self.harvest_matrix = myRound(harvest)
+        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL

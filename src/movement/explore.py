@@ -99,7 +99,6 @@ class Explore(Moves, Explores, Harvests):
                                             directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
 
-        logging.debug("path: {}".format(path))
         if len(path) > 1:
             start_coord = path[-1]
             next_coord = path[-2]
