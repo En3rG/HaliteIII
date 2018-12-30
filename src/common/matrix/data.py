@@ -199,14 +199,14 @@ class Data(abc.ABC):
                                        Matrix_val.ONE,
                                        ship.position,
                                        MyConstants.ENGAGE_INFLUENCE_DISTANCE,
-                                       Option.REGULAR)
+                                       Option.REPLACE)
 
                     for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
                         populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
                                            Matrix_val.ONE,
                                            ship.position,
                                            dist,
-                                           Option.REGULAR)
+                                           Option.REPLACE)
 
 
     def populate_cost(self):

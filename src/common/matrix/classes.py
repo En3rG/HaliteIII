@@ -7,7 +7,7 @@ class Option():
     """
     USED FOR POPULATE MANHATTAN OPTIONS
     """
-    REGULAR = "regular"
+    REPLACE = "replace"
     CUMMULATIVE = "cummulative"
     MINIMUM = "minimum"
     MAXIMUM = "maximum"

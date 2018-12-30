@@ -39,7 +39,7 @@ class Builds():
                     populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
                                        Matrix_val.ZERO,
                                        ship.position,
-                                       MyConstants.DOCK_MANHATTAN, Option.REGULAR)
+                                       MyConstants.DOCK_MANHATTAN, Option.REPLACE)
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
                     self.data.myVars.dontSpawn = True                                                                      ## PREVENT SPAWNING SHIPS

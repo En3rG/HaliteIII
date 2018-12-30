@@ -235,7 +235,7 @@ def populate_manhattan(matrix, val, position, dist, option):
             y_ = (y + position.y) % size
             x_ = (x + position.x) % size
 
-            if option == Option.REGULAR:
+            if option == Option.REPLACE:
                 matrix[y_, x_] = val
             elif option == Option.CUMMULATIVE:
                 matrix[y_, x_] += val
