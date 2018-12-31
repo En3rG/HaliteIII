@@ -82,8 +82,8 @@ class MyConstants():
                                                     ## V28: 0.80
 
     ## SUPPORT
-    SUPPORT_GAIN_RATIO_2P = 0.75
-    SUPPORT_GAIN_RATIO_4P = 1.00
+    SUPPORT_GAIN_RATIO_2P = 0.70
+    SUPPORT_GAIN_RATIO_4P = 0.85
 
     ## DEPOSIT
     DEPOSIT_SEARCH_PERIMETER = 5
