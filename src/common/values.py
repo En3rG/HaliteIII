@@ -76,14 +76,14 @@ class MyConstants():
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 20
-    ATTACK_TURNS_UPPER_LIMIT = 0.85
+    ATTACK_TURNS_UPPER_LIMIT = 1.00
     ATTACK_TURNS_LOWER_LIMIT = 0.00
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
     ## SUPPORT
-    SUPPORT_GAIN_RATIO_2P = 1.20
-    SUPPORT_GAIN_RATIO_4P = 1.50
+    SUPPORT_GAIN_RATIO_2P = 0.75
+    SUPPORT_GAIN_RATIO_4P = 1.00
 
     ## DEPOSIT
     DEPOSIT_SEARCH_PERIMETER = 5
