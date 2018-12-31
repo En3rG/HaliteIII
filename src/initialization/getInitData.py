@@ -89,11 +89,15 @@ class GetInitData(Data):
                                        MyConstants.MIN_DIST_BTW_DOCKS,
                                        Option.REPLACE)
 
-                    ## GET TOP HALITE WITHIN THIS AREA
+                    ## TOP N IS THE HIGHEST HALITE WITHIN THE HIGHEST AVERAGE
+                    # GET TOP HALITE WITHIN THIS AREA
                     loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
 
                     ## POPULATE TOP N POSITIONS IN cell_average.top_N
                     self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
+
+                    ## TOP N IS THE HIGHEST AVERAGE
+                    #self.myMatrix.cell_average.top_N[pos_top_ave.y][pos_top_ave.x] = value_top_ave
 
                     keep_looking = False
 

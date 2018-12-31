@@ -36,6 +36,7 @@ class PrevData():
         self.ships_returning = data.mySets.ships_returning
         self.positions_taken = data.myDicts.positions_taken
         self.ships_building = data.mySets.ships_building
+        self.rate_of_decays = data.myLists.rate_of_decays
 
 """ <<<Game Begin>>> """
 

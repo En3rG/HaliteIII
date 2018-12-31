@@ -18,6 +18,8 @@ class GetData(Data):
 
         self.update_matrix()
 
+        self.get_rate_of_decay(prev_data)
+
 
     def update_matrix(self):
         """
@@ -37,7 +39,17 @@ class GetData(Data):
 
         self.get_mean_median_halite()
 
+
+
         self.update_dock_placement()
+
+
+    def get_rate_of_decay(self, prev_data):
+        """
+        GET RATE OF DECAYS FROM PREVIOUSLY
+        """
+        if prev_data:
+            self.myLists.rate_of_decays = prev_data.rate_of_decays
 
 
     def count_ships_died(self, prev_data):

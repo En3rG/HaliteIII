@@ -143,9 +143,10 @@ class MyDicts():
         self.ships_building_dock = {}
 
 class MyLists():
-    def __init__(self):
+    def __init__(self, data):
         self.explore_target = []
         self.snipe_target = []
+        self.rate_of_decays = []
 
 
 class HaliteInfo():

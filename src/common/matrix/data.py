@@ -19,7 +19,7 @@ class Data(abc.ABC):
         self.mySets = MySets(game)
         self.myVars = MyVars(self, game)
         self.myDicts = MyDicts()
-        self.myLists = MyLists()
+        self.myLists = MyLists(self)
         self.myMatrix = Matrix(self.game.game_map.height, self.game.game_map.width)
 
 
