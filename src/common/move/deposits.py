@@ -50,7 +50,7 @@ class Deposits():
                                             avoid_enemy=True, avoid_potential_enemy=True)
         else:
             direction = self.best_direction(ship, directions, mode=MoveMode.DEPOSIT,
-                                            avoid_enemy=True, avoid_potential_enemy=False)
+                                            avoid_enemy=True, avoid_potential_enemy=True)
 
         return direction
 

@@ -205,7 +205,9 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                         and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
                         and support_distance <= ship_distance + 1:                                                      ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
-                    real_gain = (support_ship.halite_amount + potental_harvest) % 1000                                  ## CAN ONLY GET MAX 1000
+                    total_halite = support_ship.halite_amount + potental_harvest
+                    real_gain = potental_harvest if total_halite < 1000 else (1000 - support_ship.halite_amount)        ## CAN ONLY GET MAX 1000
+
                     if real_gain > my_halite * self.data.myVars.support_gain_ratio:                                     ## MORE THAN 20% GAIN THAN WHAT WE LOST
                         support_ships.add(support_id)
 
