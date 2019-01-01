@@ -126,7 +126,7 @@ class Influence(Moves, Explores, Harvests):
             self.heap_set.add(ship_id)
 
             ship = self.data.game.me._ships.get(ship_id)
-            matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
+            matrix_highest_ratio, max_ratio, destination, harvest_value = self.get_matrix_ratio(ship)
 
-            s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, harvest_value, matrix_highest_ratio)
             heapq.heappush(self.heap_explore, s)

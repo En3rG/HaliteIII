@@ -52,8 +52,8 @@ class Start(Moves, Harvests, Explores):
                 ship_id = sorted(ships)[-1]
                 self.heap_set.add(ship_id)
                 ship = self.data.game.me._ships.get(ship_id)
-                matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-                s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+                matrix_highest_ratio, max_ratio, destination, harvest_value = self.get_matrix_ratio(ship)
+                s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, harvest_value, matrix_highest_ratio)
                 self.move_ship(s)
 
             for ship_id in ships:
@@ -110,8 +110,8 @@ class Start(Moves, Harvests, Explores):
             self.heap_set.add(ship_id)
 
             ship = self.data.game.me._ships.get(ship_id)
-            matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
+            matrix_highest_ratio, max_ratio, destination, harvest_value = self.get_matrix_ratio(ship)
             ## NEGATIVE MAX RATIO TO MOVE LOWEST FIRST
-            s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+            s = ExploreShip(-max_ratio, ship.halite_amount, ship_id, destination, harvest_value, matrix_highest_ratio)
             heapq.heappush(self.heap_dist, s)
 

@@ -30,8 +30,10 @@ class ExploreTarget(Moves, Harvests, Explores):
 
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
         else:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
@@ -73,8 +75,8 @@ class ExploreTarget(Moves, Harvests, Explores):
             self.heap_set.add(ship_id)
 
             ship = self.data.game.me._ships.get(ship_id)
-            matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-            s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
+            matrix_highest_ratio, max_ratio, destination, harvest_value = self.get_matrix_ratio(ship)
+            s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, harvest_value, matrix_highest_ratio)
             heapq.heappush(self.heap_explore, s)
 
 

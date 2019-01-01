@@ -226,10 +226,13 @@ class Data(abc.ABC):
         harvest = self.myMatrix.halite.amount * 0.25
         #self.myMatrix.halite.harvest = np.round(harvest)                                                               ## FYI, numpy.round IS UNBIASED FOR XX.5 (BY DESIGN)
         self.myMatrix.halite.harvest = myRound(harvest)
+        self.myMatrix.halite.updated_harvest = myRound(harvest)
 
         self.myMatrix.halite.bonus = myBonusArea(self.myMatrix.halite.harvest, self.myMatrix.locations.influenced)
 
         self.myMatrix.halite.harvest_with_bonus = self.myMatrix.halite.harvest + self.myMatrix.halite.bonus
+        self.myMatrix.halite.updated_harvest_with_bonus = self.myMatrix.halite.harvest + self.myMatrix.halite.bonus
+
 
         ## POPULATE ENEMY CARGO, HARVEST, WITH BONUS
         harvest = self.myMatrix.halite.enemyCargo * 0.25

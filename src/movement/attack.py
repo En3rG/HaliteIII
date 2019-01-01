@@ -158,7 +158,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                                                                                      avoid_enemy=True,
 																					 avoid_potential_enemy=True)
 
-        matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
+        matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(ship)
 
         # directions = self.get_directions_target(ship, explore_destination)
         # explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)
@@ -185,7 +185,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                                                                                              avoid_enemy=True,
 																							 avoid_potential_enemy=True)
 
-                matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(support_ship)
+                matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(support_ship)
 
                 # directions = self.get_directions_target(ship, explore_destination)
                 # explore_direction, points = self.best_direction(support_ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)

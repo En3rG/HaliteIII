@@ -36,8 +36,10 @@ class Explore(Moves, Explores, Harvests):
         self.taken_destinations = set()
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
         else:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)                           ## WORST THAN JUST DOING HARVEST
+            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus                           ## WORST THAN JUST DOING HARVEST
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL

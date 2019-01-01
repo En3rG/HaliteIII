@@ -60,7 +60,14 @@ class Explores():
             return s.destination
 
     def isDestination_updated(self, s):
-        pass
+        """
+        CHECK IF HARVEST VALUE CHANGED, IF SO RECALCULATE
+        """
+        if self.harvest_matrix[s.destination.y][s.destination.x] == s.harvest_value:
+            return s.destination
+        else:
+            self.heap_set.remove(s.ship_id)
+            self.populate_heap(s.ship_id)
 
 
     def mark_taken_udpate_top_halite(self, destination):
@@ -88,7 +95,10 @@ class Explores():
         UPDATE HARVEST MATRIX (DEDUCT HALITE TO BE HARVESTED)
         """
         ship = self.data.game.me._ships.get(ship_id)
-        maximum_harvest = 0
+        maximum_capacity = 1000 - ship.halite_amount
+        maximum_harvest = maximum_capacity if self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0 else (maximum_capacity * 0.333)      ## ONLY TAKING 1/3 (CUZ OF BONUS)
+
+        self.harvest_matrix[destination.y][destination.x] -= maximum_harvest
 
     def get_matrix_ratio(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
@@ -96,8 +106,9 @@ class Explores():
         matrix_highest_ratio = self.get_highest_harvest(ship, curr_cell)
         max_ratio, coord = get_coord_max_closest(matrix_highest_ratio, distance_matrix)
         destination = Position(coord[1], coord[0])
+        harvest_value = self.harvest_matrix[destination.y][destination.x]
 
-        return matrix_highest_ratio, max_ratio, destination
+        return matrix_highest_ratio, max_ratio, destination, harvest_value
 
 
     def get_highest_harvest(self, ship, curr_cell):

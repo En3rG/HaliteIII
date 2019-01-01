@@ -50,6 +50,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         POPULATE HARVEST MATRIX TO BE USED FOR ATTACK
         """
         matrixes = [self.data.myMatrix.halite.harvest_with_bonus, self.data.myMatrix.halite.enemyCargo_harvest_with_bonus]
+        #matrixes = [self.data.myMatrix.halite.updated_harvest_with_bonus, self.data.myMatrix.halite.enemyCargo_harvest_with_bonus]
         return myMaxValueMatrix(*matrixes)
 
 
@@ -98,7 +99,12 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 ## FIRST SHIP WILL JUST HARVEST/EXPLORE
                 ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
                 destination = self.get_destination(first_ship, direction)
+
+                ## OLD WAY (MARK TAKEN)
                 self.mark_taken_udpate_top_halite(destination)
+                ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                #self.update_harvest_matrix(s.ship_id, destination)
+
                 self.move_mark_unsafe(first_ship, direction)
 
                 logging.debug("Attacking ship id: {} support ships: {}".format(first_ship.id, s.support_ships))
@@ -109,7 +115,12 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                         support_directions = self.get_directions_target(support_ship, first_ship.position)
                         direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
                         destination = self.get_destination(support_ship, direction)
+
+                        ## OLD WAY (MARK TAKEN)
                         self.mark_taken_udpate_top_halite(destination)
+                        ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                        #self.update_harvest_matrix(s.ship_id, destination)
+
                         self.move_mark_unsafe(support_ship, direction)
 
 
@@ -140,7 +151,12 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                             support_directions = self.get_directions_target(support_ship, ship.position)
                             direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
                             destination = self.get_destination(support_ship, direction)
+
+                            ## OLD WAY (MARK TAKEN)
                             self.mark_taken_udpate_top_halite(destination)
+                            ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                            #self.update_harvest_matrix(s.ship_id, destination)
+
                             self.move_mark_unsafe(support_ship, direction)
 
 
@@ -172,7 +188,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                                                                                      avoid_enemy=True,
 																					 avoid_potential_enemy=True)
 
-        matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
+        matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(ship)
 
         # directions = self.get_directions_target(ship, explore_destination)
         # explore_direction, points = self.best_direction(ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)
@@ -209,7 +225,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                                                                                              avoid_enemy=True,
 																							 avoid_potential_enemy=True)
 
-                matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(support_ship)
+                matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(support_ship)
 
                 # directions = self.get_directions_target(ship, explore_destination)
                 # explore_direction, points = self.best_direction(support_ship, directions, mode=MoveMode.EXPLORE, avoid_enemy=False)
