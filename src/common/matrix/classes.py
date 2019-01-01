@@ -80,7 +80,6 @@ class Locations():
         self.potential_enemy_collisions = np.zeros((map_height, map_width), dtype=np.int16)
         self.potential_enemy_cargo = np.zeros((map_height, map_width), dtype=np.int16)
 
-        self.dock_placement = np.zeros((map_height, map_width), dtype=np.int16)
 
 
 class Distances():
@@ -91,6 +90,11 @@ class Distances():
         self.cell = {}                                                                                                  ## ONLY FILLED IN INIT
         self.closest_dock = None
 
+class Docks():
+    def __init__(self, map_height, map_width):
+        self.averages = np.zeros((map_height, map_width), dtype=np.int16)
+        self.placement = np.zeros((map_height, map_width), dtype=np.int16)
+        self.manhattan = np.zeros((map_height, map_width), dtype=np.int16)
 
 class Matrix():
     """
@@ -101,7 +105,7 @@ class Matrix():
         self.distances = Distances(map_height, map_width)
         self.locations = Locations(map_height, map_width)
         self.cell_average = CellAverage(map_height, map_width)
-        self.dock_averages = np.zeros((map_height, map_width), dtype=np.int16)
+        self.docks = Docks(map_height, map_width)
 
         ## NO LONGER USED
         # self.sectioned = Sectioned(map_height, map_width)

@@ -40,7 +40,6 @@ class GetData(Data):
         self.get_mean_median_halite()
 
 
-
         self.update_dock_placement()
 
 

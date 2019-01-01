@@ -17,7 +17,7 @@ class Builds():
         """
         MOVE SHIPS BUILDING NOW (CURRENTLY AT DOCK POSITION)
         """
-        r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+        r, c = np.where(self.data.myMatrix.docks.manhattan == MyConstants.DOCK_MANHATTAN)
         ships_on_docks = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
@@ -36,10 +36,12 @@ class Builds():
                     self.data.command_queue.append(command)
 
                     ## CLEAR DOCK AREA, SO THAT OTHER SHIPS WILL NOT TRY TO BUILD ON IT
-                    populate_manhattan(self.data.init_data.myMatrix.locations.dock_placement,
+                    populate_manhattan(self.data.myMatrix.docks.manhattan,
                                        Matrix_val.ZERO,
                                        ship.position,
                                        MyConstants.DOCK_MANHATTAN, Option.REPLACE)
+
+                    self.data.init_data.myMatrix.docks.placement[ship.position.y][ship.position.x] = Matrix_val.ZERO
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
                     self.data.myVars.dontSpawn = True                                                                      ## PREVENT SPAWNING SHIPS
@@ -62,7 +64,7 @@ class Builds():
         """
         i = MyConstants.DOCK_MANHATTAN - 1                                                                              ## CURRENTLY RIGHT NEXT TO THE DOCK
 
-        r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
+        r, c = np.where(self.data.myMatrix.docks.manhattan == i)
         matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
@@ -109,7 +111,7 @@ class Builds():
 
         if MyConstants.DOCK_MANHATTAN > 2:
             for i in range(MyConstants.DOCK_MANHATTAN - 2, 0, -1):                                                      ## MOVES SHIPS CLOSEST TO DOCK FIRST
-                r, c = np.where(self.data.init_data.myMatrix.locations.dock_placement == i)
+                r, c = np.where(self.data.myMatrix.docks.manhattan == i)
                 matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
                 ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
 
@@ -156,7 +158,7 @@ class Builds():
     def get_dock_coord(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
         dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
-                                                      self.data.init_data.myMatrix.locations.dock_placement,
+                                                      self.data.myMatrix.docks.manhattan,
                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                       Inequality.EQUAL)
 

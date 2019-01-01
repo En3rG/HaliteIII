@@ -230,14 +230,15 @@ class GetInitData(Data):
             populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
 
             ## POPULATE DOCK PLACEMENT
-            # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
-            for i in range(0, MyConstants.DOCK_MANHATTAN):
-                populate_manhattan(self.myMatrix.locations.dock_placement, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
+            # # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
+            # for i in range(0, MyConstants.DOCK_MANHATTAN):
+            #     populate_manhattan(self.myMatrix.docks.placement, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
+            self.myMatrix.docks.placement[position.y][position.x] = Matrix_val.ONE
 
             ## GET COORD OF NEXT HIGHEST VALUE IN MATRIX
             coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
 
-        print_matrix("Final dock placement", self.myMatrix.locations.dock_placement)
+        print_matrix("Final dock placement", self.myMatrix.docks.placement)
 
 
 

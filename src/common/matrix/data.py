@@ -341,36 +341,53 @@ class Data(abc.ABC):
         REMEMBER, DOCK PLACEMENT IS ONLY CALCULATED IN INIT_DATA
         """
         r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
-        self.init_data.myMatrix.locations.dock_placement[r, c] = Matrix_val.ZERO
+        self.init_data.myMatrix.docks.placement[r, c] = Matrix_val.ZERO
 
         self.populate_dock_averages()
 
         ## ALSO UPDATE DOCK PLACEMENT WHERE AVERAGE IS TOO LOW NOW
-        indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+        indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
         for y, x in indexes:
-            original_average = self.init_data.myMatrix.dock_averages[y][x]
-            current_average = self.myMatrix.dock_averages[y][x]
+            original_average = self.init_data.myMatrix.docks.averages[y][x]
+            current_average = self.myMatrix.docks.averages[y][x]
 
-            if current_average <= original_average * MyConstants.DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
-                self.init_data.myMatrix.locations.dock_placement[r, c] = Matrix_val.ZERO
+            #logging.debug("Dock average: original_average {} current_average {}".format(original_average, current_average))
 
+            if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
+                self.init_data.myMatrix.docks.placement[y][x] = Matrix_val.ZERO
 
+        self.populate_dock_manhattan()
 
     def populate_dock_averages(self):
         """
         POPULATE AVERAGE OF EACH DOCKS (TO BE BUILT)
         """
         if getattr(self, 'init_data', None):
-            indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+            indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
 
         else:                                                                                                           ## init_data IS NONE, ITS AT GETINITDATA
-            indexes = np.argwhere(self.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+            indexes = np.argwhere(self.myMatrix.docks.placement == Matrix_val.ONE)
 
         for y, x in indexes:
-            self.myMatrix.dock_averages[y][x] = get_average_manhattan(self.myMatrix.halite.amount,
+            self.myMatrix.docks.averages[y][x] = get_average_manhattan(self.myMatrix.halite.amount,
                                                                      Position(x, y),
                                                                      MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
+        #print_matrix("dock averages ", self.myMatrix.docks.averages)
+
+    def populate_dock_manhattan(self):
+        if getattr(self, 'init_data', None):
+            indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
+        else:
+            indexes = np.argwhere(self.myMatrix.docks.placement == Matrix_val.ONE)
+
+        for y, x in indexes:
+            for i in range(0, MyConstants.DOCK_MANHATTAN):
+                position = Position(x,y)
+                logging.debug("dock position {}".format(position))
+                populate_manhattan(self.myMatrix.docks.manhattan, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
+
+        #print_matrix("dock manhattan", self.myMatrix.docks.manhattan)
 
     ## NO LONGER USED
     # def populate_sectioned_halite(self):

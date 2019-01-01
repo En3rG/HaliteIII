@@ -21,41 +21,41 @@ def spawn_ships(data):
     :param data:
     """
     ## OLD WAY
-    # max_turn_percent = None
-    #
-    # if len(data.game.players) == 2:
-    #     if data.game.game_map.height == 32:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
-    #     elif data.game.game_map.height == 40:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
-    #     elif data.game.game_map.height == 48:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
-    #     elif data.game.game_map.height == 56:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
-    #     elif data.game.game_map.height == 64:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
-    #
-    # else:  ## 4 PLAYERS
-    #     if data.game.game_map.height == 32:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
-    #     elif data.game.game_map.height == 40:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
-    #     elif data.game.game_map.height == 48:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
-    #     elif data.game.game_map.height == 56:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
-    #     elif data.game.game_map.height == 64:
-    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
-    #
-    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-    #                          and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
+    max_turn_percent = None
 
-    ## NEW WAY
-    depletion_time = get_time_of_depletion(data)
-    max_turn_percent = 0.75
+    if len(data.game.players) == 2:
+        if data.game.game_map.height == 32:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
+        elif data.game.game_map.height == 40:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
+        elif data.game.game_map.height == 48:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
+        elif data.game.game_map.height == 56:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
+        elif data.game.game_map.height == 64:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
+
+    else:  ## 4 PLAYERS
+        if data.game.game_map.height == 32:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
+        elif data.game.game_map.height == 40:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
+        elif data.game.game_map.height == 48:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
+        elif data.game.game_map.height == 56:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
+        elif data.game.game_map.height == 64:
+            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
 
     allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                             and depletion_time > constants.MAX_TURNS
+                             and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
+
+    ## NEW WAY USING DEPLETION TIME
+    # depletion_time = get_time_of_depletion(data)
+    # max_turn_percent = 0.75
+    #
+    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+    #                          and depletion_time > constants.MAX_TURNS
 
 
     shipyard = data.game.game_map[data.game.me.shipyard]
