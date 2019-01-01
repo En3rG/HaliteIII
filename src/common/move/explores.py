@@ -59,6 +59,9 @@ class Explores():
         else:
             return s.destination
 
+    def isDestination_updated(self, s):
+        pass
+
 
     def mark_taken_udpate_top_halite(self, destination):
         """
@@ -79,6 +82,13 @@ class Explores():
         #                    MyConstants.DIRECT_NEIGHBOR_DISTANCE,
         #                    cummulative=False)
 
+
+    def update_harvest_matrix(self, ship_id, destination):
+        """
+        UPDATE HARVEST MATRIX (DEDUCT HALITE TO BE HARVESTED)
+        """
+        ship = self.data.game.me._ships.get(ship_id)
+        maximum_harvest = 0
 
     def get_matrix_ratio(self, ship):
         curr_cell = (ship.position.y, ship.position.x)

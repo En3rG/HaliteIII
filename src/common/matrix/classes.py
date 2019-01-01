@@ -2,7 +2,6 @@ import numpy as np
 from src.common.values import MyConstants, Matrix_val, Inequality
 from src.common.orderedSet import OrderedSet
 
-
 class Option():
     """
     USED FOR POPULATE MANHATTAN OPTIONS
@@ -114,7 +113,7 @@ class Matrix():
 
 class MySets():
     def __init__(self, game):
-        self.ships_all = OrderedSet(game.me._ships.keys())                                                              ## ALL SHIPS
+        self.ships_all = OrderedSet(sorted(game.me._ships.keys()))                                                              ## ALL SHIPS
         self.ships_to_move = OrderedSet(sorted(game.me._ships.keys()))                                                  ## SHIPS TO MOVE (SORTING TO MATCH ORDER ONLINE)
         self.ships_returning = OrderedSet()                                                                             ## SHIPS RETURNING HALITE
         self.ships_kicked = OrderedSet()

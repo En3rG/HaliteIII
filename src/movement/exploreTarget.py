@@ -52,13 +52,20 @@ class ExploreTarget(Moves, Harvests, Explores):
             s = heapq.heappop(self.heap_explore)
             logging.debug(s)
 
+            ## OLD WAY (MARK TAKEN)
             explore_destination = self.isDestination_untaken(s)
+            ## NEW WAY
+            #explore_destination = self.isDestination_updated(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
                 self.data.myDicts.explore_ship[s.ship_id] = s
                 self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
+
+                ## OLD WAY (MARK TAKEN)
                 self.mark_taken_udpate_top_halite(explore_destination)
+                ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                #self.update_harvest_matrix(s.ship_id, explore_destination)
 
 
     def populate_heap(self, ship_id):
