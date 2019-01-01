@@ -13,6 +13,8 @@ from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
+from src.movement.swap import Swap
+from src.movement.evade import Evade
 from src.movement.attack2 import Attack2
 from src.movement.snipe import Snipe
 from src.movement.build import Build
@@ -86,6 +88,12 @@ while True:
     ## ATTACK SHIPS
     #G = Attack(data, prev_data)
     P = Attack2(data, prev_data)
+
+    ## EVADE SHIPS
+    L = Evade(data, prev_data)
+
+    ## SWAP SHIPS
+    Q = Swap(data, prev_data)
 
     ## INFLUENCE SHIPS
     K = Influence(data, prev_data)
