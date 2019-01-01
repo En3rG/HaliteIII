@@ -126,7 +126,12 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                                                                         avoid_enemy=False,
                                                                         avoid_potential_enemy=False)
                 harvest_destination = self.get_destination(ship, harvest_direction)
-                if harvest_destination == s.explore_destination:
+
+                harvest_halite = self.data.myMatrix.halite.harvest_with_bonus[harvest_destination.y][harvest_destination.x]
+
+                if harvest_destination == s.explore_destination \
+                        and ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
+                        and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO:
                     self.move_mark_unsafe(ship, harvest_direction)
 
                     for support_id in s.support_ships:
