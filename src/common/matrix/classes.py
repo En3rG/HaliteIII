@@ -151,7 +151,7 @@ class MyLists():
     def __init__(self, data):
         self.explore_target = []
         self.snipe_target = []
-        self.rate_of_decays = []
+        self.ratio_left_halite = []
 
 
 class HaliteInfo():

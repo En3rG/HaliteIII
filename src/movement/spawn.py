@@ -22,7 +22,7 @@ def spawn_ships(data):
     """
     ## OLD WAY
     max_turn_percent = None
-
+    
     if len(data.game.players) == 2:
         if data.game.game_map.height == 32:
             max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
@@ -52,10 +52,11 @@ def spawn_ships(data):
 
     ## NEW WAY USING DEPLETION TIME
     # depletion_time = get_time_of_depletion(data)
-    # max_turn_percent = 0.75
     #
-    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-    #                          and depletion_time > constants.MAX_TURNS
+    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * MyConstants.MIN_TURN_PERCENT or \
+    #              (data.game.turn_number <= constants.MAX_TURNS * MyConstants.MAX_TURN_PERCENT
+    #               and depletion_time > constants.MAX_TURNS
+    #               and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT)
 
 
     shipyard = data.game.game_map[data.game.me.shipyard]
@@ -82,25 +83,23 @@ def get_time_of_depletion(data):
 
     where N/Nt is the percent left
     """
-    ## CURRENT RATE OF DECAY
-    rate_of_decay = np.log(data.myVars.ratio_left_halite) / data.game.turn_number
-
-    ## LIMIT NUMBER OF RATE OF DECAYS
-    if len(data.myLists.rate_of_decays) < MyConstants.NUM_RATE_OF_DECAY:
-        data.myLists.rate_of_decays.append(rate_of_decay)
+    ## LIMIT NUMBER OF RATIO LEFT HALITE
+    if len(data.myLists.ratio_left_halite) < MyConstants.NUM_RATE_OF_DECAY:
+        data.myLists.ratio_left_halite.append(data.myVars.ratio_left_halite)
     else:
-        data.myLists.rate_of_decays.pop(0)                                                                              ## TAKE FIRST ELEMENT OFF
-        data.myLists.rate_of_decays.append(rate_of_decay)
+        data.myLists.ratio_left_halite.pop(0)  ## TAKE FIRST ELEMENT OFF
+        data.myLists.ratio_left_halite.append(data.myVars.ratio_left_halite)
 
-    logging.debug("data.myLists.rate_of_decays {}".format(data.myLists.rate_of_decays))
+    ## CURRENT RATE OF DECAY
+    change = data.myLists.ratio_left_halite[-1] - data.myLists.ratio_left_halite[0]
+    rate_of_decay = np.log(1.00 - change) / MyConstants.NUM_RATE_OF_DECAY
 
-    ave_rate_of_decay = sum(data.myLists.rate_of_decays) / len(data.myLists.rate_of_decays)
+    logging.debug("data.myLists.ratio_left_halite {}".format(data.myLists.ratio_left_halite))
 
-    logging.debug("ave_rate_of_decay {}".format(ave_rate_of_decay))
 
     ## DETERMINE DEPLETION TIME USING AVERAGE RATE OF DECAY
-    if ave_rate_of_decay != 0:
-        depletion_time = -np.log(MyConstants.DEPLETED_RATIO) / -ave_rate_of_decay
+    if rate_of_decay != 0:
+        depletion_time = np.log(MyConstants.DEPLETED_RATIO) / -rate_of_decay
     else:
         depletion_time = 100000
 

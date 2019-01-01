@@ -48,7 +48,7 @@ class GetData(Data):
         GET RATE OF DECAYS FROM PREVIOUSLY
         """
         if prev_data:
-            self.myLists.rate_of_decays = prev_data.rate_of_decays
+            self.myLists.ratio_left_halite = prev_data.ratio_left_halite
 
 
     def count_ships_died(self, prev_data):
