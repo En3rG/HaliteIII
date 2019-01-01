@@ -65,7 +65,10 @@ class Influence(Moves, Explores, Harvests):
                                                                                              moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
+                ## OLD WAY
                 explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                ## A STAR WAY (TIMED OUT)
+                #explore_direction = self.get_a_star_direction(ship, explore_destination, directions)
 
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
@@ -76,11 +79,8 @@ class Influence(Moves, Explores, Harvests):
                     direction = harvest_direction
                 else:
                     destination = explore_destination
-
-                    ## OLD WAY
                     direction = explore_direction
-                    ## A STAR WAY (TIMED OUT)
-                    #direction = self.get_a_star_direction(ship, explore_destination, directions)
+
 
                 # self.mark_unsafe(ship, explore_destination)
                 self.mark_taken_udpate_top_halite(destination)
