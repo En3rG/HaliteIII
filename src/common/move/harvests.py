@@ -97,7 +97,7 @@ class Harvests():
             cost, harvest = self.get_harvest(ship, direction, leave_cost, harvest_stay)
             self.set_harvestPoints(ship, direction, harvest, points, avoid_enemy, avoid_potential_enemy)
 
-        # logging.debug(points)
+        logging.debug(points)
 
         return points
 

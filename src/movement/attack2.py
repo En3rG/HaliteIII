@@ -93,7 +93,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
             first_ship = self.data.game.me._ships.get(s.ship_id)
             direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
-            if direction != Direction.Still:
+            if direction != Direction.Still and s.ship_id in self.data.mySets.ships_to_move:
                 ## IF STAYING STILL, NO NEED TO MOVE
                 ## FIRST SHIP WILL JUST HARVEST/EXPLORE
                 ## SUPPORT SHIP MOVE WILL BE DETERMINED LATER
@@ -122,7 +122,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
             if s.ship_id in self.data.mySets.ships_to_move:
                 canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS,
-                                                                        kicked=False, moveNow=False, avoid_enemy=False,
+                                                                        kicked=False, moveNow=False,
+                                                                        avoid_enemy=False,
                                                                         avoid_potential_enemy=False)
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 if harvest_destination == s.explore_destination:
@@ -174,6 +175,16 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
+        if i == 2:
+            support_ships = OrderedSet()
+            for support_id in sorted(potential_support_IDs):
+                if support_id in self.data.mySets.ships_to_move:
+                    support_ships.add(support_id)
+
+            s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
+            heapq.heappush(self.heap_kamikaze, s)
+
+
         if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
                 and len(potential_support_IDs) > num_enemy_ships:
                 #and (len(self.data.game.players) == 2):
@@ -218,14 +229,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy)
                 heapq.heappush(self.heap_support, s)
 
-        elif i == 2:
-            support_ships = OrderedSet()
-            for support_id in sorted(potential_support_IDs):
-                if support_id in self.data.mySets.ships_to_move:
-                    support_ships.add(support_id)
 
-            s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
-            heapq.heappush(self.heap_kamikaze, s)
 
 
 

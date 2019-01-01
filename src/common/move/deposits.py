@@ -109,6 +109,6 @@ class Deposits():
                               avoid_potential_enemy=avoid_potential_enemy)
             points.append(c)
 
-        # logging.debug(points)
+        logging.debug(points)
 
         return points
