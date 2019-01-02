@@ -82,8 +82,8 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
-    KAMIKAZE_HALITE_RATIO = 0.5
-    KAMIKAZE_HALITE_MAX = 825
+    KAMIKAZE_HALITE_RATIO = 0.0
+    KAMIKAZE_HALITE_MAX = 1000
 
     ## SUPPORT
     SUPPORT_GAIN_RATIO_2P = 0.70
