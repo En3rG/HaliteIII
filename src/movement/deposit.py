@@ -8,7 +8,7 @@ from src.movement.collision_prevention import avoid_collision_direction
 from src.common.points import FarthestShip, DepositPoints, ExploreShip
 from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
 from hlt.positionals import Direction
-from src.common.matrix.functions import get_coord_closest
+from src.common.matrix.functions import get_coord_closest, count_manhattan
 from hlt.positionals import Position
 from hlt import constants
 import copy
@@ -95,7 +95,7 @@ class Deposit(Moves, Deposits, Explores):
             ship = self.data.game.me._ships.get(ship_id)
 
             if ship.is_full:                                                                                            ## SHIPS JUST HIT MAX
-                self.populate_heap_dist(ship)
+                self.populate_heap_return(ship)
 
             self.populate_heap(ship_id)
 
@@ -112,7 +112,7 @@ class Deposit(Moves, Deposits, Explores):
                 ship = self.data.game.me._ships.get(ship_id)
 
                 if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:                     ## SHIP ALREADY IN DOCK
-                    self.populate_heap_dist(ship)
+                    self.populate_heap_return(ship)
 
 
     def verify_can_depositing_now(self):
@@ -131,16 +131,30 @@ class Deposit(Moves, Deposits, Explores):
 
                 if ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO \
                     and (ship.halite_amount + (current_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000 \
-                        or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
-                        self.populate_heap_dist(ship)
+                         or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
+                    self.populate_heap_return(ship)
 
+                elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO and self.hasTooManyEnemy(ship):
+                    self.populate_heap_return(ship)
                 else:
                     self.mark_taken_udpate_top_halite(explore_destination)
 
 
 
 
-    def populate_heap_dist(self, ship):
+    def hasTooManyEnemy(self, ship):
+        """
+        IF HAS TOO MANY ENEMY
+        """
+        count = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE, ship.position, MyConstants.ENEMY_CHECK_MANHATTAN)
+
+        if count > MyConstants.ENEMY_CHECK_NUM:
+            return True
+        else:
+            return False
+
+
+    def populate_heap_return(self, ship):
         """
         GET DISTANCE FROM SHIPYARD/DOCKS
         """
