@@ -68,6 +68,7 @@ class Explores():
         else:
             self.heap_set.remove(s.ship_id)
             self.populate_heap(s.ship_id)
+            return None
 
 
     def mark_taken_udpate_top_halite(self, destination):

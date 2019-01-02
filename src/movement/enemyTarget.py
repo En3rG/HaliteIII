@@ -28,14 +28,15 @@ class EnemyTarget(Moves, Harvests, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
-        self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
+        #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
+        self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
-        r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
-        self.taken_matrix[r, c] = Matrix_val.ZERO
-
-        self.taken_destinations = set()
+        # r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
+        # self.taken_matrix[r, c] = Matrix_val.ZERO
+        #
+        # self.taken_destinations = set()
 
         self.move_ships()
 
@@ -49,13 +50,20 @@ class EnemyTarget(Moves, Harvests, Explores):
             s = heapq.heappop(self.heap_explore)
             logging.debug(s)
 
-            explore_destination = self.isDestination_untaken(s)
+            ## OLD WAY (MARK TAKEN)
+            # explore_destination = self.isDestination_untaken(s)
+            ## NEW WAY
+            explore_destination = self.isDestination_updated(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 self.data.myDicts.snipe_ship.setdefault(s.ship_id, None)
                 self.data.myDicts.snipe_ship[s.ship_id] = s
                 self.data.myLists.snipe_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
-                self.mark_taken_udpate_top_halite(explore_destination)
+
+                ## OLD WAY (MARK TAKEN)
+                # self.mark_taken_udpate_top_halite(explore_destination)
+                ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                self.update_harvest_matrix(s.ship_id, explore_destination)
 
 
     def populate_heap(self, ship_id):

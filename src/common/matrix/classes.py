@@ -35,6 +35,7 @@ class Halite():
         self.updated_harvest_with_bonus = None
         self.enemyCargo = np.zeros((map_height, map_width), dtype=np.float16)                                           ## CAUSES AN ERROR WHEN INT16
         self.enemyCargo_harvest = np.zeros((map_height, map_width), dtype=np.float16)
+        self.updated_enemyCargo_harvest = np.zeros((map_height, map_width), dtype=np.float16)
         self.enemyCargo_harvest_with_bonus = np.zeros((map_height, map_width), dtype=np.float16)
 
 
