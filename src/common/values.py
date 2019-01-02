@@ -27,6 +27,7 @@ class Matrix_val():
     UNSAFE = -1
     POTENTIAL_COLLISION = -1
     UNAVAILABLE = -1
+    NINETY = 90
 
 
 class MyConstants():

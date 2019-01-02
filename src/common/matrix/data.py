@@ -343,33 +343,68 @@ class Data(abc.ABC):
         UPDATE DOCK PLACEMENT TO EXCLUDE ENEMY DOCKS/SHIPYARDS
         REMEMBER, DOCK PLACEMENT IS ONLY CALCULATED IN INIT_DATA
         """
+        ## OLD WAY
+        # r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
+        # self.init_data.myMatrix.docks.placement[r, c] = Matrix_val.ZERO
+        #
+        # self.populate_dock_averages()
+        #
+        # ## ALSO UPDATE DOCK PLACEMENT WHERE AVERAGE IS TOO LOW NOW
+        # indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
+        # for y, x in indexes:
+        #     original_average = self.init_data.myMatrix.docks.averages[y][x]
+        #     current_average = self.myMatrix.docks.averages[y][x]
+        #
+        #     #logging.debug("Dock average: original_average {} current_average {}".format(original_average, current_average))
+        #
+        #     if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
+        #         self.init_data.myMatrix.docks.placement[y][x] = Matrix_val.ZERO
+        #
+        # self.populate_dock_manhattan()
+
+
+        ## ORDERED DOCK
         r, c = np.where(self.myMatrix.locations.enemyDocks == Matrix_val.ONE)
-        self.init_data.myMatrix.docks.placement[r, c] = Matrix_val.ZERO
+        self.init_data.myMatrix.docks.order[r, c] = Matrix_val.NINETY
 
         self.populate_dock_averages()
 
         ## ALSO UPDATE DOCK PLACEMENT WHERE AVERAGE IS TOO LOW NOW
-        indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
+        indexes = np.argwhere(self.init_data.myMatrix.docks.order != Matrix_val.NINETY)
         for y, x in indexes:
             original_average = self.init_data.myMatrix.docks.averages[y][x]
             current_average = self.myMatrix.docks.averages[y][x]
 
-            #logging.debug("Dock average: original_average {} current_average {}".format(original_average, current_average))
+            if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:  ## AVERAGE TOO LOW
+                self.init_data.myMatrix.docks.order[y, x] = Matrix_val.NINETY
 
-            if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
-                self.init_data.myMatrix.docks.placement[y][x] = Matrix_val.ZERO
+        ## GET LOWEST ORDER DOCK
+        matrix = self.init_data.myMatrix.docks.order
+        y, x = np.where(matrix == matrix.min())
+        position = Position(x, y)
 
-        self.populate_dock_manhattan()
+        ## POPULATE DOCK PLACEMENT
+        for i in range(0, MyConstants.DOCK_MANHATTAN):
+            populate_manhattan(self.myMatrix.docks.manhattan, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
+
 
     def populate_dock_averages(self):
         """
         POPULATE AVERAGE OF EACH DOCKS (TO BE BUILT)
         """
-        if getattr(self, 'init_data', None):
-            indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
+        ## OLD WAY
+        # if getattr(self, 'init_data', None):
+        #     indexes = np.argwhere(self.init_data.myMatrix.docks.placement == Matrix_val.ONE)
+        # else:                                                                                                           ## init_data IS NONE, ITS AT GETINITDATA
+        #     indexes = np.argwhere(self.myMatrix.docks.placement == Matrix_val.ONE)
 
-        else:                                                                                                           ## init_data IS NONE, ITS AT GETINITDATA
-            indexes = np.argwhere(self.myMatrix.docks.placement == Matrix_val.ONE)
+        ## ORDERED DOCK
+        if getattr(self, 'init_data', None):
+            indexes = np.argwhere(self.init_data.myMatrix.docks.order != Matrix_val.NINETY)
+        else:
+            indexes = np.argwhere(self.myMatrix.docks.order != Matrix_val.NINETY)
+
+
 
         for y, x in indexes:
             self.myMatrix.docks.averages[y][x] = get_average_manhattan(self.myMatrix.halite.amount,

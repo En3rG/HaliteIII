@@ -22,7 +22,7 @@ def spawn_ships(data):
     """
     ## OLD WAY
     max_turn_percent = None
-    
+
     if len(data.game.players) == 2:
         if data.game.game_map.height == 32:
             max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS

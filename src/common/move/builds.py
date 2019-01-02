@@ -42,6 +42,7 @@ class Builds():
                                        MyConstants.DOCK_MANHATTAN, Option.REPLACE)
 
                     self.data.init_data.myMatrix.docks.placement[ship.position.y][ship.position.x] = Matrix_val.ZERO
+                    self.data.init_data.myMatrix.docks.order[ship.position.y][ship.position.x] = Matrix_val.NINETY
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
                     self.data.myVars.dontSpawn = True                                                                      ## PREVENT SPAWNING SHIPS

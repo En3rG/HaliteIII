@@ -96,6 +96,8 @@ class Docks():
         self.averages = np.zeros((map_height, map_width), dtype=np.int16)
         self.placement = np.zeros((map_height, map_width), dtype=np.int16)
         self.manhattan = np.zeros((map_height, map_width), dtype=np.int16)
+        self.order = np.zeros((map_height, map_width), dtype=np.int16)
+        self.order.fill(Matrix_val.NINETY)
 
 class Matrix():
     """

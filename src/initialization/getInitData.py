@@ -6,6 +6,7 @@ from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
 from src.common.matrix.classes import Option
 from src.common.print import print_heading
+from src.common.matrix.vectorized import myMinValueMatrix
 import numpy as np
 import logging
 import copy
@@ -204,45 +205,122 @@ class GetInitData(Data):
         shipyard = self.game.me.shipyard
         matrix = copy.deepcopy(self.myMatrix.cell_average.top_N)
 
-        print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
+        ## OLD WAY
+        # print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
+        #
+        # ## ELIMINATE TOP N CLOSE TO SHIPYARD
+        # populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        #
+        # print_matrix("Eliminate close to shipyard: top N", matrix)
+        #
+        # ## ELIMINATE TOP N CLOSE TO ENEMY SHIPYARD
+        # for id, player in self.game.players.items():
+        #     if id != self.game.me.id:
+        #         enemyShipyard_position = player.shipyard.position
+        #         populate_manhattan(matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        #
+        # print_matrix("Eliminate close to enemy shipyard: top N", matrix)
+        #
+        #
+        # ## GET COORD OF HIGHEST VALUE IN MATRIX
+        # ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
+        # curr_cell = (shipyard.position.y, shipyard.position.x)
+        # coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
+        # while val > 1:
+        #     ## ELIMINATE TOP N CLOSE TO THIS AREA
+        #     position = Position(coord[1], coord[0])
+        #     populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        #
+        #     ## POPULATE DOCK PLACEMENT
+        #     # # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
+        #     # for i in range(0, MyConstants.DOCK_MANHATTAN):
+        #     #     populate_manhattan(self.myMatrix.docks.placement, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
+        #     self.myMatrix.docks.placement[position.y][position.x] = Matrix_val.ONE
+        #
+        #     ## GET COORD OF NEXT HIGHEST VALUE IN MATRIX
+        #     coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
+        #
+        # print_matrix("Final dock placement", self.myMatrix.docks.placement)
+
+
+        ## ORDERED DOCK
+        print_matrix("Average: top N", matrix)
+
+        self.get_dock_order()
+
+        indexes = np.argwhere(self.myMatrix.docks.order != Matrix_val.NINETY)
+        self.myMatrix.docks.placement[indexes] = Matrix_val.ONE
+
+
+    def get_dock_order(self):
+        """
+        GET ORDER OF WHAT DOCKS TO BUILD
+        """
+        order_num = 1
+        shipyard = self.game.me.shipyard
+        shipyard_coord = (shipyard.position.y, shipyard.position.x)
+        value_matrix = copy.deepcopy(self.myMatrix.cell_average.top_N)
+        distance_coords = {shipyard_coord}
 
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
-        populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        populate_manhattan(value_matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
 
-        print_matrix("Eliminate close to shipyard: top N", matrix)
+        print_matrix("Eliminate close to shipyard: top N", value_matrix)
 
         ## ELIMINATE TOP N CLOSE TO ENEMY SHIPYARD
         for id, player in self.game.players.items():
             if id != self.game.me.id:
                 enemyShipyard_position = player.shipyard.position
-                populate_manhattan(matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+                populate_manhattan(value_matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.MIN_DIST_BTW_DOCKS,
+                                   Option.REPLACE)
 
-        print_matrix("Eliminate close to enemy shipyard: top N", matrix)
+        print_matrix("Eliminate close to enemy shipyard: top N", value_matrix)
 
+        ratio, distances = self.get_ratio(value_matrix, distance_coords)
 
-        ## GET COORD OF HIGHEST VALUE IN MATRIX
-        ## LOCATED ON HIGHEST HALITE (WITH HIGHEST AVERAGE VALUE FROM THAT SECTION)
-        curr_cell = (shipyard.position.y, shipyard.position.x)
-        coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
-        while val > 1:
-            ## ELIMINATE TOP N CLOSE TO THIS AREA
+        print_matrix("ratio order_num {}".format(order_num), ratio)
+
+        ## GET HIGHEST RATIO
+        coord, distance, val = get_coord_closest(ratio.max(), ratio, distances, Inequality.EQUAL)
+
+        while val > 0:
+            ## POPULATE ORDER MATRIX
             position = Position(coord[1], coord[0])
-            populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+            self.myMatrix.docks.order[position.y][position.x] = order_num
+            order_num += 1
 
-            ## POPULATE DOCK PLACEMENT
-            # # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
-            # for i in range(0, MyConstants.DOCK_MANHATTAN):
-            #     populate_manhattan(self.myMatrix.docks.placement, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
-            self.myMatrix.docks.placement[position.y][position.x] = Matrix_val.ONE
+            ## ELIMINATE TOP N CLOSE TO THIS AREA
+            populate_manhattan(value_matrix, Matrix_val.ZERO, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
 
-            ## GET COORD OF NEXT HIGHEST VALUE IN MATRIX
-            coord, distance, val = get_coord_closest(matrix.max(), matrix, self.myMatrix.distances.cell[curr_cell], Inequality.EQUAL)
+            print_matrix("order matrix", self.myMatrix.docks.order)
 
-        print_matrix("Final dock placement", self.myMatrix.docks.placement)
+            ## CLEAR THAT LOCATION
+            value_matrix[position.y][position.x] = Matrix_val.ZERO
+
+            ## ADD THIS COORD TO DISTANCES TO TAKE INTO ACCOUNT
+            distance_coords.add(coord)
+
+            ratio, distances = self.get_ratio(value_matrix, distance_coords)
+
+            print_matrix("ratio order_num {}".format(order_num), ratio)
+
+            ## GET HIGHEST RATIO
+            coord, distance, val = get_coord_closest(ratio.max(), ratio, distances, Inequality.EQUAL)
 
 
+    def get_ratio(self, value_matrix, distance_coords):
+        """
+        GET RATIO GIVEN THE DISTANCE MATRICES TO BE CONSIDERED
+        """
+        distances = []
+        for coord in distance_coords:
+            distances.append(copy.deepcopy(self.myMatrix.distances.cell[coord]))
 
+        distance_matrix = myMinValueMatrix(*distances)
 
+        ratio = np.divide(value_matrix, distance_matrix, out=np.zeros_like(value_matrix), where=distance_matrix != 0)
+
+        return ratio, distance_matrix
 
 
 
