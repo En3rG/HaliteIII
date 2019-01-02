@@ -126,13 +126,15 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
     def move_kamikaze(self):
         while self.heap_kamikaze:
-            s = heapq.heappop(self.heap_kamikaze)
-            logging.debug(s)
+            s_kamikaze = heapq.heappop(self.heap_kamikaze)
+            logging.debug(s_kamikaze)
 
-            ship = self.data.game.me._ships.get(s.ship_id)
+            s_exploreTarget = self.data.myDicts.explore_ship[s_kamikaze.ship_id]
 
-            if s.ship_id in self.data.mySets.ships_to_move:
-                canHarvest, harvest_direction = self.check_harvestLater(s.ship_id, MyConstants.DIRECTIONS,
+            ship = self.data.game.me._ships.get(s_kamikaze.ship_id)
+
+            if s_kamikaze.ship_id in self.data.mySets.ships_to_move:
+                canHarvest, harvest_direction = self.check_harvestLater(s_kamikaze.ship_id, MyConstants.DIRECTIONS,
                                                                         kicked=False, moveNow=False,
                                                                         avoid_enemy=False,
                                                                         avoid_potential_enemy=False)
@@ -140,12 +142,14 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 harvest_halite = self.data.myMatrix.halite.harvest_with_bonus[harvest_destination.y][harvest_destination.x]
 
-                if harvest_destination == s.explore_destination \
+                logging.debug("harvest_destination {} s.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
+
+                if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
                         and ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
                         and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO:
                     self.move_mark_unsafe(ship, harvest_direction)
 
-                    for support_id in s.support_ships:
+                    for support_id in s_kamikaze.support_ships:
                         if support_id in self.data.mySets.ships_to_move:
                             support_ship = self.data.game.me._ships.get(support_id)
                             support_directions = self.get_directions_target(support_ship, ship.position)
