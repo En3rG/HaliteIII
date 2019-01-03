@@ -28,8 +28,12 @@ class EnemyTarget(Moves, Harvests, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
-        #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
-        self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+            # self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
+            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
+        else:
+            # self.harvest_matrix = self.data.myMatrix.halite.enemyCargo_harvest_with_bonus
+            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest_with_bonus
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
@@ -48,7 +52,6 @@ class EnemyTarget(Moves, Harvests, Explores):
 
         while self.heap_explore:
             s = heapq.heappop(self.heap_explore)
-            logging.debug(s)
 
             ## OLD WAY (MARK TAKEN)
             # explore_destination = self.isDestination_untaken(s)
@@ -56,6 +59,7 @@ class EnemyTarget(Moves, Harvests, Explores):
             explore_destination = self.isDestination_updated(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
+                logging.debug(s)
                 self.data.myDicts.snipe_ship.setdefault(s.ship_id, None)
                 self.data.myDicts.snipe_ship[s.ship_id] = s
                 self.data.myLists.snipe_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))

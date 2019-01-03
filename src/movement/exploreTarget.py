@@ -52,7 +52,6 @@ class ExploreTarget(Moves, Harvests, Explores):
 
         while self.heap_explore:
             s = heapq.heappop(self.heap_explore)
-            logging.debug(s)
 
             ## OLD WAY (MARK TAKEN)
             #explore_destination = self.isDestination_untaken(s)
@@ -60,6 +59,7 @@ class ExploreTarget(Moves, Harvests, Explores):
             explore_destination = self.isDestination_updated(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
+                logging.debug(s)
                 self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
                 self.data.myDicts.explore_ship[s.ship_id] = s
                 self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))

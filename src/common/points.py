@@ -181,10 +181,12 @@ class ExploreShip:
         return NotImplemented
 
     def __repr__(self):
-        return "{} Ship id: {} ratio: {} cargo: {}".format(self.__class__.__name__,
+        return "{} Ship id: {} ratio: {} cargo: {} destination {} harvest_value {}".format(self.__class__.__name__,
                                                            self.ship_id,
                                                            self.ratio,
-                                                           self.cargo)
+                                                           self.cargo,
+                                                           self.destination,
+                                                           self.harvest_value)
 
 
 class KamikazeShip:
@@ -224,9 +226,10 @@ class KamikazeShip:
         return NotImplemented
 
     def __repr__(self):
-        return "{} Ship id: {} cargo: {} support_ships {}".format(self.__class__.__name__,
+        return "{} Ship id: {} cargo: {} destination {} support_ships {}".format(self.__class__.__name__,
                                                            self.ship_id,
                                                            self.cargo,
+                                                           self.destination,
                                                            self.support_ships)
 
 

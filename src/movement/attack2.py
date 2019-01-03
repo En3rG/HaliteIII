@@ -94,6 +94,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
             first_ship = self.data.game.me._ships.get(s.ship_id)
             direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
+            logging.debug("direction {}".format(direction))
+
             if direction != Direction.Still and s.ship_id in self.data.mySets.ships_to_move:
                 ## IF STAYING STILL, NO NEED TO MOVE
                 ## FIRST SHIP WILL JUST HARVEST/EXPLORE
@@ -130,6 +132,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
             logging.debug(s_kamikaze)
 
             s_exploreTarget = self.data.myDicts.explore_ship[s_kamikaze.ship_id]
+
+            logging.debug("s_kamikaze.ship_id {}".format(s_kamikaze.ship_id))
 
             ship = self.data.game.me._ships.get(s_kamikaze.ship_id)
 
@@ -200,7 +204,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        if i == 2:
+        if i == 1 or i == 2:
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
                 if support_id in self.data.mySets.ships_to_move:
