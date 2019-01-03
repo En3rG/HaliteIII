@@ -146,9 +146,10 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 harvest_halite = self.data.myMatrix.halite.harvest_with_bonus[harvest_destination.y][harvest_destination.x]
 
-                logging.debug("harvest_destination {} s.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
+                logging.debug("harvest_destination {} s_kamikaze.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
 
-                if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
+                #if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
+                if harvest_destination == s_kamikaze.destination \
                         and ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
                         and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO:
                     self.move_mark_unsafe(ship, harvest_direction)
@@ -204,7 +205,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        if i == 1 or i == 2:
+        #if i == 1 or i == 2:
+        if i == 2:
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
                 if support_id in self.data.mySets.ships_to_move:

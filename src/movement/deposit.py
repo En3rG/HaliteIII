@@ -134,8 +134,8 @@ class Deposit(Moves, Deposits, Explores):
                          or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
                     self.populate_heap_return(ship)
 
-                elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO and self.hasTooManyEnemy(ship):
-                    self.populate_heap_return(ship)
+                # elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO and self.hasTooManyEnemy(ship):
+                #     self.populate_heap_return(ship)
                 else:
                     self.mark_taken_udpate_top_halite(explore_destination)
 
