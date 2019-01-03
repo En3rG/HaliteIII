@@ -6,7 +6,6 @@ from src.common.values import Matrix_val, MyConstants, Inequality
 from hlt.positionals import Position
 from src.common.matrix.classes import Option
 from src.common.print import print_heading
-from src.common.matrix.vectorized import myMinValueMatrix
 import numpy as np
 import logging
 import copy
@@ -24,6 +23,7 @@ class GetInitData(Data):
 
         print_heading("Gathering Initialized data......")
 
+        self.unavailable_area = np.zeros((game.game_map.height, game.game_map.width), dtype=np.float16)
         self.update_matrix()
 
     def update_matrix(self):
@@ -66,7 +66,7 @@ class GetInitData(Data):
         average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
 
         ## POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
-        self.populate_shipyards_unavailable(average_manhattan)
+        self.populate_shipyards_unavailable()
 
         ## GET INDEXES OF TOP N AVERAGES
         for _ in range(MyConstants.TOP_N):
@@ -81,42 +81,45 @@ class GetInitData(Data):
                 loc_top_ave = (index_top_ave[0], index_top_ave[1])
                 pos_top_ave = Position(loc_top_ave[1], loc_top_ave[0])                                                  ## Position(x, y)
 
+                if self.unavailable_area[pos_top_ave.y][pos_top_ave.x] != Matrix_val.UNAVAILABLE:
+                    ## SET THE SURROUNDING TO UNAVAILABLE
+                    populate_manhattan(self.unavailable_area,
+                                       Matrix_val.UNAVAILABLE,
+                                       pos_top_ave,
+                                       MyConstants.MIN_DIST_BTW_DOCKS,
+                                       Option.REPLACE)
 
-                ## SET THE SURROUNDING TO UNAVAILABLE
-                populate_manhattan(average_manhattan,
-                                   Matrix_val.ZERO,
-                                   pos_top_ave,
-                                   MyConstants.MIN_DIST_BTW_DOCKS,
-                                   Option.REPLACE)
+                    ## TOP N IS THE HIGHEST HALITE WITHIN THE HIGHEST AVERAGE
+                    ## GET TOP HALITE WITHIN THIS AREA
+                    loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
 
-                ## TOP N IS THE HIGHEST HALITE WITHIN THE HIGHEST AVERAGE
-                ## GET TOP HALITE WITHIN THIS AREA
-                loc_top_halite_normalized, pos_top_halite_normalized = self.get_closest_top_halite(loc_top_ave, pos_top_ave)
+                    ## POPULATE TOP N POSITIONS IN cell_average.top_N
+                    self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
 
-                ## POPULATE TOP N POSITIONS IN cell_average.top_N
-                self.myMatrix.cell_average.top_N[loc_top_halite_normalized[0]][loc_top_halite_normalized[1]] = value_top_ave
+                    ## TOP N IS THE HIGHEST AVERAGE
+                    # self.myMatrix.cell_average.top_N[pos_top_ave.y][pos_top_ave.x] = value_top_ave
 
-                ## TOP N IS THE HIGHEST AVERAGE
-                # self.myMatrix.cell_average.top_N[pos_top_ave.y][pos_top_ave.x] = value_top_ave
+                    keep_looking = False
 
-                keep_looking = False
+                ## CHANGE THIS TO ZERO SO IT WONT BE TAKEN AS HIGHEST AVERAGE LATER
+                average_manhattan[pos_top_ave.y][pos_top_ave.x] = Matrix_val.ZERO
 
                 ## WHEN TOP AVERAGE IS BELOW THE TOTAL AVERAGE, WILL EXIT FOR LOOP
-                if value_top_ave == Matrix_val.ZERO:
+                if value_top_ave < self.myVars.average_halite:
                     quit = True
                     break
 
             if quit: break
 
 
-    def populate_shipyards_unavailable(self, matrix):
+    def populate_shipyards_unavailable(self):
         """
         POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
         SO NO DOCK WILL BE TOO CLOSE TO SHIPYARD
         """
         ## POPULATE AROUND MY SHIPYARD
-        populate_manhattan(matrix,
-                           Matrix_val.ZERO,
+        populate_manhattan(self.unavailable_area,
+                           Matrix_val.UNAVAILABLE,
                            self.game.me.shipyard.position,
                            MyConstants.MIN_DIST_BTW_DOCKS,
                            Option.REPLACE)
@@ -124,8 +127,8 @@ class GetInitData(Data):
         ## POPULATE AROUND ENEMY SHIPYARD
         for id, player in self.game.players.items():
             if id != self.game.me.id:
-                populate_manhattan(matrix,
-                                   Matrix_val.ZERO,
+                populate_manhattan(self.unavailable_area,
+                                   Matrix_val.UNAVAILABLE,
                                    player.shipyard.position,
                                    MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
                                    Option.REPLACE)
