@@ -118,7 +118,7 @@ class GetInitData(Data):
         populate_manhattan(matrix,
                            Matrix_val.ZERO,
                            self.game.me.shipyard.position,
-                           MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
+                           MyConstants.MIN_DIST_BTW_DOCKS,
                            Option.REPLACE)
 
         ## POPULATE AROUND ENEMY SHIPYARD

@@ -113,7 +113,7 @@ class MyConstants():
                                                     ## V28: 35
 
 
-    EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.00    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+    EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.75    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
                                                     ## 1 MEANS NEVER WILL USE IT
     HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.00    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT
