@@ -108,7 +108,7 @@ class Deposit(Moves, Deposits, Explores):
         POPULATE HEAP REGARDING SHIPS DEPOSITING BEFORE
         """
         if self.prev_data:
-            for ship_id in (self.prev_data.ships_returning & self.data.mySets.ships_to_move):
+            for ship_id in sorted(self.prev_data.ships_returning & self.data.mySets.ships_to_move):
                 ship = self.data.game.me._ships.get(ship_id)
 
                 if ship and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:                     ## SHIP ALREADY IN DOCK

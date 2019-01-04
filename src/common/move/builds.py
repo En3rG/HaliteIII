@@ -21,7 +21,7 @@ class Builds():
         ships_on_docks = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
-        for ship_id in ships_building:
+        for ship_id in sorted(ships_building):
             ship = self.data.game.me._ships.get(ship_id)
             cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
 
@@ -71,7 +71,7 @@ class Builds():
 
         logging.debug("ship next to dock: {}".format(ships_going_dock))
 
-        for ship_id in ships_going_dock:
+        for ship_id in sorted(ships_going_dock):
             ship = self.data.game.me._ships.get(ship_id)
             dock_coord = self.get_dock_coord(ship)                                                                      ## DOCK COORD IS NONE IF ENEMY BUILT THERE
             self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
@@ -119,7 +119,7 @@ class Builds():
                 logging.debug("ship going to dock: {} at i {}".format(ships_going_dock, i))
 
                 ## POPULATE HEAP
-                for ship_id in ships_going_dock:
+                for ship_id in sorted(ships_going_dock):
                     ship = self.data.game.me._ships.get(ship_id)
                     s = BuildShip(ship.halite_amount, ship_id)
                     heapq.heappush(heap_halite, s)

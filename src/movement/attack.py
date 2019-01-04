@@ -67,7 +67,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 self.heap_kamikaze = []
                 self.heap_support = []                                                                                  ## RESET PER ITERATION
 
-                for ship_id in ships_attacking:
+                for ship_id in sorted(ships_attacking):
                     self.populate_heap(ship_id, i)
 
                 ## MOVE ATTACK/SUPPORT SHIPS

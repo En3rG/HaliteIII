@@ -39,7 +39,7 @@ class Influence(Moves, Explores, Harvests):
         ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_influenced = ships_engaging & self.data.mySets.ships_to_move
 
-        for ship_id in ships_influenced:
+        for ship_id in sorted(ships_influenced):
             self.populate_heap(ship_id)
 
         while self.heap_explore:
