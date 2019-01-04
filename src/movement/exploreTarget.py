@@ -29,18 +29,18 @@ class ExploreTarget(Moves, Harvests, Explores):
         self.ships_kicked_temp = OrderedSet()
 
         if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
-            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
+            #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
+            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
         else:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
-            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus
+            #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
+            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
-        r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
-        self.taken_matrix[r, c] = Matrix_val.ZERO
-
-        self.taken_destinations = set()
+        # r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
+        # self.taken_matrix[r, c] = Matrix_val.ZERO
+        #
+        # self.taken_destinations = set()
 
         self.move_ships()
 
@@ -54,9 +54,9 @@ class ExploreTarget(Moves, Harvests, Explores):
             s = heapq.heappop(self.heap_explore)
 
             ## OLD WAY (MARK TAKEN)
-            explore_destination = self.isDestination_untaken(s)
+            #explore_destination = self.isDestination_untaken(s)
             ## NEW WAY
-            #explore_destination = self.isDestination_updated(s)
+            explore_destination = self.isDestination_updated(s)
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 logging.debug(s)
@@ -65,9 +65,9 @@ class ExploreTarget(Moves, Harvests, Explores):
                 self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
 
                 ## OLD WAY (MARK TAKEN)
-                self.mark_taken_udpate_top_halite(explore_destination)
+                #self.mark_taken_udpate_top_halite(explore_destination)
                 ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
-                #self.update_harvest_matrix(s.ship_id, explore_destination)
+                self.update_harvest_matrix(s.ship_id, explore_destination)
 
 
     def populate_heap(self, ship_id):
