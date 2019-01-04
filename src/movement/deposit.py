@@ -63,7 +63,7 @@ class Deposit(Moves, Deposits, Explores):
 
 
     def move_ships(self):
-        print_heading("Moving depositing ships......")
+        print_heading("Gathering depositing ships......")
 
         ## MOVE SHIPS DEPOSITING PREVIOUSLY
         self.check_depositing_previously()
@@ -74,17 +74,21 @@ class Deposit(Moves, Deposits, Explores):
         ## MOVE SHIPS, BASED ON HEAP
         while self.heap_dist:
             ## MOVE KICKED SHIPS FIRST (MAYBE BY BUILDING)
-            while self.data.mySets.ships_kicked:
-                ship_kicked = self.data.mySets.ships_kicked.pop()
-                logging.debug("Moving kicked ship ({}) by a depositing ship".format(ship_kicked))
-                ship = self.data.game.me._ships.get(ship_kicked)
-                direction = avoid_collision_direction(self, ship, directions=None)
-                self.move_mark_unsafe(ship, direction)
+            # while self.data.mySets.ships_kicked:
+            #     ship_kicked = self.data.mySets.ships_kicked.pop()
+            #     logging.debug("Moving kicked ship ({}) by a depositing ship".format(ship_kicked))
+            #     ship = self.data.game.me._ships.get(ship_kicked)
+            #     direction = avoid_collision_direction(self, ship, directions=None)
+            #     self.move_mark_unsafe(ship, direction)
 
             s = heapq.heappop(self.heap_dist)
             if s.ship_id in self.data.mySets.ships_to_move:                                                             ## MEANS IT HAS MOVED BEFORE (MAYBE KICKED)
                 ship = self.data.game.me._ships.get(s.ship_id)
-                self.depositNow(ship, s.dock_position, s.directions)
+                #self.depositNow(ship, s.dock_position, s.directions)
+
+                ## INSTEAD OF MOVING IT NOW, SAVE THAT DATA AND MOVE THE SHIPS LATER
+                if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
+                self.data.myLists.deposit_ships.append(s)
 
 
     def check_depositing_now(self):

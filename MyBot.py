@@ -5,6 +5,7 @@ from src.initialization.getInitData import GetInitData
 from src.initialization.getData import GetData
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
+from src.movement.moveDeposit import MoveDeposit
 from src.movement.influence import Influence
 from src.movement.explore import Explore
 from src.movement.harvest import Harvest
@@ -81,6 +82,8 @@ while True:
     ## GET EACH SHIP'S TARGET
     M = ExploreTarget(data, prev_data)
     N = EnemyTarget(data, prev_data)
+
+    R = MoveDeposit(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)

@@ -153,6 +153,7 @@ class MyDicts():
 
 class MyLists():
     def __init__(self, data):
+        self.deposit_ships = []
         self.explore_target = []
         self.snipe_target = []
         self.ratio_left_halite = []
