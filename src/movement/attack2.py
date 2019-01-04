@@ -205,8 +205,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        #if i == 1 or i == 2:
-        if i == 2:
+        if i == 1 or i == 2:
+        #if i == 2:
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
                 if support_id in self.data.mySets.ships_to_move:
