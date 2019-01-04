@@ -148,8 +148,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 logging.debug("harvest_destination {} s_kamikaze.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
 
-                #if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
-                if harvest_destination == s_kamikaze.destination \
+                #if harvest_destination == s_kamikaze.destination \
+                if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
                         and ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
                         and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO:
                     self.move_mark_unsafe(ship, harvest_direction)
