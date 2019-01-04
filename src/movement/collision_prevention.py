@@ -4,6 +4,19 @@ from src.common.values import MyConstants, MoveMode
 from src.common.points import CollisionPoints
 from src.common.orderedSet import OrderedSet
 
+def get_adjacent_directions(direction):
+    """
+    GET ITS SIDE DIRECTIONS (NOT THE OPPOSITE THOUGH)
+    """
+    if direction == Direction.North:
+        return [Direction.West, Direction.East]
+    elif direction == Direction.East:
+        return [Direction.North, Direction.South]
+    elif direction == Direction.South:
+        return [Direction.East, Direction.West]
+    elif direction == Direction.West:
+        return [Direction.South, Direction.North]
+
 def avoid_collision_direction(Moves, ship, directions):
     """
     GET BEST DIRECTION FOR KICKED SHIP
@@ -27,17 +40,23 @@ def get_move_points_collision(Moves, ship, directions):
     :return:
     """
     points = []
-    try:
-        directions_set = OrderedSet(directions)
-    except:
-        directions_set = OrderedSet()
+
+    ## SET FIRST PRIORITY DIRECTIONS
+    try: first_priority = OrderedSet(directions)
+    except: first_priority = OrderedSet()
+
+    ## SET SECOND PRIORITY DIRECTIONS
+    second_priority = OrderedSet()
+    for direction in directions:
+        directions = set(get_adjacent_directions(direction))
+        second_priority.update(directions)
 
     for direction in MyConstants.DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)
 
         safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]
         occupied = Moves.data.myMatrix.locations.occupied[destination.y][destination.x]
-        priority_direction = 1 if direction in directions_set else 0
+        priority_direction = 2 if direction in first_priority else 1 if direction in second_priority else 0
         cost = Moves.data.myMatrix.halite.cost[ship.position.y][ship.position.x]
         harvest = Moves.data.myMatrix.halite.harvest_with_bonus[destination.y][destination.x]
         harvest_amnt = harvest - cost

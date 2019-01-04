@@ -7,6 +7,8 @@ from src.common.print import print_heading
 from src.movement.collision_prevention import avoid_collision_direction
 from src.common.points import FarthestShip, DepositPoints, ExploreShip
 from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
+from src.common.matrix.functions import get_coord_closest, pad_around, Section
+from src.common.astar import a_star, get_goal_in_section
 from hlt.positionals import Direction
 from src.common.matrix.functions import get_coord_closest, count_manhattan
 from hlt.positionals import Position
@@ -41,5 +43,21 @@ class MoveDeposit(Moves, Deposits, Explores):
         GO TOWARDS EXPLORE TARGET FIRST
         IT THAT IS NOT SAFE, GO ANYWHERE SAFE
         """
-        direction = avoid_collision_direction(self, ship, directions=None)
+        explore_ship = self.data.myDicts.explore_ship[ship.id]
+        explore_destination = explore_ship.destination
+        explore_ratio = -explore_ship.ratio
+
+        snipe_ship = self.data.myDicts.snipe_ship[ship.id]
+        snipe_destination = snipe_ship.destination
+        snipe_ratio = -snipe_ship.ratio
+
+        ## DETERMINE WHETHER TO SNIPE OR EXPLORE
+        if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+            directions = self.get_directions_target(ship, snipe_destination)
+        else:
+            directions = self.get_directions_target(ship, explore_destination)
+
+        direction = avoid_collision_direction(self, ship, directions=directions)
         self.move_mark_unsafe(ship, direction)
+
+
