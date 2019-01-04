@@ -148,10 +148,13 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 logging.debug("harvest_destination {} s_kamikaze.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
 
-                #if harvest_destination == s_kamikaze.destination \
-                if (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination) \
-                        and ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
-                        and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO:
+                if ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
+                    and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO \
+                    and ((len(self.data.game.players) == 2) and (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination)) \
+                        or harvest_destination == s_kamikaze.destination:
+                    ## IF 2 PLAYERS, CHECK EITHER KAMIKAZE OR EXPLORE DESTINATION
+                    ## IF 4 PLAYERS, JUST CHECK KAMIKAZE DESTINATION
+
                     self.move_mark_unsafe(ship, harvest_direction)
 
                     for support_id in s_kamikaze.support_ships:
@@ -205,15 +208,11 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        if i == 1 or i == 2:
-        #if i == 2:
-            support_ships = OrderedSet()
-            for support_id in sorted(potential_support_IDs):
-                if support_id in self.data.mySets.ships_to_move:
-                    support_ships.add(support_id)
-
-            s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
-            heapq.heappush(self.heap_kamikaze, s)
+        if ((len(self.data.game.players) == 2) and (i == 1 or i == 2)) \
+                or i == 2:
+            ## FOR 2 PLAYERS, CHECK i = 1 or 2
+            ## FOR 4 PLAYERS, JUST CHECK i = 2
+            self.populate_kamikaze(ship, potential_support_IDs, explore_destination)
 
 
         if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
@@ -261,8 +260,14 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 heapq.heappush(self.heap_support, s)
 
 
+    def populate_kamikaze(self, ship, potential_support_IDs, explore_destination):
+        support_ships = OrderedSet()
+        for support_id in sorted(potential_support_IDs):
+            if support_id in self.data.mySets.ships_to_move:
+                support_ships.add(support_id)
 
-
+        s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
+        heapq.heappush(self.heap_kamikaze, s)
 
 
 
