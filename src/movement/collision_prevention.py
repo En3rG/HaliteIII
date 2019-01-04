@@ -17,6 +17,30 @@ def get_adjacent_directions(direction):
     elif direction == Direction.West:
         return [Direction.South, Direction.North]
 
+
+def move_kicked_ship(Moves, ship):
+    """
+    GO TOWARDS EXPLORE TARGET FIRST
+    IT THAT IS NOT SAFE, GO ANYWHERE SAFE
+    """
+    explore_ship = Moves.data.myDicts.explore_ship[ship.id]
+    explore_destination = explore_ship.destination
+    explore_ratio = -explore_ship.ratio
+
+    snipe_ship = Moves.data.myDicts.snipe_ship[ship.id]
+    snipe_destination = snipe_ship.destination
+    snipe_ratio = -snipe_ship.ratio
+
+    ## DETERMINE WHETHER TO SNIPE OR EXPLORE
+    if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+        directions = Moves.get_directions_target(ship, snipe_destination)
+    else:
+        directions = Moves.get_directions_target(ship, explore_destination)
+
+    direction = avoid_collision_direction(Moves, ship, directions=directions)
+    Moves.move_mark_unsafe(ship, direction)
+
+
 def avoid_collision_direction(Moves, ship, directions):
     """
     GET BEST DIRECTION FOR KICKED SHIP
