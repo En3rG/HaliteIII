@@ -120,7 +120,7 @@ class MyConstants():
                                                     ## 0 MEANS ALWAYS WILL USE IT
 
     ## SPAWNING
-    STOP_SPAWNING_HALITE_LEFT = 0.40                ## USED TO BE:
+    STOP_SPAWNING_HALITE_LEFT = 0.45                ## USED TO BE:
                                                     ## V28: 0.40
     ALLOW_SPAWNING_2P_32_TURNS = 0.65
     ALLOW_SPAWNING_2P_40_TURNS = 0.65
