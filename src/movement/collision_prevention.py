@@ -23,21 +23,26 @@ def move_kicked_ship(Moves, ship):
     GO TOWARDS EXPLORE TARGET FIRST
     IT THAT IS NOT SAFE, GO ANYWHERE SAFE
     """
-    explore_ship = Moves.data.myDicts.explore_ship[ship.id]
-    explore_destination = explore_ship.destination
-    explore_ratio = -explore_ship.ratio
+    try:
+        explore_ship = Moves.data.myDicts.explore_ship[ship.id]
+        explore_destination = explore_ship.destination
+        explore_ratio = -explore_ship.ratio
 
-    snipe_ship = Moves.data.myDicts.snipe_ship[ship.id]
-    snipe_destination = snipe_ship.destination
-    snipe_ratio = -snipe_ship.ratio
+        snipe_ship = Moves.data.myDicts.snipe_ship[ship.id]
+        snipe_destination = snipe_ship.destination
+        snipe_ratio = -snipe_ship.ratio
 
-    ## DETERMINE WHETHER TO SNIPE OR EXPLORE
-    if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
-        directions = Moves.get_directions_target(ship, snipe_destination)
-    else:
-        directions = Moves.get_directions_target(ship, explore_destination)
+        ## DETERMINE WHETHER TO SNIPE OR EXPLORE
+        if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+            directions = Moves.get_directions_target(ship, snipe_destination)
+        else:
+            directions = Moves.get_directions_target(ship, explore_destination)
 
-    direction = avoid_collision_direction(Moves, ship, directions=directions)
+        direction = avoid_collision_direction(Moves, ship, directions=directions)
+
+    except:
+        direction = avoid_collision_direction(Moves, ship, directions=None)
+
     Moves.move_mark_unsafe(ship, direction)
 
 
@@ -71,9 +76,10 @@ def get_move_points_collision(Moves, ship, directions):
 
     ## SET SECOND PRIORITY DIRECTIONS
     second_priority = OrderedSet()
-    for direction in directions:
-        directions = set(get_adjacent_directions(direction))
-        second_priority.update(directions)
+    if directions:
+        for direction in directions:
+            directions = set(get_adjacent_directions(direction))
+            second_priority.update(directions)
 
     for direction in MyConstants.DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)

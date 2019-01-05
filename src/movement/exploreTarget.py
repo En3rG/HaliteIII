@@ -2,10 +2,12 @@ from src.common.move.moves import Moves
 from src.common.move.harvests import Harvests
 from src.common.print import print_heading
 from src.common.orderedSet import OrderedSet
-from src.common.values import MyConstants
-from src.common.points import ExploreShip
-from src.common.values import MoveMode, Matrix_val
 from src.common.move.explores import Explores
+from hlt.positionals import Position
+from src.common.move.deposits import Deposits
+from src.common.values import MoveMode, Matrix_val, Inequality, MyConstants
+from src.common.points import FarthestShip, DepositPoints, ExploreShip
+from src.common.matrix.functions import get_coord_closest, count_manhattan
 from hlt import constants
 import heapq
 import logging
@@ -20,11 +22,13 @@ class Target():
         self.destination = destination
         self.matrix_ratio = matrix_ratio
 
-class ExploreTarget(Moves, Harvests, Explores):
+class ExploreTarget(Moves, Harvests, Deposits, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
+        self.heap_dist = []
         self.heap_set = set()
+        self.heap_set_dist = set()
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
@@ -45,12 +49,45 @@ class ExploreTarget(Moves, Harvests, Explores):
 
         self.move_ships()
 
+    def populate_heap_return(self, ship):
+        """
+        GET DISTANCE FROM SHIPYARD/DOCKS
+        """
+        ## TAKING DOCKS INTO ACCOUNT
+        if ship.id not in self.heap_set_dist:
+            self.heap_set_dist.add(ship.id)
+
+            curr_cell = (ship.position.y, ship.position.x)
+            coord, distance, value = get_coord_closest(Matrix_val.ONE,
+                                                       self.data.myMatrix.locations.myDocks,
+                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                       Inequality.EQUAL)
+            dock_position = Position(coord[1], coord[0])
+            directions = self.get_directions_target(ship, dock_position)
+            num_directions = len(directions)
+            s = FarthestShip(distance, num_directions, ship.id, directions, dock_position)
+            heapq.heappush(self.heap_dist, s)
+
 
     def move_ships(self):
-        print_heading("Populate Explore targets......")
-        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
-            self.populate_heap(ship_id)
+        print_heading("Populate Explore targets and depositing ships......")
 
+        for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
+            ship = self.data.game.me._ships.get(ship_id)
+
+            ## GATHER SHIPS THAT ARE FULL
+            if ship.is_full:
+                self.populate_heap_return(ship)
+
+            ## GATHER SHIPS THAT WERE RETURNING BEFORE
+            elif ship_id in self.prev_data.ships_returning and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:
+                self.populate_heap_return(ship)
+
+            ## GATHER THE REST FOR FURTHER ANALYSIS
+            else:
+                self.populate_heap(ship_id)
+
+        ## GATHER TARGET / DEPOSITING
         while self.heap_explore:
             s = heapq.heappop(self.heap_explore)
 
@@ -61,14 +98,39 @@ class ExploreTarget(Moves, Harvests, Explores):
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 logging.debug(s)
-                self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
-                self.data.myDicts.explore_ship[s.ship_id] = s
-                self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
 
-                ## OLD WAY (MARK TAKEN)
-                #self.mark_taken_udpate_top_halite(explore_destination)
-                ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
-                self.update_harvest_matrix(s.ship_id, explore_destination)
+                ship = self.data.game.me._ships.get(s.ship_id)
+                current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
+                target_harvest = self.harvest_matrix[explore_destination.y][explore_destination.x]
+
+                if ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO \
+                        and (ship.halite_amount + (current_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000 \
+                              or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
+                    self.populate_heap_return(ship)
+
+                # elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO and self.hasTooManyEnemy(ship):
+                #     self.populate_heap_return(ship)
+                else:
+                    self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
+                    self.data.myDicts.explore_ship[s.ship_id] = s
+                    self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
+
+                    ## OLD WAY (MARK TAKEN)
+                    #self.mark_taken_udpate_top_halite(explore_destination)
+                    ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
+                    self.update_harvest_matrix(s.ship_id, explore_destination)
+
+
+        ## GATHER ALL SHIPS DEPOSITING, TO BE ALL MOVED LATER
+        while self.heap_dist:
+            s = heapq.heappop(self.heap_dist)
+            if s.ship_id in self.data.mySets.ships_to_move:
+                ship = self.data.game.me._ships.get(s.ship_id)
+                # self.depositNow(ship, s.dock_position, s.directions)
+
+                ## INSTEAD OF MOVING IT NOW, SAVE THAT DATA AND MOVE THE SHIPS LATER
+                if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
+                self.data.myLists.deposit_ships.append(s)
 
 
     def populate_heap(self, ship_id):
@@ -80,6 +142,18 @@ class ExploreTarget(Moves, Harvests, Explores):
             s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, harvest_value, matrix_highest_ratio)
             heapq.heappush(self.heap_explore, s)
 
+
+    def hasTooManyEnemy(self, ship):
+        """
+        IF HAS TOO MANY ENEMY
+        """
+        count = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE, ship.position,
+                                MyConstants.ENEMY_CHECK_MANHATTAN)
+
+        if count > MyConstants.ENEMY_CHECK_NUM:
+            return True
+        else:
+            return False
 
 
 

@@ -77,7 +77,7 @@ while True:
     C = Build(data, prev_data)
 
     ## DEPOSIT SHIPS
-    E = Deposit(data, prev_data)
+    #E = Deposit(data, prev_data)
 
     ## GET EACH SHIP'S TARGET
     M = ExploreTarget(data, prev_data)
