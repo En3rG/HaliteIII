@@ -235,10 +235,11 @@ class Data(abc.ABC):
 
 
         ## POPULATE ENEMY CARGO, HARVEST, WITH BONUS
-        harvest = self.myMatrix.halite.enemyCargo * 0.25
-        #self.myMatrix.halite.enemyCargo_harvest = myRound(harvest) + self.myMatrix.halite.harvest
-        self.myMatrix.halite.enemyCargo_harvest = myRound(harvest)
-        self.myMatrix.halite.updated_enemyCargo_harvest = myRound(harvest) + self.myMatrix.halite.harvest
+        enemy_harvest = self.myMatrix.halite.enemyCargo * 0.25
+        #self.myMatrix.halite.enemyCargo_harvest = myRound(enemy_harvest) + self.myMatrix.halite.harvest
+        self.myMatrix.halite.enemyCargo_harvest = myRound(enemy_harvest)
+        #self.myMatrix.halite.updated_enemyCargo_harvest = myRound(enemy_harvest) + self.myMatrix.halite.harvest
+        self.myMatrix.halite.updated_enemyCargo_harvest = myRound(enemy_harvest)
 
         bonus = myBonusArea(self.myMatrix.halite.enemyCargo_harvest, self.myMatrix.locations.influenced)
         self.myMatrix.halite.enemyCargo_harvest_with_bonus = self.myMatrix.halite.enemyCargo_harvest + bonus

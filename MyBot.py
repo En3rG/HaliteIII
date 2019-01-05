@@ -99,7 +99,7 @@ while True:
     Q = Swap(data, prev_data)
 
     ## INFLUENCE SHIPS
-    K = Influence(data, prev_data)
+    #K = Influence(data, prev_data)
 
     ## TARGET ENEMY SHIP
     O = Snipe(data, prev_data)
