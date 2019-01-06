@@ -8,8 +8,7 @@ from src.common.matrix.functions import populate_manhattan, get_n_largest_values
 from src.common.matrix.vectorized import myRound, myBonusArea, myMinValueMatrix
 from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
-from src.common.matrix.classes import *
-from src.common.matrix.classes import Option
+from src.common.matrix.classes import Option, PlayerInfo, MySets, MyVars, MyDicts, MyLists, Matrix
 import copy
 import abc
 
@@ -130,6 +129,7 @@ class Data(abc.ABC):
         """
         self.myDicts.players_info[self.game.my_id] = PlayerInfo()
         self.myDicts.players_info[self.game.my_id].halite_amount = self.game.me.halite_amount
+        self.myDicts.players_info[self.game.my_id].num_ships = len(self.game.me.get_ships())
 
         for ship in self.game.me.get_ships():
             self.myDicts.players_info[self.game.my_id].halite_carried += ship.halite_amount
@@ -161,6 +161,7 @@ class Data(abc.ABC):
             if id != self.game.me.id:
                 self.myDicts.players_info[id] = PlayerInfo()
                 self.myDicts.players_info[id].halite_amount = player.halite_amount
+                self.myDicts.players_info[id].num_ships = len(player.get_ships())
 
                 for ship in player.get_ships():
                     self.myDicts.players_info[id].halite_carried += ship.halite_amount

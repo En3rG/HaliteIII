@@ -165,5 +165,11 @@ class PlayerInfo():
         self.halite_carried = 0
         self.num_ships = 0
 
+    def __repr__(self):
+        return "{} halite_amount {} halite_carried {} num_ships {}".format(self.__class__.__name__,
+                         self.halite_amount,
+                         self.halite_carried,
+                         self.num_ships)
+
 
 
