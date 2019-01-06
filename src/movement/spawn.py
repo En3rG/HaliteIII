@@ -61,7 +61,7 @@ def spawn_ships(data):
 
     shipyard = data.game.game_map[data.game.me.shipyard]
     if allowSpawn \
-            and data.myVars.dontSpawn == False \
+            and data.myVars.isSaving == False \
             and data.game.me.halite_amount >= constants.SHIP_COST \
             and data.myMatrix.locations.safe[shipyard.position.y][shipyard.position.x] != Matrix_val.UNSAFE:
             # and not data.game.game_map[data.game.me.shipyard].is_occupied\                                            ## NOT ACCURATE? LOOKS AT CURRENT TURN BUT SPAWN HAPPENS NEXT TURN

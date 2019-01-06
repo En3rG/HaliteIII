@@ -138,14 +138,14 @@ class MyVars():
         self.median_halite = 0
         self.harvest_percentile = 0
         self.isBuilding = False
-        self.dontSpawn = False
+        self.isSaving = False
         self.support_gain_ratio = MyConstants.SUPPORT_GAIN_RATIO_2P if (len(game.players) == 2) \
                                     else MyConstants.SUPPORT_GAIN_RATIO_4P                                              ## RATIO OF GAIN BEFORE SUPPORTING
 
 
 class MyDicts():
     def __init__(self):
-        self.players_halite = {}
+        self.players_info = {}
         self.positions_taken = {}
         self.explore_ship = {}
         self.snipe_ship = {}
@@ -159,9 +159,11 @@ class MyLists():
         self.ratio_left_halite = []
 
 
-class HaliteInfo():
+class PlayerInfo():
     def __init__(self):
         self.halite_amount = 0
         self.halite_carried = 0
+        self.num_ships = 0
+
 
 

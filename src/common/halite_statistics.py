@@ -45,10 +45,10 @@ class Halite_stats():
 
     def set_halite(self, game, data):
         self.halite_amount = game.me.halite_amount
-        self.halite_carried = data.myDicts.players_halite[game.my_id].halite_carried
+        self.halite_carried = data.myDicts.players_info[game.my_id].halite_carried
 
         self.enemy_stat = {}
-        for id, v in data.myDicts.players_halite.items():
+        for id, v in data.myDicts.players_info.items():
             if id != game.me.id:
                 self.enemy_stat[id] = {"halite amount":v.halite_amount, "halite carried":v.halite_carried}
 

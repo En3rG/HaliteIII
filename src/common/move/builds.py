@@ -45,7 +45,7 @@ class Builds():
                     self.data.init_data.myMatrix.docks.order[ship.position.y][ship.position.x] = Matrix_val.NINETY
                 else:
                     ## NOT ENOUGH HALITE YET, STAY STILL
-                    self.data.myVars.dontSpawn = True                                                                      ## PREVENT SPAWNING SHIPS
+                    self.data.myVars.isSaving = True                                                                      ## PREVENT SPAWNING SHIPS
                     direction = Direction.Still
                     command = ship.move(direction)
                     self.data.command_queue.append(command)
@@ -83,7 +83,7 @@ class Builds():
                 self.data.myVars.isBuilding = True
 
                 if self.data.game.me.halite_amount < 5000:
-                    self.data.myVars.dontSpawn = True                                                                  ## PREVENT SPAWNING SHIPS
+                    self.data.myVars.isSaving = True                                                                  ## PREVENT SPAWNING SHIPS
 
                 dock_position = Position(dock_coord[1], dock_coord[0])
                 directions = self.get_directions_target(ship, dock_position)
@@ -143,7 +143,7 @@ class Builds():
                         directions = self.get_directions_target(ship, dock_position)
 
                         if self.data.game.me.halite_amount < 5000:
-                            self.data.myVars.dontSpawn = True                                                          ## PREVENT SPAWNING SHIPS
+                            self.data.myVars.isSaving = True                                                          ## PREVENT SPAWNING SHIPS
 
                         ## OLD WAY
                         #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False, avoid_potential_enemy=False)

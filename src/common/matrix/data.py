@@ -128,11 +128,11 @@ class Data(abc.ABC):
         POPULATE POTENTIAL COLLISION MATRIX
         POPULATE STUCK SHIPS
         """
-        self.myDicts.players_halite[self.game.my_id] = HaliteInfo()
-        self.myDicts.players_halite[self.game.my_id].halite_amount = self.game.me.halite_amount
+        self.myDicts.players_info[self.game.my_id] = PlayerInfo()
+        self.myDicts.players_info[self.game.my_id].halite_amount = self.game.me.halite_amount
 
         for ship in self.game.me.get_ships():
-            self.myDicts.players_halite[self.game.my_id].halite_carried += ship.halite_amount
+            self.myDicts.players_info[self.game.my_id].halite_carried += ship.halite_amount
             self.myMatrix.locations.myShips[ship.position.y][ship.position.x] = Matrix_val.ONE
             self.myMatrix.locations.myShipsID[ship.position.y][ship.position.x] = ship.id
             self.myMatrix.locations.occupied[ship.position.y][ship.position.x] = Matrix_val.OCCUPIED
@@ -159,11 +159,11 @@ class Data(abc.ABC):
         """
         for id, player in self.game.players.items():
             if id != self.game.me.id:
-                self.myDicts.players_halite[id] = HaliteInfo()
-                self.myDicts.players_halite[id].halite_amount = player.halite_amount
+                self.myDicts.players_info[id] = PlayerInfo()
+                self.myDicts.players_info[id].halite_amount = player.halite_amount
 
                 for ship in player.get_ships():
-                    self.myDicts.players_halite[id].halite_carried += ship.halite_amount
+                    self.myDicts.players_info[id].halite_carried += ship.halite_amount
                     self.myMatrix.locations.enemyShips[ship.position.y][ship.position.x] = Matrix_val.ONE
                     self.myMatrix.locations.enemyShipsID[ship.position.y][ship.position.x] = ship.id
                     self.myMatrix.locations.enemyShipsOwner[ship.position.y][ship.position.x] = id
