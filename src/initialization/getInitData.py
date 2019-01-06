@@ -37,7 +37,7 @@ class GetInitData(Data):
         self.populate_harvest()
 
         self.populate_cell_distances()
-        self.populate_top_halite()
+        # self.populate_top_halite()
         self.get_mean_median_halite()
 
         self.populate_cell_averages()
