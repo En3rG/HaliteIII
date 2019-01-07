@@ -151,7 +151,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 if ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
                     and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO \
-                    and ((len(self.data.game.players) == 2) and (s_kamikaze.destination == s_exploreTarget.destination)) \
+                    and ((len(self.data.game.players) == 2) and (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination)) \
                         or harvest_destination == s_kamikaze.destination:
                     ## IF 2 PLAYERS, CHECK EITHER KAMIKAZE OR EXPLORE DESTINATION
                     ## IF 4 PLAYERS, JUST CHECK KAMIKAZE DESTINATION
@@ -212,8 +212,9 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
-        if ((len(self.data.game.players) == 2) and (i == 1 or i == 2)) \
-                or i == 2:
+        # if ((len(self.data.game.players) == 2) and (i == 1 or i == 2)) \
+        #         or i == 2:
+        if i == 2:
             ## FOR 2 PLAYERS, CHECK i = 1 or 2
             ## FOR 4 PLAYERS, JUST CHECK i = 2
             self.populate_kamikaze(ship, potential_support_IDs, explore_destination, enemy_position)
@@ -247,8 +248,9 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
                 if support_id in self.data.mySets.ships_to_move \
+                        and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
                         and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
-                        #and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest
