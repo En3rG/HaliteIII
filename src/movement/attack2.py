@@ -151,7 +151,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
                 if ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
                     and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO \
-                    and ((len(self.data.game.players) == 2) and (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination)) \
+                    and ((len(self.data.game.players) == 2) and (s_kamikaze.destination == s_exploreTarget.destination)) \
                         or harvest_destination == s_kamikaze.destination:
                     ## IF 2 PLAYERS, CHECK EITHER KAMIKAZE OR EXPLORE DESTINATION
                     ## IF 4 PLAYERS, JUST CHECK KAMIKAZE DESTINATION
