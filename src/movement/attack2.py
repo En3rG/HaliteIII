@@ -73,6 +73,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 considered_prev_i.update(ships_attacking)
                 self.considered_already.update(ships_attacking)
 
+                logging.debug("i {} ships_attacking {}".format(i, ships_attacking))
+
                 self.heap_kamikaze = []
                 self.heap_support = []                                                                                  ## RESET PER ITERATION
 
@@ -94,8 +96,6 @@ class Attack2(Moves, Attacks, Harvests, Explores):
             first_ship = self.data.game.me._ships.get(s.ship_id)
             direction = self.best_direction(first_ship, s.directions, mode=MoveMode.ATTACKING)
 
-            logging.debug("direction {}".format(direction))
-
             if direction != Direction.Still and s.ship_id in self.data.mySets.ships_to_move:
                 ## IF STAYING STILL, NO NEED TO MOVE
                 ## FIRST SHIP WILL JUST HARVEST/EXPLORE
@@ -114,7 +114,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 for support_id in s.support_ships:
                     if support_id in self.data.mySets.ships_to_move:
                         support_ship = self.data.game.me._ships.get(support_id)
-                        support_directions = self.get_directions_target(support_ship, first_ship.position)
+                        #support_directions = self.get_directions_target(support_ship, first_ship.position)
+                        support_directions = self.get_directions_target(support_ship, s.enemy_position)
                         direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
                         destination = self.get_destination(support_ship, direction)
 
@@ -160,7 +161,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                     for support_id in s_kamikaze.support_ships:
                         if support_id in self.data.mySets.ships_to_move:
                             support_ship = self.data.game.me._ships.get(support_id)
-                            support_directions = self.get_directions_target(support_ship, ship.position)
+                            #support_directions = self.get_directions_target(support_ship, ship.position)
+                            support_directions = self.get_directions_target(support_ship, s_kamikaze.enemy_position)
                             direction = self.best_direction(support_ship, support_directions, mode=MoveMode.SUPPORTING)
                             destination = self.get_destination(support_ship, direction)
 
@@ -191,6 +193,8 @@ class Attack2(Moves, Attacks, Harvests, Explores):
         enemy_halite = self.data.myMatrix.locations.shipsCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
+        logging.debug("Populate heap for attack.  ship {} enemy_position {} potential_support_IDs {} num_enemy_ships {}".format(ship, enemy_position, potential_support_IDs, num_enemy_ships))
+
         canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False,
                                                               avoid_enemy=True, avoid_potential_enemy=True)
         if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
@@ -212,7 +216,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 or i == 2:
             ## FOR 2 PLAYERS, CHECK i = 1 or 2
             ## FOR 4 PLAYERS, JUST CHECK i = 2
-            self.populate_kamikaze(ship, potential_support_IDs, explore_destination)
+            self.populate_kamikaze(ship, potential_support_IDs, explore_destination, enemy_position)
 
 
         if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
@@ -243,8 +247,9 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
                 if support_id in self.data.mySets.ships_to_move \
-                        and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
-                        and support_distance <= ship_distance + 1:                                                      ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
+                        and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
+                        #and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest
                     real_gain = potental_harvest if total_halite < 1000 else (1000 - support_ship.halite_amount)        ## CAN ONLY GET MAX 1000
@@ -256,17 +261,17 @@ class Attack2(Moves, Attacks, Harvests, Explores):
 
             # if my_halite < enemy_halite * MyConstants.ATTACK_ENEMY_HALITE_RATIO and num_support >= 1:
             if num_support >= 1:                                                                                        ## ATTACK EVEN WHEN HAS HIGH CARGO
-                s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy)
+                s = SupportShip(num_support, ship.id, support_ships, directions_to_enemy, enemy_position)
                 heapq.heappush(self.heap_support, s)
 
 
-    def populate_kamikaze(self, ship, potential_support_IDs, explore_destination):
+    def populate_kamikaze(self, ship, potential_support_IDs, explore_destination, enemy_position):
         support_ships = OrderedSet()
         for support_id in sorted(potential_support_IDs):
             if support_id in self.data.mySets.ships_to_move:
                 support_ships.add(support_id)
 
-        s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination)
+        s = KamikazeShip(ship.halite_amount, ship.id, support_ships, explore_destination, enemy_position)
         heapq.heappush(self.heap_kamikaze, s)
 
 

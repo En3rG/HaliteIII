@@ -70,13 +70,15 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V19: 12
 
+    BUILD_RIGHT_AWAY_HALITE = 3000
+
     ## INFLUENCE
     ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
 
     ## ATTACKING
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
-    NUM_SHIPS_BEFORE_ATTACKING = 20
+    NUM_SHIPS_BEFORE_ATTACKING = 0
     ATTACK_TURNS_UPPER_LIMIT = 1.00
     ATTACK_TURNS_LOWER_LIMIT = 0.00
                                                     ## USED TO BE:

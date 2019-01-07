@@ -3,9 +3,10 @@ from hlt.positionals import Direction
 from src.common.move.moves import Moves
 from src.common.print import print_heading, print_matrix
 from src.common.values import Inequality, Matrix_val
+from src.common.move.builds import Builds
 import numpy as np
 
-class Stuck(Moves):
+class Stuck(Moves, Builds):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
@@ -13,6 +14,8 @@ class Stuck(Moves):
 
     def move_ships(self):
         print_heading("Moving stuck ships......")
+
+        self.build_on_high_halite()
 
         ## MOVE SHIPS THAT CANNOT MOVE YET
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):

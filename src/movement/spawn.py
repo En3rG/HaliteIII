@@ -21,34 +21,34 @@ def spawn_ships(data):
     :param data:
     """
     ## OLD WAY
-    max_turn_percent = None
-
-    if len(data.game.players) == 2:
-        if data.game.game_map.height == 32:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
-        elif data.game.game_map.height == 40:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
-        elif data.game.game_map.height == 48:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
-        elif data.game.game_map.height == 56:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
-        elif data.game.game_map.height == 64:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
-
-    else:  ## 4 PLAYERS
-        if data.game.game_map.height == 32:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
-        elif data.game.game_map.height == 40:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
-        elif data.game.game_map.height == 48:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
-        elif data.game.game_map.height == 56:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
-        elif data.game.game_map.height == 64:
-            max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
-
-    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                             and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
+    # max_turn_percent = None
+    #
+    # if len(data.game.players) == 2:
+    #     if data.game.game_map.height == 32:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_32_TURNS
+    #     elif data.game.game_map.height == 40:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_40_TURNS
+    #     elif data.game.game_map.height == 48:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_48_TURNS
+    #     elif data.game.game_map.height == 56:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_56_TURNS
+    #     elif data.game.game_map.height == 64:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_2P_64_TURNS
+    #
+    # else:  ## 4 PLAYERS
+    #     if data.game.game_map.height == 32:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_32_TURNS
+    #     elif data.game.game_map.height == 40:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_40_TURNS
+    #     elif data.game.game_map.height == 48:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_48_TURNS
+    #     elif data.game.game_map.height == 56:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_56_TURNS
+    #     elif data.game.game_map.height == 64:
+    #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
+    #
+    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+    #                          and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
 
 
     ## NEW WAY USING DEPLETION TIME
@@ -61,17 +61,17 @@ def spawn_ships(data):
 
 
     ## NEWER WAY (KEEP BUILDING IF BELOW THE ENEMY)
-    # max_turn_percent = 0.77
-    # percent_more_ships = 1.10
-    # numMyShips = data.myDicts.players_info[data.game.me.id].num_ships
-    # numEnemyShips, enemyID = min([ (v.num_ships, k) for k, v in data.myDicts.players_info.items() if k != data.game.me.id ])          ## LOWEST ENEMY SHIPS NUMBER
-    # ## KEEP MAKING SHIPS AS LONG AS ITS BELOW THE THRESHOLD TURNS
-    # ## AND WE HAVE MORE MONEY THAN LOWEST ENEMY
-    # ## AND WE HAVE LESS SHIPS THAN THE LOWEST ENEMY
-    # logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * percent_more_ships))
-    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-    #               and ( data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
-    #               or numMyShips < numEnemyShips * percent_more_ships )
+    max_turn_percent = 0.77
+    percent_more_ships = 1.10
+    numMyShips = data.myDicts.players_info[data.game.me.id].num_ships
+    numEnemyShips, enemyID = min([ (v.num_ships, k) for k, v in data.myDicts.players_info.items() if k != data.game.me.id ])          ## LOWEST ENEMY SHIPS NUMBER
+    ## KEEP MAKING SHIPS AS LONG AS ITS BELOW THE THRESHOLD TURNS
+    ## AND WE HAVE MORE MONEY THAN LOWEST ENEMY
+    ## AND WE HAVE LESS SHIPS THAN THE LOWEST ENEMY
+    logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * percent_more_ships))
+    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
+                  and ( data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
+                  or numMyShips < numEnemyShips * percent_more_ships )
 
 
 

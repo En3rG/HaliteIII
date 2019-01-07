@@ -13,6 +13,31 @@ import logging
 import heapq
 
 class Builds():
+    def build_on_high_halite(self):
+        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.BUILD_RIGHT_AWAY_HALITE)
+        ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
+        ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
+
+        for ship_id in sorted(ships_building):
+            ship = self.data.game.me._ships.get(ship_id)
+            cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
+
+            if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000:
+                ## HAVE ENOUGH HALITE TO BUILD DOCK
+                halite_used = 0 if ship.halite_amount + cell_halite_amount >= 4000 else (4000 - ship.halite_amount - cell_halite_amount)
+                self.data.game.me.halite_amount -= halite_used
+                logging.debug("Shid id: {} building dock on high halite at position: {}".format(ship.id, ship.position))
+                self.data.halite_stats.record_spent(BuildType.DOCK)
+                command = ship.make_dropoff()
+                self.data.command_queue.append(command)
+
+            ## RECORD INFO ALSO SHIP COUNTER PER DOCK
+            dock_coord = (ship.position.y, ship.position.x)
+            self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
+            self.data.myDicts.ships_building_dock[dock_coord].add(ship.id)
+            self.mark_unsafe(ship, ship.position)
+            self.data.mySets.ships_to_move.remove(ship.id)
+
     def building_now(self):
         """
         MOVE SHIPS BUILDING NOW (CURRENTLY AT DOCK POSITION)

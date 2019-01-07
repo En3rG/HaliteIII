@@ -55,11 +55,12 @@ class SupportShip:
     """
     USED TO DETERMINE SUPPORT SHIPS FOR ATTACKING
     """
-    def __init__(self, num_support, ship_id, support_ships, directions):
+    def __init__(self, num_support, ship_id, support_ships, directions, enemy_position):
         self.num_support = num_support
         self.ship_id = ship_id
         self.support_ships = support_ships
         self.directions = directions
+        self.enemy_position = enemy_position
 
     def __gt__(self, other):
         if isinstance(other, SupportShip):
@@ -193,11 +194,12 @@ class KamikazeShip:
     """
     USED TO DETERMINE CLOSEST SHIP WITH LOWEST CARGO TO KAMIKAZE HARVEST (POTENTIALLY)
     """
-    def __init__(self, cargo, id, support_ships, destination):
+    def __init__(self, cargo, id, support_ships, destination, enemy_position):
         self.cargo = cargo
         self.ship_id = id
         self.destination = destination
         self.support_ships = support_ships
+        self.enemy_position = enemy_position
 
     def __gt__(self, other):
         if isinstance(other, KamikazeShip):
@@ -748,8 +750,9 @@ class SupportPoints():
     """
     USED TO DETERMINE BEST DIRECTION FOR SUPPORTING
     """
-    def __init__(self, safe, direction):
+    def __init__(self, safe, potential_enemy_collision,direction):
         self.safe = safe
+        self.potential_enemy_collision = potential_enemy_collision
         self.direction = direction
 
     def __gt__(self, other):
@@ -757,6 +760,10 @@ class SupportPoints():
             if self.safe > other.safe:
                 return True
             elif self.safe < other.safe:
+                return False
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
                 return False
             else:
                 return False
@@ -769,15 +776,20 @@ class SupportPoints():
                 return True
             elif self.safe > other.safe:
                 return False
+            elif self.potential_enemy_collision < other.potential_enemy_collision:
+                return True
+            elif self.potential_enemy_collision > other.potential_enemy_collision:
+                return False
             else:
                 return False
 
         return NotImplemented
 
     def __repr__(self):
-        return "{} safe: {} direction: {}".format(
+        return "{} safe: {} potential_enemy_collision: {} direction: {}".format(
             self.__class__.__name__,
             self.safe,
+            self.potential_enemy_collision,
             self.direction)
 
 
