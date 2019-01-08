@@ -51,11 +51,11 @@ class MyConstants():
     ALLOW_BUILDING_TURNS = 0.70                     ## USED TO BE:
                                                     ## V28: 0.70
     STOP_BUILDING_HALITE_LEFT = 0.40
-    NUM_SHIPS_BEFORE_BUILDING = 10
+    NUM_SHIPS_BEFORE_BUILDING = 12
     MIN_DOCK_HALITE_AVERAGE = 0.50                      ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
     HALITE_TOWARDS_BUILDING = 500
 
-    SHIPS_PER_DOCK_RATIO = 7
+    SHIPS_PER_DOCK_RATIO = 12
     SHIPS_BUILDING_PERCENT = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
     SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
     DOCK_MANHATTAN = 7                             ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
@@ -70,7 +70,7 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V19: 12
 
-    BUILD_RIGHT_AWAY_HALITE = 3000
+    BUILD_RIGHT_AWAY_HALITE = 3500
 
     ## INFLUENCE
     ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
@@ -84,7 +84,7 @@ class MyConstants():
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
-    KAMIKAZE_HALITE_RATIO = 0.0
+    KAMIKAZE_HALITE_RATIO = 1.0
     KAMIKAZE_HALITE_MAX = 1000
 
     ## SUPPORT
