@@ -37,6 +37,9 @@ class Data(abc.ABC):
         halites = [ [ cell.halite_amount for cell in row ] for row in self.game.game_map._cells ]
         self.myMatrix.halite.amount = np.array(halites, dtype=np.int16)
 
+        halites = [[cell.halite_amount for cell in row] for row in self.game.game_map._cells]
+        self.myMatrix.halite.updated_amount = np.array(halites, dtype=np.int16)
+
         self.myVars.total_halite = self.myMatrix.halite.amount.sum()
 
         if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
@@ -170,6 +173,7 @@ class Data(abc.ABC):
                     self.myMatrix.locations.enemyShipsOwner[ship.position.y][ship.position.x] = id
                     self.myMatrix.locations.shipsCargo[ship.position.y][ship.position.x] = ship.halite_amount
                     self.myMatrix.halite.enemyCargo[ship.position.y][ship.position.x] = ship.halite_amount
+                    self.myMatrix.halite.updated_enemyCargo[ship.position.y][ship.position.x] = ship.halite_amount
 
                     ## CANT USE FILL CIRCLE.  DISTANCE 4 NOT TECHNICALLY CIRCLE
                     # self.myMatrix.locations.influenced = fill_circle(self.myMatrix.locations.influenced,

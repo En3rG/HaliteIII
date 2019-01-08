@@ -26,6 +26,7 @@ class CellAverage():
 class Halite():
     def __init__(self, map_height, map_width):
         self.amount = np.zeros((map_height, map_width), dtype=np.int16)
+        self.updated_amount = np.zeros((map_height, map_width), dtype=np.int16)
         self.top_amount = np.zeros((map_height, map_width), dtype=np.int16)
         self.cost = None
         self.harvest = None
@@ -34,6 +35,7 @@ class Halite():
         self.harvest_with_bonus = None
         self.updated_harvest_with_bonus = None
         self.enemyCargo = np.zeros((map_height, map_width), dtype=np.float16)                                           ## CAUSES AN ERROR WHEN INT16
+        self.updated_enemyCargo = np.zeros((map_height, map_width), dtype=np.float16)
         self.enemyCargo_harvest = np.zeros((map_height, map_width), dtype=np.float16)
         self.updated_enemyCargo_harvest = np.zeros((map_height, map_width), dtype=np.float16)
         self.enemyCargo_harvest_with_bonus = np.zeros((map_height, map_width), dtype=np.float16)

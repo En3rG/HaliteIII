@@ -106,7 +106,8 @@ class Explores():
         else:
             maximum_harvest = (maximum_capacity * 0.333)
 
-        self.harvest_matrix[destination.y][destination.x] -= maximum_harvest
+        self.halite_matrix[destination.y][destination.x] -= maximum_harvest                                             ## UPDATE HALITE VALUE
+        self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25     ## UPDATE HARVEST VALUE
 
     def get_matrix_ratio(self, ship):
         curr_cell = (ship.position.y, ship.position.x)

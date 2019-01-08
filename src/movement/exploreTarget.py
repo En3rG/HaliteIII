@@ -32,6 +32,8 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
+        self.halite_matrix = self.data.myMatrix.halite.updated_amount
+
         if data.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT \
             or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
