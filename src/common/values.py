@@ -102,6 +102,7 @@ class MyConstants():
 
     ## EXPLORE
     EXPLORE_SEARCH_PERIMETER = 5
+    AVERAGE_CELL_DISTANCE = 3
 
     ## SNIPE
     EXPLORE_RATIO_TO_SNIPE = 3

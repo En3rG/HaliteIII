@@ -280,7 +280,7 @@ class Data(abc.ABC):
                 # print_matrix("Distances (2) on {}".format(curr_cell), self.myMatrix.distances.cell[curr_cell])
 
 
-    def populate_cell_averages(self):
+    def populate_cell_averages(self, distance):
         """
         POPULATE AVERAGES OF EACH CELL BASED ON DISTANCE
         USED FOR DETERMINING DOCK PLACEMENT
@@ -290,8 +290,8 @@ class Data(abc.ABC):
             for c in range(self.game.game_map.width):
                 loc = Position(c, r) ## Position(x, y)
                 self.myMatrix.cell_average.manhattan[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
-                                                                                 loc,
-                                                                                 MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+                                                                                   loc,
+                                                                                   distance)
 
 
     def populate_top_halite(self):

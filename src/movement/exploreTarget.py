@@ -38,9 +38,11 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
             or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
             self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
+            #self.harvest_matrix = (self.data.myMatrix.halite.updated_harvest + self.data.myMatrix.cell_average.manhattan) * 0.5
         else:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
             self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus
+            #self.harvest_matrix = (self.data.myMatrix.halite.updated_harvest_with_bonus + self.data.myMatrix.cell_average.manhattan) * 0.5
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL

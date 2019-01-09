@@ -1,5 +1,6 @@
 from src.common.matrix.data import Data
 from src.common.print import print_heading, print_matrix
+from src.common.values import MyConstants
 import logging
 
 class GetData(Data):
@@ -40,6 +41,7 @@ class GetData(Data):
 
         self.get_mean_median_halite()
 
+        self.populate_cell_averages(MyConstants.AVERAGE_CELL_DISTANCE)
 
         self.update_dock_placement()
 

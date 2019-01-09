@@ -40,7 +40,7 @@ class GetInitData(Data):
         # self.populate_top_halite()
         self.get_mean_median_halite()
 
-        self.populate_cell_averages()
+        self.populate_cell_averages(MyConstants.AVERAGE_MANHATTAN_DISTANCE)
 
         self.populate_dock_placement()
 
