@@ -133,6 +133,7 @@ class MySets():
         self.ships_enemy_collision = set()
         self.ships_building = set()
         self.dock_coords = set()
+        self.deposit_ships = OrderedSet()
 
 
 class MyVars():
@@ -148,6 +149,7 @@ class MyVars():
                                     else MyConstants.SUPPORT_GAIN_RATIO_4P                                              ## RATIO OF GAIN BEFORE SUPPORTING
         self.kamikaze_halite_ratio = MyConstants.KAMIKAZE_HALITE_RATIO_2P if (len(game.players) == 2) \
                                     else MyConstants.KAMIKAZE_HALITE_RATIO_4P
+        self.explore_enable_bonus = None
 
 
 class MyDicts():
@@ -155,12 +157,12 @@ class MyDicts():
         self.players_info = {}
         self.positions_taken = {}
         self.explore_ship = {}
+        self.deposit_ship = {}
         self.snipe_ship = {}
         self.ships_building_dock = {}
 
 class MyLists():
     def __init__(self, data):
-        self.deposit_ships = []
         self.explore_target = []
         self.snipe_target = []
         self.ratio_left_halite = []

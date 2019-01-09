@@ -45,6 +45,9 @@ class Data(abc.ABC):
         if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
             self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
+            self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT \
+                                                or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE
+
 
     def populate_myShipyard_docks(self):
         """

@@ -26,7 +26,7 @@ class MoveDeposit(Moves, Deposits, Explores):
     def move_ships(self):
         print_heading("Moving depositing ships......")
 
-        for s in self.data.myLists.deposit_ships:
+        for id in self.data.mySets.deposit_ships:
             while self.data.mySets.ships_kicked:
                 ship_kicked = self.data.mySets.ships_kicked.pop()
                 logging.debug("Moving kicked ship ({}) by a depositing ship".format(ship_kicked))
@@ -35,11 +35,13 @@ class MoveDeposit(Moves, Deposits, Explores):
 
                 move_kicked_ship(self, ship)
 
+            ship = self.data.game.me._ships.get(id)
+            s = self.data.myDicts.deposit_ship[id]
 
-            ship = self.data.game.me._ships.get(s.ship_id)
             if ship.id in self.data.mySets.ships_to_move:
                 self.data.mySets.ships_to_move.remove(ship.id)
                 self.depositNow(ship, s.dock_position, s.directions)
+
 
 
 

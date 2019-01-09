@@ -34,8 +34,7 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
 
         self.halite_matrix = self.data.myMatrix.halite.updated_amount
 
-        if data.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT \
-            or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if data.myVars.explore_disable_bonus:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
             self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
             #self.harvest_matrix = (self.data.myMatrix.halite.updated_harvest + self.data.myMatrix.cell_average.manhattan) * 0.5
@@ -128,13 +127,16 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
         ## GATHER ALL SHIPS DEPOSITING, TO BE ALL MOVED LATER
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
+            logging.debug(s)
             if s.ship_id in self.data.mySets.ships_to_move:
                 ship = self.data.game.me._ships.get(s.ship_id)
                 # self.depositNow(ship, s.dock_position, s.directions)
 
                 ## INSTEAD OF MOVING IT NOW, SAVE THAT DATA AND MOVE THE SHIPS LATER
                 #if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
-                self.data.myLists.deposit_ships.append(s)
+                self.data.mySets.deposit_ships.add(s.ship_id)
+
+                self.data.myDicts.deposit_ship[s.ship_id] = s
 
 
     def populate_heap(self, ship_id):

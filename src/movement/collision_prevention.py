@@ -23,25 +23,34 @@ def move_kicked_ship(Moves, ship):
     GO TOWARDS EXPLORE TARGET FIRST
     IT THAT IS NOT SAFE, GO ANYWHERE SAFE
     """
-    try:
-        explore_ship = Moves.data.myDicts.explore_ship[ship.id]
-        explore_destination = explore_ship.destination
-        explore_ratio = -explore_ship.ratio
+    if ship.id in Moves.data.mySets.deposit_ships:
+        logging.debug("...ship is also depositing")
+        deposit_ship = Moves.data.myDicts.deposit_ship[ship.id]
+        deposit_destination = deposit_ship.dock_position
 
-        snipe_ship = Moves.data.myDicts.snipe_ship[ship.id]
-        snipe_destination = snipe_ship.destination
-        snipe_ratio = -snipe_ship.ratio
-
-        ## DETERMINE WHETHER TO SNIPE OR EXPLORE
-        if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
-            directions = Moves.get_directions_target(ship, snipe_destination)
-        else:
-            directions = Moves.get_directions_target(ship, explore_destination)
+        directions = Moves.get_directions_target(ship, deposit_destination)
 
         direction = avoid_collision_direction(Moves, ship, directions=directions)
+    else:
+        try:
+            explore_ship = Moves.data.myDicts.explore_ship[ship.id]
+            explore_destination = explore_ship.destination
+            explore_ratio = -explore_ship.ratio
 
-    except:
-        direction = avoid_collision_direction(Moves, ship, directions=None)
+            snipe_ship = Moves.data.myDicts.snipe_ship[ship.id]
+            snipe_destination = snipe_ship.destination
+            snipe_ratio = -snipe_ship.ratio
+
+            ## DETERMINE WHETHER TO SNIPE OR EXPLORE
+            if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+                directions = Moves.get_directions_target(ship, snipe_destination)
+            else:
+                directions = Moves.get_directions_target(ship, explore_destination)
+
+            direction = avoid_collision_direction(Moves, ship, directions=directions)
+
+        except:
+            direction = avoid_collision_direction(Moves, ship, directions=None)
 
     Moves.move_mark_unsafe(ship, direction)
 

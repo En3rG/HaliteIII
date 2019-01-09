@@ -30,8 +30,7 @@ class EnemyTarget(Moves, Harvests, Explores):
 
         self.halite_matrix = self.data.myMatrix.halite.updated_enemyCargo
 
-        if data.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT \
-            or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if data.myVars.explore_disable_bonus:
             # self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
             self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
         else:
