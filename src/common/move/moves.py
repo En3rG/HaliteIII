@@ -54,6 +54,8 @@ class Moves(abc.ABC):
 
         self.remove_kicked(ship)
 
+        self.data.myMatrix.locations.updated_myShipsID[destination.y][destination.x] = ship.id
+
         command = ship.move(direction)
 
         self.data.command_queue.append(command)

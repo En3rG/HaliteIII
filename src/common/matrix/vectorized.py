@@ -54,6 +54,17 @@ def maxValueMatrix(*args):
 myMaxValueMatrix = np.vectorize(maxValueMatrix)
 
 
+def sunkenShips(prev, now):
+    """
+    GET THE LOCATIONS OF SUNKEN SHIPS
+    """
+    if prev != now:
+        return 1
+    else:
+        return 0
+
+mySunkenShips = np.vectorize(sunkenShips)
+
 ## NO LONGER USED
 # def harvestArea(max_x, x):
 #     """

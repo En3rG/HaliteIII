@@ -5,7 +5,7 @@ from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
     get_average_manhattan, shift_matrix
-from src.common.matrix.vectorized import myRound, myBonusArea, myMinValueMatrix
+from src.common.matrix.vectorized import myRound, myBonusArea, myMinValueMatrix, mySunkenShips
 from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
 from src.common.matrix.classes import Option, PlayerInfo, MySets, MyVars, MyDicts, MyLists, Matrix
@@ -149,6 +149,11 @@ class Data(abc.ABC):
             ## POPULATE STUCK SHIPS
             if self.myMatrix.halite.cost[ship.position.y][ship.position.x] > ship.halite_amount:
                 self.myMatrix.locations.stuck[ship.position.y][ship.position.x] = Matrix_val.ONE
+
+
+        if self.prev_data:
+            self.myMatrix.sunken_ships = mySunkenShips(self.prev_data.matrix.locations.updated_myShipsID,
+                                                       self.myMatrix.locations.myShipsID)
 
 
     def populate_enemyShips_influenced(self):

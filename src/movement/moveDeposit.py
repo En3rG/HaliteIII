@@ -31,11 +31,15 @@ class MoveDeposit(Moves, Deposits, Explores):
                 ship_kicked = self.data.mySets.ships_kicked.pop()
                 logging.debug("Moving kicked ship ({}) by a depositing ship".format(ship_kicked))
                 ship = self.data.game.me._ships.get(ship_kicked)
+                if ship.id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
 
                 move_kicked_ship(self, ship)
 
+
             ship = self.data.game.me._ships.get(s.ship_id)
-            self.depositNow(ship, s.dock_position, s.directions)
+            if ship.id in self.data.mySets.ships_to_move:
+                self.data.mySets.ships_to_move.remove(ship.id)
+                self.depositNow(ship, s.dock_position, s.directions)
 
 
 
