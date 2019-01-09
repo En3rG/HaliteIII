@@ -150,7 +150,7 @@ class Attack2(Moves, Attacks, Harvests, Explores):
                 logging.debug("harvest_destination {} s_kamikaze.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
 
                 if ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
-                    and harvest_halite >= ship.halite_amount * MyConstants.KAMIKAZE_HALITE_RATIO \
+                    and harvest_halite >= ship.halite_amount * self.data.myVars.kamikaze_halite_ratio \
                     and ((len(self.data.game.players) == 2) and (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination)) \
                         or harvest_destination == s_kamikaze.destination:
                     ## IF 2 PLAYERS, CHECK EITHER KAMIKAZE OR EXPLORE DESTINATION

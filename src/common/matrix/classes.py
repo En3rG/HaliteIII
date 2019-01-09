@@ -143,6 +143,8 @@ class MyVars():
         self.isSaving = False
         self.support_gain_ratio = MyConstants.SUPPORT_GAIN_RATIO_2P if (len(game.players) == 2) \
                                     else MyConstants.SUPPORT_GAIN_RATIO_4P                                              ## RATIO OF GAIN BEFORE SUPPORTING
+        self.kamikaze_halite_ratio = MyConstants.KAMIKAZE_HALITE_RATIO_2P if (len(game.players) == 2) \
+                                    else MyConstants.KAMIKAZE_HALITE_RATIO_4P
 
 
 class MyDicts():
