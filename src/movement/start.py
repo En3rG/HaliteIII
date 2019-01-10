@@ -27,7 +27,7 @@ class Start(Moves, Harvests, Explores):
 
         self.taken_destinations = set()
 
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
             self.harvest_matrix = copy.deepcopy(

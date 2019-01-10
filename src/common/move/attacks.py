@@ -9,17 +9,17 @@ import logging
 class Attacks():
     def get_neighbor_IDs(self, ship):
         """
-        GET NEXT NEIGHBORS IN THE GIVEN SHIP
+        GET NEXT ALLY NEIGHBORS IN THE GIVEN SHIP
 
         :return: SET OF IDs
         """
-        ids = OrderedSet()
+        ally_IDs = OrderedSet()
         for direction in MyConstants.DIRECTIONS:
             destination = self.get_destination(ship, direction)
             id = self.data.myMatrix.locations.myShipsID[destination.y][destination.x]
-            if id > Matrix_val.ZERO: ids.add(id)
+            if id > Matrix_val.ZERO: ally_IDs.add(id)
 
-        return ids
+        return ally_IDs
 
 
     def get_enemy_ship(self, position):
@@ -33,7 +33,7 @@ class Attacks():
         return ship, ship_id
 
 
-    def get_enemy_position(self, ship):
+    def get_closest_enemy_position(self, ship):
         """
         GET DIRECTIONS AND POSITION OF THE CLOSEST ENEMY GIVEN THE SHIP
         """

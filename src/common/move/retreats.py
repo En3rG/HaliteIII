@@ -22,12 +22,12 @@ class Retreats():
             ## OLD WAY
             #direction = self.best_direction(ship, s.directions, mode=MoveMode.RETREAT)
             ## USING ASTAR
-            direction = self.get_a_star_direction(ship, s.dock_position, s.directions)
+            direction = self.get_Astar_direction(ship, s.dock_position, s.directions)
 
             self.move_mark_unsafe(ship, direction)
 
 
-    def get_a_star_direction(self, ship, dock_position, directions):
+    def get_Astar_direction(self, ship, dock_position, directions):
         ## WILL NOW ALWAYS USE A STAR (WITH OR WITHOUT ENEMY AROUND)
         # if self.isEnemy_closeby(ship):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED

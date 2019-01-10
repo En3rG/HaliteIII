@@ -34,7 +34,7 @@ class Explore(Moves, Explores, Harvests):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
 
         self.taken_destinations = set()
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
             #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
         else:
@@ -70,7 +70,7 @@ class Explore(Moves, Explores, Harvests):
                 ## OLD WAY
                 explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
                 ## USING ASTAR
-                #explore_direction = self.get_a_star_direction(ship, explore_destination, directions)
+                #explore_direction = self.get_Astar_direction(ship, explore_destination, directions)
 
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = target.matrix_ratio[harvest_destination.y][harvest_destination.x]
@@ -89,7 +89,7 @@ class Explore(Moves, Explores, Harvests):
                 self.move_mark_unsafe(ship, direction)
 
 
-    def get_a_star_direction(self, ship, target_position, directions):
+    def get_Astar_direction(self, ship, target_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
         # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.RETREAT_SEARCH_PERIMETER - 1)
         # section_ally = Section(self.data.myMatrix.locations.safe, ship.position, MyConstants.RETREAT_SEARCH_PERIMETER - 1)
@@ -158,7 +158,7 @@ class Explore(Moves, Explores, Harvests):
     #             ## OLD WAY
     #             explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
     #             ## USING ASTAR
-    #             #explore_direction = self.get_a_star_direction(ship, explore_destination, directions)
+    #             #explore_direction = self.get_Astar_direction(ship, explore_destination, directions)
     #
     #             harvest_destination = self.get_destination(ship, harvest_direction)
     #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]

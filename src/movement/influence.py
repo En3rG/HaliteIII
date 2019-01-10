@@ -68,7 +68,7 @@ class Influence(Moves, Explores, Harvests):
                 ## OLD WAY
                 explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
                 ## A STAR WAY (TIMED OUT)
-                #explore_direction = self.get_a_star_direction(ship, explore_destination, directions)
+                #explore_direction = self.get_Astar_direction(ship, explore_destination, directions)
 
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
@@ -87,7 +87,7 @@ class Influence(Moves, Explores, Harvests):
                 self.move_mark_unsafe(ship, direction)
 
 
-    def get_a_star_direction(self, ship, target_position, directions):
+    def get_Astar_direction(self, ship, target_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
         # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
         #                         MyConstants.RETREAT_SEARCH_PERIMETER - 1)

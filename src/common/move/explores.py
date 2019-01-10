@@ -41,7 +41,7 @@ class Explores():
     #         ## OLD WAY
     #         direction = explore_direction
     #         ## A STAR WAY (SAME AS NOT DOING A STAR, WHY??)
-    #         # direction = self.get_a_star_direction(ship, explore_destination, directions)
+    #         # direction = self.get_Astar_direction(ship, explore_destination, directions)
     #
     #     # self.mark_unsafe(ship, explore_destination)
     #     self.mark_taken_udpate_top_halite(destination)
@@ -58,6 +58,7 @@ class Explores():
             return None
         else:
             return s.destination
+
 
     def isDestination_updated(self, s):
         """

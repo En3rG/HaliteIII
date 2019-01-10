@@ -14,6 +14,9 @@ import heapq
 
 class Builds():
     def build_on_high_halite(self):
+        """
+        BUILD A DOCK RIGHT AWAY ON A HIGH COLLISION CELL, TO PREVENT ENEMY FROM HARVESTING IT
+        """
         r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.BUILD_RIGHT_AWAY_HALITE)
         ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
@@ -37,6 +40,7 @@ class Builds():
             self.data.myDicts.ships_building_dock[dock_coord].add(ship.id)
             self.mark_unsafe(ship, ship.position)
             self.data.mySets.ships_to_move.remove(ship.id)
+
 
     def building_now(self):
         """
@@ -98,7 +102,7 @@ class Builds():
 
         for ship_id in sorted(ships_going_dock):
             ship = self.data.game.me._ships.get(ship_id)
-            dock_coord = self.get_dock_coord(ship)                                                                      ## DOCK COORD IS NONE IF ENEMY BUILT THERE
+            dock_coord = self.get_closest_dock_coord(ship)                                                                      ## DOCK COORD IS NONE IF ENEMY BUILT THERE
             self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
 
             if dock_coord \
@@ -154,7 +158,7 @@ class Builds():
                     logging.debug(s)
 
                     ship = self.data.game.me._ships.get(s.ship_id)
-                    dock_coord = self.get_dock_coord(ship)                                                              ## DOCK COORD IS NONE IF ENEMY BUILT THERE
+                    dock_coord = self.get_closest_dock_coord(ship)                                                              ## DOCK COORD IS NONE IF ENEMY BUILT THERE
                     self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
 
                     #if dock_coord and (ship.halite_amount >= 1000 or ship_id in self.prev_data.ships_building):
@@ -173,7 +177,7 @@ class Builds():
                         ## OLD WAY
                         #direction = self.best_direction(ship, directions, mode=MoveMode.BUILDING, avoid_enemy=False, avoid_potential_enemy=False)
                         ## A STAR WAY
-                        direction = self.get_a_star_direction(ship, dock_position, directions)
+                        direction = self.get_Astar_direction(ship, dock_position, directions)
 
                         ## RECORD INFO ALSO SHIP COUNTER PER DOCK
                         self.data.mySets.ships_building.add(ship_id)
@@ -181,7 +185,7 @@ class Builds():
                         self.move_mark_unsafe(ship, direction)
 
 
-    def get_dock_coord(self, ship):
+    def get_closest_dock_coord(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
         dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
                                                       self.data.myMatrix.docks.manhattan,
@@ -202,7 +206,7 @@ class Builds():
         return (num_ships_building <= num_ships_allowed) and ( ( num_ships / (num_docks + num_ships_building)) >= MyConstants.SHIPS_PER_DOCK_RATIO)
 
 
-    def get_a_star_direction(self, ship, dock_position, directions):
+    def get_Astar_direction(self, ship, dock_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
         # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
         #                         MyConstants.RETREAT_SEARCH_PERIMETER - 1)

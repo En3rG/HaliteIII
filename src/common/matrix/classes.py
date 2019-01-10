@@ -19,8 +19,8 @@ class CellAverage():
     USED FOR DOCK PLACEMENT
     """
     def __init__(self, map_height, map_width):
-        self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)
-        self.top_N = np.zeros((map_height, map_width), dtype=np.float16)
+        self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)                                            ## WILL CONTAIN THE AVERAGE OF EACH CELL
+        self.top_N = np.zeros((map_height, map_width), dtype=np.float16)                                                ## WILL CONTAIN AVERAGE OF TOP N LOCATIONS
 
 
 class Halite():
@@ -95,14 +95,14 @@ class Distances():
     CONTAINS DISTANCES MATRIXES
     """
     def __init__(self, map_height, map_width):
-        self.cell = {}                                                                                                  ## ONLY FILLED IN INIT
-        self.closest_dock = None
+        self.cell = {}                                                                                                  ## KEY IS COORD, VALUE IS DISTANCE MATRIX.  ONLY FILLED IN INITIALIZATION
+        self.closest_dock = None                                                                                        ## WILL BE A MATRIX REPRESENTING THE DISTANCE OF THE CLOSEST DOCK
 
 class Docks():
     def __init__(self, map_height, map_width):
-        self.averages = np.zeros((map_height, map_width), dtype=np.int16)
-        self.placement = np.zeros((map_height, map_width), dtype=np.int16)
-        self.manhattan = np.zeros((map_height, map_width), dtype=np.int16)
+        self.averages = np.zeros((map_height, map_width), dtype=np.int16)                                               ## THE AVERAGE VALUE OF THE SURROUNDING AREA
+        self.placement = np.zeros((map_height, map_width), dtype=np.int16)                                              ## WHERE THE DOCK WILL BE BUILT
+        self.manhattan = np.zeros((map_height, map_width), dtype=np.int16)                                              ## IDENTIFIES THE SURROUNDING OF THE DOCKS, SO SHIP GRAVITATES TOWARDS IT
         self.order = np.zeros((map_height, map_width), dtype=np.int16)
         self.order.fill(Matrix_val.NINETY)
 
@@ -124,7 +124,7 @@ class Matrix():
 
 class MySets():
     def __init__(self, game):
-        self.ships_all = OrderedSet(sorted(game.me._ships.keys()))                                                              ## ALL SHIPS
+        self.ships_all = OrderedSet(sorted(game.me._ships.keys()))                                                      ## ALL SHIPS
         self.ships_to_move = OrderedSet(sorted(game.me._ships.keys()))                                                  ## SHIPS TO MOVE (SORTING TO MATCH ORDER ONLINE)
         self.ships_returning = OrderedSet()                                                                             ## SHIPS RETURNING HALITE
         self.ships_kicked = OrderedSet()
@@ -154,12 +154,12 @@ class MyVars():
 
 class MyDicts():
     def __init__(self):
-        self.players_info = {}
-        self.positions_taken = {}
-        self.explore_ship = {}
-        self.deposit_ship = {}
-        self.snipe_ship = {}
-        self.ships_building_dock = {}
+        self.players_info = {}              ## KEY IS PLAYER ID, VALUE IS PlayerInfo
+        self.positions_taken = {}           ## KEY IS COORD, VALUE IS SHIP ID
+        self.explore_ship = {}              ## KEY IS SHIP ID, VALUE IS AN ExploreShip
+        self.deposit_ship = {}              ## KEY IS SHIP ID, VALUE IS AN FarthestShip
+        self.snipe_ship = {}                ## KEY IS SHIP ID, VALUE IS AN ExploreShip
+        self.ships_building_dock = {}       ## KEY IS DOCK COORD, VALUES ARE SHIP IDs BUILDING THERE
 
 class MyLists():
     def __init__(self, data):

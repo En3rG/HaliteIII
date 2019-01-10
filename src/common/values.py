@@ -65,12 +65,12 @@ class MyConstants():
 
                                                     ## USED TO BE:
                                                     ## V19: 20
-    MIN_DIST_BTW_ENEMY_DOCKS = 22
-    MIN_DIST_BTW_DOCKS = 12                         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
+    MIN_DIST_BTW_ENEMY_DOCKS = 18
+    MIN_DIST_BTW_DOCKS = 15                         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
                                                     ## USED TO BE:
                                                     ## V19: 12
 
-    BUILD_RIGHT_AWAY_HALITE = 3500
+    BUILD_ON_HIGH_HALITE = 3500
 
     ## INFLUENCE
     ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
@@ -79,13 +79,13 @@ class MyConstants():
     ENEMY_BACKUP_DISTANCE = 2
     ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
     NUM_SHIPS_BEFORE_ATTACKING = 0
-    ATTACK_TURNS_UPPER_LIMIT = 1.00
+    ATTACK_TURNS_UPPER_LIMIT = 0.95
     ATTACK_TURNS_LOWER_LIMIT = 0.00
                                                     ## USED TO BE:
                                                     ## V28: 0.80
 
-    KAMIKAZE_HALITE_RATIO_2P = 0.0
-    KAMIKAZE_HALITE_RATIO_4P = 1.0
+    KAMIKAZE_HALITE_RATIO_2P = 0.00
+    KAMIKAZE_HALITE_RATIO_4P = 1.00
     KAMIKAZE_HALITE_MAX = 1000
 
     ## SUPPORT
@@ -102,11 +102,11 @@ class MyConstants():
 
     ## EXPLORE
     EXPLORE_SEARCH_PERIMETER = 5
-    AVERAGE_CELL_DISTANCE = 2
+    AVERAGE_CELL_DISTANCE = 1
 
     ## SNIPE
     EXPLORE_RATIO_TO_SNIPE = 3
-    SNIPE_TURNS_UPPER_LIMIT = 1.00
+    SNIPE_TURNS_UPPER_LIMIT = 0.95
     SNIPE_TURNS_LOWER_LIMIT = 0.00
 
     ## HARVEST
@@ -117,10 +117,10 @@ class MyConstants():
                                                     ## V28: 35
 
 
-    EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT = 0.00
-    EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.75    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+    EXPLORE_ENABLE_BONUS_HALITE_LEFT = 0.00
+    EXPLORE_ENABLE_BONUS_TURNS_ABOVE = 0.75    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
                                                     ## 1 MEANS NEVER WILL USE IT
-    HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE = 0.25    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
+    HARVEST_ENABLE_BONUS_TURNS_ABOVE = 0.25    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT
 
     ## SPAWNING

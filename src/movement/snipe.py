@@ -41,9 +41,9 @@ class Snipe(Moves, Explores, Harvests):
 
                 directions = self.get_directions_target(ship, snipe_destination)
                 ## OLD WAY
-                #snipe_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
+                snipe_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
                 ## USING ASTAR
-                snipe_direction = self.get_a_star_direction(ship, explore_destination, directions)
+                #snipe_direction = self.get_Astar_direction(ship, explore_destination, directions)
 
 
                 if -target.ratio > -explore_target.ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
@@ -56,7 +56,7 @@ class Snipe(Moves, Explores, Harvests):
                     self.move_mark_unsafe(ship, direction)
 
 
-    def get_a_star_direction(self, ship, target_position, directions):
+    def get_Astar_direction(self, ship, target_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
         # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
         #                         MyConstants.RETREAT_SEARCH_PERIMETER - 1)

@@ -16,13 +16,13 @@ class Deposits():
         """
         logging.debug("Ship id: {} is returning".format(ship.id))
 
-        direction = self.get_a_star_direction(ship, dock_position, directions)
+        direction = self.get_Astar_direction(ship, dock_position, directions)
 
         self.move_mark_unsafe(ship, direction)
         self.data.mySets.ships_returning.add(ship.id)
 
 
-    def get_a_star_direction(self, ship, dock_position, directions):
+    def get_Astar_direction(self, ship, dock_position, directions):
         ## WILL NOW ALWAYS USE A STAR (WITH OR WITHOUT ENEMY AROUND)
         # if self.isEnemy_closeby(ship):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED

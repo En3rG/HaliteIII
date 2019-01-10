@@ -182,7 +182,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
         WILL NOT BE ADDED TO HEAP IF IT HAS TOO MUCH HALITE CARGO
         """
         ship = self.data.game.me._ships.get(ship_id)
-        directions_to_enemy, enemy_position = self.get_enemy_position(ship)
+        directions_to_enemy, enemy_position = self.get_closest_enemy_position(ship)
         ship_distance = calculate_distance(ship.position, enemy_position, self.data)
         enemy_ship, enemy_shipID = self.get_enemy_ship(enemy_position)
         potential_support = get_manhattan(self.data.myMatrix.locations.myShipsID,

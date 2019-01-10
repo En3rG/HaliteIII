@@ -45,8 +45,8 @@ class Data(abc.ABC):
         if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
             self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
-            self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_WITH_BONUS_HALITE_LEFT \
-                                                or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE
+            self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_BONUS_HALITE_LEFT \
+                                                or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE
 
 
     def populate_myShipyard_docks(self):
@@ -303,7 +303,7 @@ class Data(abc.ABC):
         """
         ## NO LONGER USED
         ## NOW JUST USING RATIO (HARVEST PER TURN)
-        if self.game.turn_number > constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
             ## BASED ON HARVEST (INCLUDING INFLUENCE)
             top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.harvest_with_bonus, top_num_cells)
@@ -344,7 +344,7 @@ class Data(abc.ABC):
         self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
 
         ## HARVEST PERCENTILE USED FOR HARVEST LATER (WHETHER ITS A GOOD HARVEST OR NOT)
-        if self.game.turn_number > constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_WITH_BONUS_TURNS_ABOVE:
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_BONUS_TURNS_ABOVE:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_ABOVE_PERCENTILE))
         else:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_ABOVE_PERCENTILE))
