@@ -300,7 +300,7 @@ def get_average_manhattan(matrix, loc, dist):
             sum += matrix[y_, x_]
             num += 1
 
-    return int(sum/num) ## FORCING TO INT FOR READABILITY (CHANGE LATER)
+    return sum/num ## FORCING TO INT FOR READABILITY (CHANGE LATER)
 
 
 def get_index_highest_val(matrix):

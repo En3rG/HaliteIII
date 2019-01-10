@@ -133,7 +133,7 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                 # self.depositNow(ship, s.dock_position, s.directions)
 
                 ## INSTEAD OF MOVING IT NOW, SAVE THAT DATA AND MOVE THE SHIPS LATER
-                #if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
+                if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
                 self.data.mySets.deposit_ships.add(s.ship_id)
 
                 self.data.myDicts.deposit_ship[s.ship_id] = s

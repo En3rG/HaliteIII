@@ -5,7 +5,6 @@ from src.initialization.getInitData import GetInitData
 from src.initialization.getData import GetData
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
-from src.movement.moveDeposit import MoveDeposit
 from src.movement.influence import Influence
 from src.movement.explore import Explore
 from src.movement.harvest import Harvest
@@ -14,9 +13,6 @@ from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
-from src.movement.swap import Swap
-from src.movement.evade import Evade
-from src.movement.attack2 import Attack2
 from src.movement.snipe import Snipe
 from src.movement.build import Build
 from src.movement.start import Start
@@ -76,27 +72,17 @@ while True:
     ## BUILD DOCK
     C = Build(data, prev_data)
 
-    ## DEPOSIT SHIPS
-    #E = Deposit(data, prev_data)
-
     ## GET EACH SHIP'S TARGET
     M = ExploreTarget(data, prev_data)
     N = EnemyTarget(data, prev_data)
 
-    R = MoveDeposit(data, prev_data)
+    R = Deposit(data, prev_data)
 
     ## HARVEST SHIPS
     H = Harvest(data, prev_data)
 
     ## ATTACK SHIPS
-    #G = Attack(data, prev_data)
-    P = Attack2(data, prev_data)
-
-    ## EVADE SHIPS
-    L = Evade(data, prev_data)
-
-    ## SWAP SHIPS
-    Q = Swap(data, prev_data)
+    P = Attack(data, prev_data)
 
     ## INFLUENCE SHIPS
     K = Influence(data, prev_data)
