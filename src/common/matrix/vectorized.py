@@ -65,6 +65,17 @@ def sunkenShips(prev, now):
 
 mySunkenShips = np.vectorize(sunkenShips)
 
+
+def averageMatrix(*args):
+    """
+    GET THE AVERAGE OF THE MATRIX PROVIDED
+    """
+    #return sum(args)/len(args)
+    return np.average(args)
+
+myAverageMatrix = np.vectorize(averageMatrix)
+
+
 ## NO LONGER USED
 # def harvestArea(max_x, x):
 #     """

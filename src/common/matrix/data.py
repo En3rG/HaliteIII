@@ -4,7 +4,7 @@ from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from hlt import constants
 from src.common.matrix.functions import populate_manhattan, get_n_largest_values, get_distance_matrix, \
-    get_average_manhattan, shift_matrix
+    get_average_manhattan, shift_matrix, get_average_manhattan_matrix
 from src.common.matrix.vectorized import myRound, myBonusArea, myMinValueMatrix, mySunkenShips
 from src.common.orderedSet import OrderedSet
 from src.common.print import print_matrix
@@ -295,6 +295,15 @@ class Data(abc.ABC):
                 self.myMatrix.cell_average.manhattan[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
                                                                                    loc,
                                                                                    distance)
+
+    def populate_cell_averages2(self, distance):
+        """
+        MUCH FASTER WAY OF GENERATING THE ENTIRE MAP AVERAGES
+        BUT IS ONLY LIMITED TO 32 ARRAYS (THUS MAX DISTANCE OF 3)
+        6 DISTANCES REQUIRES 85 MATRICES, WILL ERROR OUT
+        """
+        self.myMatrix.cell_average.manhattan = get_average_manhattan_matrix(self.myMatrix.halite.amount, distance)
+
 
 
     def populate_top_halite(self):

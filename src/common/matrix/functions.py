@@ -2,6 +2,8 @@ import numpy as np
 from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from src.common.print import print_matrix
+from hlt.positionals import Position
+from src.common.matrix.vectorized import myAverageMatrix
 from src.common.matrix.classes import Option
 import logging
 
@@ -301,6 +303,25 @@ def get_average_manhattan(matrix, loc, dist):
             num += 1
 
     return sum/num ## FORCING TO INT FOR READABILITY (CHANGE LATER)
+
+
+def get_average_manhattan_matrix(matrix, dist):
+    """
+    GET THE ENTIRE MANHATTAN BY ROLLING THE MATRIX
+    """
+    matrices = []
+    position = Position(0, 0)
+
+    size, size = matrix.shape
+    for y in range(-dist, dist + 1):
+        for x in range(-dist + abs(y), dist - abs(y) + 1):
+            y_ = (y + position.y) % size
+            x_ = (x + position.x) % size
+
+            a = shift_matrix(y_, x_, matrix)
+            matrices.append(a)
+
+    return myAverageMatrix(*matrices)  ## CAN ONLY HANDLE UP TO 32 OPERANDS, FOR 6 DISTANCE, IT HAS 85 DIFFERENT MATRICES, WONT WORK
 
 
 def get_index_highest_val(matrix):
