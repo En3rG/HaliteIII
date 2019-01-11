@@ -17,7 +17,7 @@ class Builds():
         """
         BUILD A DOCK RIGHT AWAY ON A HIGH COLLISION CELL, TO PREVENT ENEMY FROM HARVESTING IT
         """
-        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.BUILD_RIGHT_AWAY_HALITE)
+        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.BUILD_ON_HIGH_HALITE)
         ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
 

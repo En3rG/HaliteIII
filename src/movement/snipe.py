@@ -6,6 +6,8 @@ import logging
 from src.common.print import print_heading, print_matrix
 from src.common.points import ExploreShip, ExplorePoints
 from src.common.astar import a_star, get_goal_in_section
+from src.movement.collision_prevention import move_kicked_ship
+from hlt.positionals import Direction
 from src.common.matrix.functions import get_coord_closest, get_n_closest_masked, populate_manhattan, \
     get_coord_max_closest, pad_around, Section
 from hlt.positionals import Position
@@ -52,8 +54,13 @@ class Snipe(Moves, Explores, Harvests):
 
                     logging.debug("snipe_destination {} -target.ratio {} explore_destination {} explore_target.ratio {}".format(snipe_destination, -target.ratio, explore_destination, explore_target.ratio))
 
-                    #self.mark_taken_udpate_top_halite(destination)
-                    self.move_mark_unsafe(ship, direction)
+                    if direction == Direction.Still and self.data.myMatrix.locations.myDocks[ship.position.y][
+                        ship.position.x] == Matrix_val.ONE:
+                        ## IF STILL AND AT A DOCK (MOVE!!)
+                        move_kicked_ship(self, ship)  ## NOT REALLY KICKED
+                    else:
+                        #self.mark_taken_udpate_top_halite(destination)
+                        self.move_mark_unsafe(ship, direction)
 
 
     def get_Astar_direction(self, ship, target_position, directions):

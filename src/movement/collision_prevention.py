@@ -21,7 +21,7 @@ def get_adjacent_directions(direction):
 def move_kicked_ship(Moves, ship):
     """
     GO TOWARDS EXPLORE TARGET FIRST
-    IT THAT IS NOT SAFE, GO ANYWHERE SAFE
+    IF THAT IS NOT SAFE, GO ANYWHERE SAFE
     """
     if ship.id in Moves.data.mySets.deposit_ships:
         logging.debug("...ship is also depositing")
