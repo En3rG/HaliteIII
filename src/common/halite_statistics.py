@@ -47,18 +47,14 @@ class Halite_stats():
         self.halite_amount = game.me.halite_amount
         self.halite_carried = data.myDicts.players_info[game.my_id].halite_carried
 
-        self.enemy_stat = {}
-        for id, v in data.myDicts.players_info.items():
-            if id != game.me.id:
-                self.enemy_stat[id] = {"halite amount":v.halite_amount, "halite carried":v.halite_carried}
-
+        self.stats = data.myDicts.players_info
 
     def __repr__(self):
         output = "\n\nHalite stats......"
         for id, record in self.ships_stat.items():
             output += str(record)
 
-        output += "\n\nHalite: {} || Carrying: {} || Total gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}\n enemy_stat: {}"\
+        output += "\n\nHalite: {} || Carrying: {} || Total gained: {} || bonus: {} || spent: {} || burned: {} ||  dropped: {}\n stats: {}"\
                     .format(self.halite_amount,
                             self.halite_carried,
                             self.total_gained,
@@ -66,7 +62,7 @@ class Halite_stats():
                             self.total_spent,
                             self.total_burned,
                             self.total_dropped,
-                            self.enemy_stat)
+                            self.stats)
 
         return output
 

@@ -113,7 +113,7 @@ class MyConstants():
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
     HARVEST_RATIO_TO_EXPLORE = 3
-    HARVEST_ABOVE_PERCENTILE = 40                   ## USED TO BE:
+    HARVEST_ABOVE_PERCENTILE = 45                   ## USED TO BE:
                                                     ## V28: 35
 
 
