@@ -38,10 +38,10 @@ class Deposit(Moves, Deposits, Explores):
             ship = self.data.game.me._ships.get(id)
             s = self.data.myDicts.deposit_ship[id]
 
-            # if ship.id in self.data.mySets.ships_to_move:
-            #     self.data.mySets.ships_to_move.remove(ship.id)
-            #     self.depositNow(ship, s.dock_position, s.directions)
-            self.depositNow(ship, s.dock_position, s.directions)
+            if ship.id in self.data.mySets.ships_to_move:
+                self.data.mySets.ships_to_move.remove(ship.id)
+                self.depositNow(ship, s.dock_position, s.directions)
+            #self.depositNow(ship, s.dock_position, s.directions)
 
 
 
