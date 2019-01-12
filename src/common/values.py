@@ -58,7 +58,7 @@ class MyConstants():
     SHIPS_PER_DOCK_RATIO = 10
     SHIPS_BUILDING_PERCENT = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
     SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
-    DOCK_MANHATTAN = 7                             ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
+    DOCK_MANHATTAN = 12                             ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
                                                     ## USED TO BE:
                                                     ## V28: 2
     AVERAGE_MANHATTAN_DISTANCE = 6                  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
@@ -115,7 +115,7 @@ class MyConstants():
     ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
     ## AND WILL HARVEST SMALLER AREAS LATER
     HARVEST_RATIO_TO_EXPLORE = 3
-    HARVEST_ABOVE_PERCENTILE = 45                   ## USED TO BE:
+    HARVEST_ABOVE_PERCENTILE = 40                   ## USED TO BE:
                                                     ## V28: 35
 
 
