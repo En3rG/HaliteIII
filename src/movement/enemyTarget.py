@@ -29,13 +29,18 @@ class EnemyTarget(Moves, Harvests, Explores):
         self.ships_kicked_temp = OrderedSet()
 
         self.halite_matrix = self.data.myMatrix.halite.updated_enemyCargo
+        self.average_matrix = self.data.myMatrix.cell_average.manhattan
 
         if data.myVars.explore_disable_bonus:
             # self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
-            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest
+            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest * MyConstants.HARVEST_RATIO \
+                                  + self.average_matrix * MyConstants.AVERAGE_RATIO
         else:
             # self.harvest_matrix = self.data.myMatrix.halite.enemyCargo_harvest_with_bonus
-            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest_with_bonus
+            #self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest_with_bonus
+            self.harvest_matrix = self.data.myMatrix.halite.updated_enemyCargo_harvest_with_bonus * MyConstants.HARVEST_RATIO \
+                                  + self.average_matrix * MyConstants.AVERAGE_RATIO
 
         #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.enemyCargo_harvest)
 

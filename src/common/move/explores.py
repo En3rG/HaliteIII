@@ -111,7 +111,10 @@ class Explores():
 
         self.halite_matrix[destination.y][destination.x] -= maximum_harvest                                             ## UPDATE HALITE VALUE
 
-        self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25     ## UPDATE HARVEST VALUE
+        #self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25     ## UPDATE HARVEST VALUE
+
+        self.harvest_matrix[destination.y][destination.x] = (self.halite_matrix[destination.y][destination.x] * 0.25) * MyConstants.HARVEST_RATIO \
+                                                            + self.average_matrix[destination.y][destination.x] * MyConstants.AVERAGE_RATIO  ## UPDATE HARVEST VALUE
 
         if self.data.myVars.explore_disable_bonus == False and self.data.myMatrix.halite.bonus[destination.y][destination.x] != 0:
             self.harvest_matrix[destination.y][destination.x] = self.harvest_matrix[destination.y][destination.x] * 3
