@@ -47,15 +47,13 @@ class Snipe(Moves, Explores, Harvests):
                 ## USING ASTAR
                 #snipe_direction = self.get_Astar_direction(ship, explore_destination, directions)
 
-
                 if -target.ratio > -explore_target.ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
                     destination = snipe_destination
                     direction = snipe_direction
 
                     logging.debug("snipe_destination {} -target.ratio {} explore_destination {} explore_target.ratio {}".format(snipe_destination, -target.ratio, explore_destination, explore_target.ratio))
 
-                    if direction == Direction.Still and self.data.myMatrix.locations.myDocks[ship.position.y][
-                        ship.position.x] == Matrix_val.ONE:
+                    if direction == Direction.Still and self.data.myMatrix.locations.myDocks[ship.position.y][ship.position.x] == Matrix_val.ONE:
                         ## IF STILL AND AT A DOCK (MOVE!!)
                         move_kicked_ship(self, ship)  ## NOT REALLY KICKED
                     else:

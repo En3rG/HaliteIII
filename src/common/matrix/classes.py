@@ -151,6 +151,7 @@ class MyVars():
         self.kamikaze_halite_ratio = MyConstants.KAMIKAZE_HALITE_RATIO_2P if (len(game.players) == 2) \
                                     else MyConstants.KAMIKAZE_HALITE_RATIO_4P
         self.explore_disable_bonus = None
+        self.on_killing_spree = False
 
 
 class MyDicts():

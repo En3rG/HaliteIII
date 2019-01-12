@@ -168,8 +168,11 @@ class Data(abc.ABC):
         POPULATE MATRIX WITH POTENTIAL ENEMY COLLISIONS
         POPULATE MATRIX WITH ENGAGE ENEMY (CLOSE TO ENEMY)
         """
+        enemy_id = None
+
         for id, player in self.game.players.items():
             if id != self.game.me.id:
+                enemy_id = id
                 self.myDicts.players_info[id] = PlayerInfo()
                 self.myDicts.players_info[id].halite_amount = player.halite_amount
                 self.myDicts.players_info[id].num_ships = len(player.get_ships())
@@ -221,6 +224,11 @@ class Data(abc.ABC):
                                            dist,
                                            Option.REPLACE)
 
+        ## CHECK IF KILLING SPREE SHOULD BE ENABLED
+        if self.myDicts.players_info[enemy_id].num_ships * MyConstants.KILLING_SPREE_RATIO <= self.myDicts.players_info[self.game.me.id].num_ships \
+            and self.myVars.ratio_left_halite <= MyConstants.KILLING_SPREE_HALITE \
+            and len(self.game.players) == 2:
+            self.myVars.on_killing_spree = True
 
     def populate_cost(self):
         """

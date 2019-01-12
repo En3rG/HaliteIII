@@ -98,8 +98,12 @@ class Explores():
         """
         ship = self.data.game.me._ships.get(ship_id)
         maximum_capacity = 1000 - ship.halite_amount
-        #maximum_harvest = maximum_capacity if self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0 else (maximum_capacity * 0.333)      ## ONLY TAKING 1/3 (CUZ OF BONUS)
 
+        ## OLD WAY
+        # maximum_harvest = maximum_capacity if self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0 else (maximum_capacity * 0.333)      ## ONLY TAKING 1/3 (CUZ OF BONUS)
+        # self.harvest_matrix[destination.y][destination.x] -= maximum_harvest
+
+        ## NEW WAY
         # if self.data.myMatrix.locations.sunken_ships[destination.y][destination.x] == Matrix_val.ONE:                   ## NO LONGER TRUE IN 2 TURNS (SHIP ONLY SHIP 1 TURN)
         #     maximum_harvest = (maximum_capacity * 0.20)
         if self.data.myMatrix.locations.engage_enemy[MyConstants.ENGAGE_ENEMY_DISTANCE][destination.y][destination.x] == MyConstants.ENGAGE_ENEMY_DISTANCE:
