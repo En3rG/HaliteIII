@@ -365,8 +365,10 @@ class Data(abc.ABC):
         ## HARVEST PERCENTILE USED FOR HARVEST LATER (WHETHER ITS A GOOD HARVEST OR NOT)
         if self.game.turn_number > constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_BONUS_TURNS_ABOVE:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_ABOVE_PERCENTILE))
+            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.DEPOSIT_HARVEST_ABOVE_PERCENTILE))
         else:
             self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_ABOVE_PERCENTILE))
+            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.DEPOSIT_HARVEST_ABOVE_PERCENTILE))
 
 
         logging.debug("Average Halite: {} Median Halite {} Harvest Percentile {}".

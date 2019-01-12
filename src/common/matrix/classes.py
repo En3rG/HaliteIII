@@ -144,6 +144,7 @@ class MyVars():
         self.average_halite = 0
         self.median_halite = 0
         self.harvest_percentile = 0
+        self.deposit_harvest_percentile = 0
         self.isBuilding = False
         self.isSaving = False
         self.support_gain_ratio = MyConstants.SUPPORT_GAIN_RATIO_2P if (len(game.players) == 2) \

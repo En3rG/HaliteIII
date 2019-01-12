@@ -10,13 +10,18 @@ import heapq
 import numpy as np
 
 class Deposits():
-    def depositNow(self, ship, dock_position, directions):
+    def depositNow(self, ship, dock_position, directions, harvest=False):
         """
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
         """
         logging.debug("Ship id: {} is returning".format(ship.id))
 
         direction = self.get_Astar_direction(ship, dock_position, directions)
+
+        if harvest:
+            current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
+            if current_harvest >= self.data.myVars.deposit_harvest_percentile and ship.halite_amount + current_harvest < 1000:
+                direction = Direction.Still
 
         self.move_mark_unsafe(ship, direction)
         self.data.mySets.ships_returning.add(ship.id)
