@@ -63,7 +63,7 @@ class GetInitData(Data):
         BECAUSE THE HIGHEST CELL AVERAGE IS NOT ALWAYS THE HIGHEST HALITE CELL IN THAT AREA
         """
         ## NEW WAY (SHOULD BE MORE EFFICIENT AND BETTER POSITIONING)
-        average_manhattan = copy.deepcopy(self.myMatrix.cell_average.manhattan)
+        average_manhattan = copy.deepcopy(self.myMatrix.cell_average.halite)
 
         ## POPULATE UNAVAILABLE AREA CLOSE TO SHIPYARD
         self.populate_shipyards_unavailable()

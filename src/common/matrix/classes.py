@@ -19,8 +19,9 @@ class CellAverage():
     USED FOR DOCK PLACEMENT
     """
     def __init__(self, map_height, map_width):
-        self.manhattan = np.zeros((map_height, map_width), dtype=np.float16)                                            ## WILL CONTAIN THE AVERAGE OF EACH CELL
+        self.halite = np.zeros((map_height, map_width), dtype=np.float16)                                               ## WILL CONTAIN THE AVERAGE OF EACH CELL
         self.top_N = np.zeros((map_height, map_width), dtype=np.float16)                                                ## WILL CONTAIN AVERAGE OF TOP N LOCATIONS
+        self.enemyCargo = np.zeros((map_height, map_width), dtype=np.float16)
 
 
 class Halite():

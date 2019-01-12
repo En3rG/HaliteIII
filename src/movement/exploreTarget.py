@@ -33,7 +33,7 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
         self.ships_kicked_temp = OrderedSet()
 
         self.halite_matrix = self.data.myMatrix.halite.updated_amount
-        self.average_matrix = self.data.myMatrix.cell_average.manhattan
+        self.average_matrix = self.data.myMatrix.cell_average.halite
 
         if data.myVars.explore_disable_bonus:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)

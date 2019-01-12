@@ -292,7 +292,7 @@ class Data(abc.ABC):
         for r in range(self.game.game_map.height):
             for c in range(self.game.game_map.width):
                 loc = Position(c, r) ## Position(x, y)
-                self.myMatrix.cell_average.manhattan[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
+                self.myMatrix.cell_average.halite[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
                                                                                    loc,
                                                                                    distance)
 
@@ -302,7 +302,9 @@ class Data(abc.ABC):
         BUT IS ONLY LIMITED TO 32 ARRAYS (THUS MAX DISTANCE OF 3)
         6 DISTANCES REQUIRES 85 MATRICES, WILL ERROR OUT
         """
-        self.myMatrix.cell_average.manhattan = get_average_manhattan_matrix(self.myMatrix.halite.amount, distance)
+        self.myMatrix.cell_average.halite = get_average_manhattan_matrix(self.myMatrix.halite.amount, distance)
+
+        self.myMatrix.cell_average.enemyCargo = get_average_manhattan_matrix(self.myMatrix.halite.enemyCargo, distance)
 
 
 
@@ -449,7 +451,6 @@ class Data(abc.ABC):
         for y, x in indexes:
             for i in range(0, MyConstants.DOCK_MANHATTAN):
                 position = Position(x,y)
-                logging.debug("dock position {}".format(position))
                 populate_manhattan(self.myMatrix.docks.manhattan, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
 
         #print_matrix("dock manhattan", self.myMatrix.docks.manhattan)
