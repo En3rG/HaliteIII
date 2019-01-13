@@ -110,7 +110,7 @@ class GetInitData(Data):
                 self.average_manhattan[pos_top_ave.y][pos_top_ave.x] = Matrix_val.ZERO
 
                 ## WHEN TOP AVERAGE IS BELOW THE TOTAL AVERAGE, WILL EXIT FOR LOOP
-                if value_top_ave < self.average_halite:
+                if value_top_ave <= self.average_halite:
                     quit = True
                     break
 
