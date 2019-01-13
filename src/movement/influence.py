@@ -59,10 +59,10 @@ class Influence(Moves, Explores, Harvests):
 
             if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
                 canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
-                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
-                                                                                             MyConstants.DIRECTIONS,
-                                                                                             kicked=False,
-                                                                                             moveNow=False)
+                # if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
+                #                                                                              MyConstants.DIRECTIONS,
+                #                                                                              kicked=False,
+                #                                                                              moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
                 ## OLD WAY

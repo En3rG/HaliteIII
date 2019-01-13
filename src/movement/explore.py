@@ -89,7 +89,7 @@ class Explore(Moves, Explores, Harvests):
 
                 if direction == Direction.Still and self.data.myMatrix.locations.myDocks[ship.position.y][ship.position.x] == Matrix_val.ONE:
                     ## IF STILL AND AT A DOCK (MOVE!!)
-                    move_kicked_ship(self, ship)  ## NOT REALLY KICKED
+                    move_kicked_ship(self, ship, all_directions=True)  ## NOT REALLY KICKED
                 else:
                     self.mark_taken_udpate_top_halite(destination)
                     self.move_mark_unsafe(ship, direction)
@@ -124,6 +124,9 @@ class Explore(Moves, Explores, Harvests):
                                             avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
+
+
+
 
 
     ## OLD WAY

@@ -18,7 +18,7 @@ def get_adjacent_directions(direction):
         return [Direction.South, Direction.North]
 
 
-def move_kicked_ship(Moves, ship):
+def move_kicked_ship(Moves, ship, all_directions=False):
     """
     GO TOWARDS EXPLORE TARGET FIRST
     IF THAT IS NOT SAFE, GO ANYWHERE SAFE
@@ -47,15 +47,15 @@ def move_kicked_ship(Moves, ship):
             else:
                 directions = Moves.get_directions_target(ship, explore_destination)
 
-            direction = avoid_collision_direction(Moves, ship, directions=directions)
+            direction = avoid_collision_direction(Moves, ship, directions=directions, all_directions=all_directions)
 
         except:
-            direction = avoid_collision_direction(Moves, ship, directions=None)
+            direction = avoid_collision_direction(Moves, ship, directions=None, all_directions=all_directions)
 
     Moves.move_mark_unsafe(ship, direction)
 
 
-def avoid_collision_direction(Moves, ship, directions):
+def avoid_collision_direction(Moves, ship, directions, all_directions=False):
     """
     GET BEST DIRECTION FOR KICKED SHIP
 
@@ -64,12 +64,12 @@ def avoid_collision_direction(Moves, ship, directions):
     :param directions: DIRECTIONS DETERMINED BEFORE, BUT BEST ONE WILL COLLIDE
     :return: BEST DIRECTION
     """
-    points = get_move_points_collision(Moves, ship, directions)
+    points = get_move_points_collision(Moves, ship, directions, all_directions)
     best = max(points)
     return best.direction
 
 
-def get_move_points_collision(Moves, ship, directions):
+def get_move_points_collision(Moves, ship, directions, all_directions):
     """
     GET POINTS FOR IMMINENT COLLISION PREVENTION
 
@@ -90,7 +90,12 @@ def get_move_points_collision(Moves, ship, directions):
             directions = set(get_adjacent_directions(direction))
             second_priority.update(directions)
 
-    for direction in MyConstants.DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
+    if all_directions:
+        DIRECTIONS = MyConstants.ALL_DIRECTIONS
+    else:
+        DIRECTIONS = MyConstants.DIRECTIONS
+
+    for direction in DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)
 
         safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]

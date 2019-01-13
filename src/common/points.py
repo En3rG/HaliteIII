@@ -195,7 +195,7 @@ class KamikazeShip:
     USED TO DETERMINE CLOSEST SHIP WITH LOWEST CARGO TO KAMIKAZE HARVEST (POTENTIALLY)
     """
     def __init__(self, cargo, id, support_ships, destination, enemy_position):
-        self.cargo = cargo
+        self.cargo = -cargo
         self.ship_id = id
         self.destination = destination
         self.support_ships = support_ships

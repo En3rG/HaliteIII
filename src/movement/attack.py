@@ -231,12 +231,12 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False,
                                                                       avoid_enemy=True, avoid_potential_enemy=True)
-                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
-                                                                                             MyConstants.DIRECTIONS,
-                                                                                             kicked=False,
-                                                                                             moveNow=False,
-                                                                                             avoid_enemy=True,
-																							 avoid_potential_enemy=True)
+                # if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
+                #                                                                              MyConstants.DIRECTIONS,
+                #                                                                              kicked=False,
+                #                                                                              moveNow=False,
+                #                                                                              avoid_enemy=True,
+					# 																		 avoid_potential_enemy=True)
 
                 matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(support_ship)
 
