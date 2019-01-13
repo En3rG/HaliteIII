@@ -63,10 +63,10 @@ class Explore(Moves, Explores, Harvests):
                 explore_destination = target.destination
 
                 canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-                if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
-                                                                                            MyConstants.DIRECTIONS,
-                                                                                            kicked=False,
-                                                                                            moveNow=False)
+                # if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id,
+                #                                                                             MyConstants.DIRECTIONS,
+                #                                                                             kicked=False,
+                #                                                                             moveNow=False)
 
                 directions = self.get_directions_target(ship, explore_destination)
                 ## OLD WAY
