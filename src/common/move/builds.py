@@ -18,15 +18,40 @@ class Builds(abc.ABC):
         """
         BUILD A DOCK RIGHT AWAY ON A HIGH COLLISION CELL, TO PREVENT ENEMY FROM HARVESTING IT
         """
-        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.build.dock_on_high_halite)
+        ## BUILD ANYWHERE WHERE HALITE IS HIGH
+        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.build.dock_anywhere_halite)
         ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
 
+        self.building_aggressively(ships_building, check_close_docks=False)
+
+        ## BUILD WHERE HALITE IS MEDIUM AND NO CLOSE DOCKS
+        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.build.dock_far_halite)
+        ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
+        ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
+
+        self.building_aggressively(ships_building, check_close_docks=True)
+
+
+    def building_aggressively(self, ships_building, check_close_docks):
         for ship_id in sorted(ships_building):
             ship = self.data.game.me._ships.get(ship_id)
             cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
 
-            if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000:
+            farEnough = True
+
+            if check_close_docks:
+                curr_cell = (ship.position.y, ship.position.x)
+                coord, distance, val = get_coord_closest(Matrix_val.ONE,
+                                                         self.data.myMatrix.locations.myDocks,
+                                                         self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                         Inequality.EQUAL)
+
+                if distance <= MyConstants.build.considered_far_distance:
+                    farEnough = False
+
+            if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000 \
+                    and farEnough:
                 ## HAVE ENOUGH HALITE TO BUILD DOCK
                 halite_used = 0 if ship.halite_amount + cell_halite_amount >= 4000 else (4000 - ship.halite_amount - cell_halite_amount)
                 self.data.game.me.halite_amount -= halite_used
@@ -35,12 +60,12 @@ class Builds(abc.ABC):
                 command = ship.make_dropoff()
                 self.data.command_queue.append(command)
 
-            ## RECORD INFO ALSO SHIP COUNTER PER DOCK
-            dock_coord = (ship.position.y, ship.position.x)
-            self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
-            self.data.myDicts.ships_building_dock[dock_coord].add(ship.id)
-            self.mark_unsafe(ship, ship.position)
-            self.data.mySets.ships_to_move.remove(ship.id)
+                ## RECORD INFO ALSO SHIP COUNTER PER DOCK
+                dock_coord = (ship.position.y, ship.position.x)
+                self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
+                self.data.myDicts.ships_building_dock[dock_coord].add(ship.id)
+                self.mark_unsafe(ship, ship.position)
+                self.data.mySets.ships_to_move.remove(ship.id)
 
 
     def building_now(self):

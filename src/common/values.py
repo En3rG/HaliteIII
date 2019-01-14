@@ -50,7 +50,9 @@ class Build():
         self.average_manhattan_distance = 6         ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
         self.min_dist_btw_enemy_docks = 18
         self.min_dist_btw_docks = 15                ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
-        self.dock_on_high_halite = 3500
+        self.dock_anywhere_halite = 3500
+        self.dock_far_halite = 1500
+        self.considered_far_distance = 10
 
         ## BUILDING
         self.allowed_turns = 0.70
