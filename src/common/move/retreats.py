@@ -7,8 +7,9 @@ from src.common.astar import a_star, get_goal_in_section
 from src.common.matrix.functions import get_coord_closest, pad_around, Section
 from hlt.positionals import Position
 import logging
+import abc
 
-class Retreats():
+class Retreats(abc.ABC):
     def move_ships(self):
         """
         MOVE ALL SHIPS TO RETREAT BACK TO SHIPYARD/DOCKS

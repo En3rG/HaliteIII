@@ -7,9 +7,10 @@ from src.common.astar import a_star, get_goal_in_section
 from hlt.positionals import Position
 import logging
 import heapq
+import abc
 import numpy as np
 
-class Deposits():
+class Deposits(abc.ABC):
     def depositNow(self, ship, dock_position, directions, harvest=False):
         """
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS

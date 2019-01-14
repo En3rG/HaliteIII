@@ -18,7 +18,7 @@ import numpy as np
 
 
 
-class Snipe(Moves, Explores, Harvests):
+class Snipe(Moves, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 

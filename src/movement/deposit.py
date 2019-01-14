@@ -17,7 +17,7 @@ import copy
 import numpy as np
 
 
-class Deposit(Moves, Deposits, Explores):
+class Deposit(Moves, Deposits):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 

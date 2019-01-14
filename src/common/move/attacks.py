@@ -5,8 +5,9 @@ from src.common.points import SupportShip, SupportPoints, AttackPoints
 from src.common.matrix.functions import get_coord_closest
 from hlt.positionals import Direction
 import logging
+import abc
 
-class Attacks():
+class Attacks(abc.ABC):
     def get_neighbor_IDs(self, ship):
         """
         GET NEXT ALLY NEIGHBORS IN THE GIVEN SHIP

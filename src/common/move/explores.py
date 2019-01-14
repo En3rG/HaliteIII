@@ -6,12 +6,13 @@ from hlt.positionals import Position
 from src.common.values import MoveMode, MyConstants, Matrix_val, Inequality
 from src.common.astar import a_star, get_goal_in_section
 import heapq
+import abc
 import numpy as np
 import logging
 from src.common.print import print_matrix
 from collections import deque
 
-class Explores():
+class Explores(abc.ABC):
     # def exploreNow(self, ship_id):
     #     """
     #     SHIP IS EXPLORING, PERFORM NECESSARY STEPS
@@ -46,7 +47,6 @@ class Explores():
     #     # self.mark_unsafe(ship, explore_destination)
     #     self.mark_taken_udpate_top_halite(destination)
     #     self.move_mark_unsafe(ship, direction)
-
 
     def isDestination_untaken(self, s):
         ## RECALCULATING TOP HALITE

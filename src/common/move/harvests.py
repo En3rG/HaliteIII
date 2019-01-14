@@ -2,9 +2,10 @@ from hlt.positionals import Direction, Position
 import logging
 from src.common.points import HarvestPoints
 from src.common.values import MyConstants, MoveMode, Matrix_val
+import abc
 
 
-class Harvests():
+class Harvests(abc.ABC):
     def check_harvestNow(self, ship_id, moveNow=True, avoid_enemy=True, avoid_potential_enemy=True):
         """
         CHECK IF SHIP WILL HARVEST NOW, IF SO, MOVE IT

@@ -10,9 +10,10 @@ from src.common.orderedSet import OrderedSet
 from src.common.matrix.classes import Option
 import numpy as np
 import logging
+import abc
 import heapq
 
-class Builds():
+class Builds(abc.ABC):
     def build_on_high_halite(self):
         """
         BUILD A DOCK RIGHT AWAY ON A HIGH COLLISION CELL, TO PREVENT ENEMY FROM HARVESTING IT
