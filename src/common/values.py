@@ -109,8 +109,8 @@ class Explore():
     def __init__(self):
         self.search_perimeter = 5
         self.average_manhattan_distance = 3
-        self.enable_bonus_halite_left = 0.00
-        self.enable_bonus_turns_above = 0.75        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+        self.enable_bonus_halite_left = 0.50
+        self.enable_bonus_turns_above = 0.50        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
                                                     ## 1 MEANS NEVER WILL USE IT
         self.score_harvest_ratio = 0.90
         self.score_average_ratio = 0.10
@@ -118,7 +118,7 @@ class Explore():
 class Spawn():
     def __init__(self):
         self.stop_halite_left = 0.40
-        self.max_allowed_turn = 0.77
+        self.max_allowed_turn = 0.70
         self.percent_more_ships = 1.10
 
         ## DECAY (NO LONGER USED)
