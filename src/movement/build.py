@@ -36,9 +36,9 @@ class Build(Moves, Builds):
     def move_ships(self):
         print_heading("Moving build (dock) ships......")
 
-        allowBuild = self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ALLOW_BUILDING_TURNS \
-                                 and self.data.myVars.ratio_left_halite > MyConstants.STOP_BUILDING_HALITE_LEFT \
-                                 and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_BUILDING
+        allowBuild = self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.build.allowed_turns \
+                                 and self.data.myVars.ratio_left_halite > MyConstants.build.stop_when_halite_left \
+                                 and len(self.data.mySets.ships_all) > MyConstants.build.min_num_ships
 
         if allowBuild:
             self.building_now()

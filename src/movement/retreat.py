@@ -40,7 +40,7 @@ class Retreat(Moves, Retreats):
 
         logging.debug("Farthest ship is {}, with {} turns left".format(self.farthest_ship, self.turns_left))
 
-        if self.farthest_ship.distance + MyConstants.RETREAT_EXTRA_TURNS > self.turns_left:
+        if self.farthest_ship.distance + MyConstants.retreat.extra_turns > self.turns_left:
             self.move_ships()
 
 

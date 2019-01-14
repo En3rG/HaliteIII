@@ -38,13 +38,13 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
         if data.myVars.explore_disable_bonus:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
             #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
-            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest * MyConstants.HARVEST_RATIO \
-                                  + self.average_matrix * MyConstants.AVERAGE_RATIO
+            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest * MyConstants.explore.score_harvest_ratio \
+                                  + self.average_matrix * MyConstants.explore.score_average_ratio
         else:
             #self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
             #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus
-            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus * MyConstants.HARVEST_RATIO \
-                                  + self.average_matrix * MyConstants.AVERAGE_RATIO
+            self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus * MyConstants.explore.score_harvest_ratio \
+                                  + self.average_matrix * MyConstants.explore.score_average_ratio
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
         self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
@@ -109,12 +109,12 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                 current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
                 target_harvest = self.harvest_matrix[explore_destination.y][explore_destination.x]
 
-                if ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO \
-                        and (ship.halite_amount + (current_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000 \
-                              or ship.halite_amount + (target_harvest * MyConstants.DEPOSIT_HARVEST_CHECK_PERCENT) >= 1000):
+                if ship.halite_amount >= MyConstants.deposit.potentially_enough_cargo \
+                        and (ship.halite_amount + (current_harvest * MyConstants.deposit.over_harvest_percent) >= 1000 \
+                              or ship.halite_amount + (target_harvest * MyConstants.deposit.over_harvest_percent) >= 1000):
                     self.populate_heap_return(ship)
 
-                # elif ship.halite_amount >= MyConstants.POTENTIALLY_ENOUGH_CARGO and self.hasTooManyEnemy(ship):
+                # elif ship.halite_amount >= MyConstants.deposit.potentially_enough_cargo and self.hasTooManyEnemy(ship):
                 #     self.populate_heap_return(ship)
                 else:
                     self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
@@ -158,9 +158,9 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
         IF HAS TOO MANY ENEMY
         """
         count = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE, ship.position,
-                                MyConstants.ENEMY_CHECK_MANHATTAN)
+                                MyConstants.deposit.enemy_check_manhattan)
 
-        if count > MyConstants.ENEMY_CHECK_NUM:
+        if count > MyConstants.deposit.enemy_check_num:
             return True
         else:
             return False

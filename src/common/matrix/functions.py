@@ -442,7 +442,7 @@ def get_cell_averages(map_height, map_width, matrix):
     for r in range(map_height):
         for c in range(map_width):
             loc = Position(c, r)  ## Position(x, y)
-            ave_matrix[r][c] = get_average_manhattan(matrix, loc, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+            ave_matrix[r][c] = get_average_manhattan(matrix, loc, MyConstants.build.average_manhattan_distance)
 
     return ave_matrix
 

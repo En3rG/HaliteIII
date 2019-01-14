@@ -36,7 +36,7 @@ class Explore(Moves, Explores, Harvests):
         self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
 
         self.taken_destinations = set()
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
             #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
         else:
@@ -77,8 +77,8 @@ class Explore(Moves, Explores, Harvests):
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = target.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
-                if canHarvest and -target.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
-                #if -target.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+                if canHarvest and -target.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+                #if -target.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
                 else:
@@ -102,10 +102,10 @@ class Explore(Moves, Explores, Harvests):
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.EXPLORE_SEARCH_PERIMETER - 1)
+                          MyConstants.explore.search_perimter - 1)
         matrix_path = pad_around(section.matrix)
         section = Section(self.data.myMatrix.halite.amount, ship.position,
-                          MyConstants.EXPLORE_SEARCH_PERIMETER)
+                          MyConstants.explore.search_perimter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position,
                                             directions)
@@ -172,8 +172,8 @@ class Explore(Moves, Explores, Harvests):
     #             harvest_destination = self.get_destination(ship, harvest_direction)
     #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
     #
-    #             #if canHarvest and -s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
-    #             if -s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+    #             #if canHarvest and -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+    #             if -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
     #                 destination = harvest_destination
     #                 direction = harvest_direction
     #             else:

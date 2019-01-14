@@ -57,15 +57,15 @@ class Attack(Moves, Attacks, Harvests, Explores):
     def move_ships(self):
         print_heading("Moving attack ships......")
 
-        allowAttack = (constants.MAX_TURNS * MyConstants.ATTACK_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.ATTACK_TURNS_UPPER_LIMIT) \
-                           and len(self.data.mySets.ships_all) > MyConstants.NUM_SHIPS_BEFORE_ATTACKING
+        allowAttack = (constants.MAX_TURNS * MyConstants.attack.allowed_turns_lower_limit <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.attack.allowed_turns_upper_limit) \
+                           and len(self.data.mySets.ships_all) > MyConstants.attack.min_ships_before_attacking
 
 
         ## MOVE SHIPS CLOSEST TO ENEMY FIRST (WITH ITS SUPPORT SHIP)
         if allowAttack:
             considered_prev_i = OrderedSet()                                                                            ## USED TO NOT CONSIDER PREVIOUS i
 
-            for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE):                                                       ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
+            for i in range(1, MyConstants.attack.engage_enemy_distance):                                                       ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
                 matrixIDs = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
                 r, c = np.where(matrixIDs > Matrix_val.ZERO)
                 ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c]) - considered_prev_i
@@ -149,7 +149,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 logging.debug("harvest_destination {} s_kamikaze.explore_destination {} ship.halite_amount {} harvest_halite {}".format(harvest_destination, s_kamikaze.destination, ship.halite_amount, harvest_halite))
 
-                if ship.halite_amount <= MyConstants.KAMIKAZE_HALITE_MAX \
+                if ship.halite_amount <= MyConstants.attack.kamikaze_halite_max \
                     and harvest_halite >= ship.halite_amount * self.data.myVars.kamikaze_halite_ratio \
                     and ( ((len(self.data.game.players) == 2) and (harvest_destination == s_kamikaze.destination or harvest_destination == s_exploreTarget.destination)) \
                          or harvest_destination == s_kamikaze.destination ):
@@ -185,10 +185,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
         ship_distance = calculate_distance(ship.position, enemy_position, self.data)
         enemy_ship, enemy_shipID = self.get_enemy_ship(enemy_position)
         potential_support = get_manhattan(self.data.myMatrix.locations.myShipsID,
-                                          enemy_position, MyConstants.ENGAGE_ENEMY_DISTANCE)
+                                          enemy_position, MyConstants.attack.engage_enemy_distance)
         potential_support_IDs = potential_support - {-1} - self.considered_already                                      ## myShipsID contains -1
         num_enemy_ships = count_manhattan(self.data.myMatrix.locations.enemyShips, Matrix_val.ONE,
-                                          enemy_position, MyConstants.ENEMY_BACKUP_DISTANCE)
+                                          enemy_position, MyConstants.attack.enemy_backup_distance)
         enemy_halite = self.data.myMatrix.locations.shipsCargo[enemy_position.y][enemy_position.x]
         my_halite = ship.halite_amount
 
@@ -218,10 +218,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
             self.populate_kamikaze(ship, potential_support_IDs, explore_destination, enemy_position)
 
 
-        if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+        if max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore \
                 and len(potential_support_IDs) > num_enemy_ships:
                 #and (len(self.data.game.players) == 2):
-        #if max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
+        #if max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
@@ -247,7 +247,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 if support_id in self.data.mySets.ships_to_move \
                         and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
-                        #and max_ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE \
+                        #and max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore \
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest

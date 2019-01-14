@@ -45,8 +45,8 @@ class Data(abc.ABC):
         if getattr(self, 'init_data', None):                                                                            ## IF THIS IS NONE, ITS AT GETINITDATA
             self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
-            self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.EXPLORE_ENABLE_BONUS_HALITE_LEFT \
-                                                or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE
+            self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.explore.enable_bonus_halite_left \
+                                                or self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above
 
 
     def populate_myShipyard_docks(self):
@@ -100,7 +100,7 @@ class Data(abc.ABC):
         ## PRETENDS DOCKS ARE ALL THERE
         # distance_matrixes = [self.myMatrix.distances.closest_dock]
         #
-        # indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.DOCK_MANHATTAN)
+        # indexes = np.argwhere(self.init_data.myMatrix.locations.dock_placement == MyConstants.build.dock_manhattan)
         # for y, x in indexes:
         #     dock_coord = (y, x)
         #     distance_matrixes.append(copy.deepcopy(self.init_data.myMatrix.distances.cell[dock_coord]))
@@ -214,10 +214,10 @@ class Data(abc.ABC):
                     populate_manhattan(self.myMatrix.locations.engage_influence,
                                        Matrix_val.ONE,
                                        ship.position,
-                                       MyConstants.ENGAGE_INFLUENCE_DISTANCE,
+                                       MyConstants.influence.engage_distance,
                                        Option.REPLACE)
 
-                    for dist in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):
+                    for dist in range(1, MyConstants.attack.engage_enemy_distance + 1):
                         populate_manhattan(self.myMatrix.locations.engage_enemy[dist],
                                            Matrix_val.ONE,
                                            ship.position,
@@ -225,8 +225,8 @@ class Data(abc.ABC):
                                            Option.REPLACE)
 
         ## CHECK IF KILLING SPREE SHOULD BE ENABLED
-        if self.myDicts.players_info[enemy_id].num_ships * MyConstants.KILLING_SPREE_RATIO <= self.myDicts.players_info[self.game.me.id].num_ships \
-            and self.myVars.ratio_left_halite <= MyConstants.KILLING_SPREE_HALITE \
+        if self.myDicts.players_info[enemy_id].num_ships * MyConstants.snipe.killing_spree_halite_ratio <= self.myDicts.players_info[self.game.me.id].num_ships \
+            and self.myVars.ratio_left_halite <= MyConstants.snipe.killing_spree_halite_left \
             and len(self.game.players) == 2:
             self.myVars.on_killing_spree = True
 
@@ -322,20 +322,20 @@ class Data(abc.ABC):
         """
         ## NO LONGER USED
         ## NOW JUST USING RATIO (HARVEST PER TURN)
-        if self.game.turn_number > constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above:
             ## BASED ON HARVEST (INCLUDING INFLUENCE)
-            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+            top_num_cells = int(MyConstants.build.top_n_halite * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.harvest_with_bonus, top_num_cells)
             self.myMatrix.halite.top_amount[ind] = top
         else:
             ## ORIGINAL
-            top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+            top_num_cells = int(MyConstants.build.top_n_halite * (self.game.game_map.height * self.game.game_map.width))
             top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
             self.myMatrix.halite.top_amount[ind] = top
 
 
         ## USED WHEN THE TOP HALITE PERCENTAGE IS LOW (< 2%)
-        # top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+        # top_num_cells = int(MyConstants.build.top_n_halite * (self.game.game_map.height * self.game.game_map.width))
         # if top_num_cells < len(self.mySets.ships_all):
         #     top_num_cells = len(self.mySets.ships_all)
         # top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
@@ -346,14 +346,14 @@ class Data(abc.ABC):
         ## SEEMS BETTER TO LIMIT BUILDING BASED NUMBER OF SHIPS
         # if self.game.turn_number < MyConstants.EARLY_GAME_TURNS:
         #     mask = np.zeros((self.game.game_map.height, self.game.game_map.width), dtype=np.int16)
-        #     populate_manhattan(mask, 1, self.game.me.shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, cummulative=False)
-        #     top_num_cells = int(MyConstants.TOP_N_HALITE_EARLY_GAME * (4 * MyConstants.MIN_DIST_BTW_DOCKS))
+        #     populate_manhattan(mask, 1, self.game.me.shipyard.position, MyConstants.build.min_dist_btw_docks, cummulative=False)
+        #     top_num_cells = int(MyConstants.TOP_N_HALITE_EARLY_GAME * (4 * MyConstants.build.min_dist_btw_docks))
         #     matrix_halite = mask * self.myMatrix.halite.amount
         #     top, ind = get_n_largest_values(matrix_halite, top_num_cells)
         #     self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
         #     print_matrix("test", self.myMatrix.halite.top_amount)
         # else:
-        #     top_num_cells = int(MyConstants.TOP_N_HALITE * (self.game.game_map.height * self.game.game_map.width))
+        #     top_num_cells = int(MyConstants.build.top_n_halite * (self.game.game_map.height * self.game.game_map.width))
         #     top, ind = get_n_largest_values(self.myMatrix.halite.amount, top_num_cells)
         #     self.myMatrix.halite.top_amount[ind] = Matrix_val.TEN
 
@@ -363,12 +363,12 @@ class Data(abc.ABC):
         self.myVars.median_halite = int(np.median(self.myMatrix.halite.amount))
 
         ## HARVEST PERCENTILE USED FOR HARVEST LATER (WHETHER ITS A GOOD HARVEST OR NOT)
-        if self.game.turn_number > constants.MAX_TURNS * MyConstants.HARVEST_ENABLE_BONUS_TURNS_ABOVE:
-            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.HARVEST_ABOVE_PERCENTILE))
-            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.DEPOSIT_HARVEST_ABOVE_PERCENTILE))
+        if self.game.turn_number > constants.MAX_TURNS * MyConstants.harvest.enable_bonus_turns_above:
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.harvest.harvest_above_percentile))
+            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest_with_bonus, MyConstants.deposit.harvest_above_percentile))
         else:
-            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.HARVEST_ABOVE_PERCENTILE))
-            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.DEPOSIT_HARVEST_ABOVE_PERCENTILE))
+            self.myVars.harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.harvest.harvest_above_percentile))
+            self.myVars.deposit_harvest_percentile = int(np.percentile(self.myMatrix.halite.harvest, MyConstants.deposit.harvest_above_percentile))
 
 
         logging.debug("Average Halite: {} Median Halite {} Harvest Percentile {}".
@@ -396,7 +396,7 @@ class Data(abc.ABC):
 
             #logging.debug("Dock average: original_average {} current_average {}".format(original_average, current_average))
 
-            if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:                                   ## AVERAGE TOO LOW
+            if current_average <= original_average * MyConstants.build.min_dock_halite_average:                                   ## AVERAGE TOO LOW
                 self.init_data.myMatrix.docks.placement[y][x] = Matrix_val.ZERO
 
         self.populate_dock_manhattan()
@@ -414,7 +414,7 @@ class Data(abc.ABC):
         #     original_average = self.init_data.myMatrix.docks.averages[y][x]
         #     current_average = self.myMatrix.docks.averages[y][x]
         #
-        #     if current_average <= original_average * MyConstants.MIN_DOCK_HALITE_AVERAGE:  ## AVERAGE TOO LOW
+        #     if current_average <= original_average * MyConstants.build.min_dock_halite_average:  ## AVERAGE TOO LOW
         #         self.init_data.myMatrix.docks.order[y, x] = Matrix_val.NINETY
         #
         # ## GET LOWEST ORDER DOCK
@@ -423,7 +423,7 @@ class Data(abc.ABC):
         # position = Position(x, y)
         #
         # ## POPULATE DOCK PLACEMENT
-        # for i in range(0, MyConstants.DOCK_MANHATTAN):
+        # for i in range(0, MyConstants.build.dock_manhattan):
         #     populate_manhattan(self.myMatrix.docks.manhattan, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
 
 
@@ -448,7 +448,7 @@ class Data(abc.ABC):
         for y, x in indexes:
             self.myMatrix.docks.averages[y][x] = get_average_manhattan(self.myMatrix.halite.amount,
                                                                      Position(x, y),
-                                                                     MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+                                                                     MyConstants.build.average_manhattan_distance)
 
         #print_matrix("dock averages ", self.myMatrix.docks.averages)
 
@@ -459,7 +459,7 @@ class Data(abc.ABC):
             indexes = np.argwhere(self.myMatrix.docks.placement == Matrix_val.ONE)
 
         for y, x in indexes:
-            for i in range(0, MyConstants.DOCK_MANHATTAN):
+            for i in range(0, MyConstants.build.dock_manhattan):
                 position = Position(x,y)
                 populate_manhattan(self.myMatrix.docks.manhattan, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
 

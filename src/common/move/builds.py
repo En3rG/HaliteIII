@@ -17,7 +17,7 @@ class Builds():
         """
         BUILD A DOCK RIGHT AWAY ON A HIGH COLLISION CELL, TO PREVENT ENEMY FROM HARVESTING IT
         """
-        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.BUILD_ON_HIGH_HALITE)
+        r, c = np.where(self.data.myMatrix.halite.amount >= MyConstants.build.dock_on_high_halite)
         ships_on_high_halite = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_high_halite & self.data.mySets.ships_to_move
 
@@ -46,7 +46,7 @@ class Builds():
         """
         MOVE SHIPS BUILDING NOW (CURRENTLY AT DOCK POSITION)
         """
-        r, c = np.where(self.data.myMatrix.docks.manhattan == MyConstants.DOCK_MANHATTAN)
+        r, c = np.where(self.data.myMatrix.docks.manhattan == MyConstants.build.dock_manhattan)
         ships_on_docks = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
         ships_building = ships_on_docks & self.data.mySets.ships_to_move
 
@@ -68,7 +68,7 @@ class Builds():
                     populate_manhattan(self.data.myMatrix.docks.manhattan,
                                        Matrix_val.ZERO,
                                        ship.position,
-                                       MyConstants.DOCK_MANHATTAN, Option.REPLACE)
+                                       MyConstants.build.dock_manhattan, Option.REPLACE)
 
                     self.data.init_data.myMatrix.docks.placement[ship.position.y][ship.position.x] = Matrix_val.ZERO
                     self.data.init_data.myMatrix.docks.order[ship.position.y][ship.position.x] = Matrix_val.NINETY
@@ -92,7 +92,7 @@ class Builds():
         """
         MOVE SHIPS RIGHT NEXT TO DOCK POSITION
         """
-        i = MyConstants.DOCK_MANHATTAN - 1                                                                              ## CURRENTLY RIGHT NEXT TO THE DOCK
+        i = MyConstants.build.dock_manhattan - 1                                                                              ## CURRENTLY RIGHT NEXT TO THE DOCK
 
         r, c = np.where(self.data.myMatrix.docks.manhattan == i)
         matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
@@ -106,7 +106,7 @@ class Builds():
             self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
 
             if dock_coord \
-                and len(self.data.myDicts.ships_building_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK \
+                and len(self.data.myDicts.ships_building_dock[dock_coord]) < MyConstants.build.ships_per_dock \
                 and self.withinLimit_ships():
 
                 self.data.myVars.isBuilding = True
@@ -139,8 +139,8 @@ class Builds():
         """
         heap_halite = []
 
-        if MyConstants.DOCK_MANHATTAN > 2:
-            for i in range(MyConstants.DOCK_MANHATTAN - 2, 0, -1):                                                      ## MOVES SHIPS CLOSEST TO DOCK FIRST
+        if MyConstants.build.dock_manhattan > 2:
+            for i in range(MyConstants.build.dock_manhattan - 2, 0, -1):                                                      ## MOVES SHIPS CLOSEST TO DOCK FIRST
                 r, c = np.where(self.data.myMatrix.docks.manhattan == i)
                 matrixIDs = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c])
                 ships_going_dock = matrixIDs & self.data.mySets.ships_to_move
@@ -162,8 +162,8 @@ class Builds():
                     self.data.myDicts.ships_building_dock.setdefault(dock_coord, set())
 
                     #if dock_coord and (ship.halite_amount >= 1000 or ship_id in self.prev_data.ships_building):
-                    if dock_coord and ship.halite_amount >= MyConstants.HALITE_TOWARDS_BUILDING \
-                        and len(self.data.myDicts.ships_building_dock[dock_coord]) < MyConstants.SHIPS_BUILDING_PER_DOCK \
+                    if dock_coord and ship.halite_amount >= MyConstants.build.min_halite_amount \
+                        and len(self.data.myDicts.ships_building_dock[dock_coord]) < MyConstants.build.ships_per_dock \
                         and self.withinLimit_ships():
 
                         self.data.myVars.isBuilding = True
@@ -187,7 +187,7 @@ class Builds():
 
     def get_closest_dock_coord(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
-        dock_coord, distance, val = get_coord_closest(MyConstants.DOCK_MANHATTAN,
+        dock_coord, distance, val = get_coord_closest(MyConstants.build.dock_manhattan,
                                                       self.data.myMatrix.docks.manhattan,
                                                       self.data.init_data.myMatrix.distances.cell[curr_cell],
                                                       Inequality.EQUAL)
@@ -200,10 +200,10 @@ class Builds():
         CHECK IF SHIPS BUILDING IS WITHIN PERCENT LIMIT
         """
         num_ships = len(self.data.mySets.ships_all)
-        num_ships_allowed = num_ships * MyConstants.SHIPS_BUILDING_PERCENT
+        num_ships_allowed = num_ships * MyConstants.build.ships_percent
         num_ships_building = sum([len(x) for x in self.data.myDicts.ships_building_dock.values()])
         num_docks = len(self.data.mySets.dock_coords)
-        return (num_ships_building <= num_ships_allowed) and ( ( num_ships / (num_docks + num_ships_building)) >= MyConstants.SHIPS_PER_DOCK_RATIO)
+        return (num_ships_building <= num_ships_allowed) and ( ( num_ships / (num_docks + num_ships_building)) >= MyConstants.build.ships_per_dock_ratio)
 
 
     def get_Astar_direction(self, ship, dock_position, directions):
@@ -215,9 +215,9 @@ class Builds():
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions,
-                          ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+                          ship.position, MyConstants.deposit.search_perimeter - 1)
         matrix_path = pad_around(section.matrix)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.deposit.search_perimeter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)

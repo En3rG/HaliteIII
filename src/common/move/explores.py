@@ -33,7 +33,7 @@ class Explores():
     #     harvest_destination = self.get_destination(ship, harvest_direction)
     #     harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
     #
-    #     if canHarvest and max_ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+    #     if canHarvest and max_ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
     #         destination = harvest_destination
     #         direction = harvest_direction
     #     else:
@@ -106,7 +106,7 @@ class Explores():
         ## NEW WAY
         # if self.data.myMatrix.locations.sunken_ships[destination.y][destination.x] == Matrix_val.ONE:                   ## NO LONGER TRUE IN 2 TURNS (SHIP ONLY SHIP 1 TURN)
         #     maximum_harvest = (maximum_capacity * 0.20)
-        if self.data.myMatrix.locations.engage_enemy[MyConstants.ENGAGE_ENEMY_DISTANCE][destination.y][destination.x] == MyConstants.ENGAGE_ENEMY_DISTANCE:
+        if self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][destination.y][destination.x] == MyConstants.attack.engage_enemy_distance:
             maximum_harvest = (maximum_capacity * 0.25)
         elif self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0:
             maximum_harvest = maximum_capacity
@@ -117,8 +117,8 @@ class Explores():
 
         #self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25     ## UPDATE HARVEST VALUE
 
-        self.harvest_matrix[destination.y][destination.x] = (self.halite_matrix[destination.y][destination.x] * 0.25) * MyConstants.HARVEST_RATIO \
-                                                            + self.average_matrix[destination.y][destination.x] * MyConstants.AVERAGE_RATIO  ## UPDATE HARVEST VALUE
+        self.harvest_matrix[destination.y][destination.x] = (self.halite_matrix[destination.y][destination.x] * 0.25) * MyConstants.explore.score_harvest_ratio \
+                                                            + self.average_matrix[destination.y][destination.x] * MyConstants.explore.score_average_ratio  ## UPDATE HARVEST VALUE
 
         if self.data.myVars.explore_disable_bonus == False and self.data.myMatrix.halite.bonus[destination.y][destination.x] != 0:
             self.harvest_matrix[destination.y][destination.x] = self.harvest_matrix[destination.y][destination.x] * 3

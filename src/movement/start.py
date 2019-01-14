@@ -27,7 +27,7 @@ class Start(Moves, Harvests, Explores):
 
         self.taken_destinations = set()
 
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
             self.harvest_matrix = copy.deepcopy(
@@ -93,7 +93,7 @@ class Start(Moves, Harvests, Explores):
             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
             ## CHECK WHETHER IT'LL HARVEST OR EXPLORE
-            if s.ratio > harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE and explore_direction != Direction.Still:
+            if s.ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore and explore_direction != Direction.Still:
                 destination = explore_destination
                 direction = explore_direction
             else:

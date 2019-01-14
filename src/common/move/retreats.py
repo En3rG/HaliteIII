@@ -31,11 +31,11 @@ class Retreats():
         ## WILL NOW ALWAYS USE A STAR (WITH OR WITHOUT ENEMY AROUND)
         # if self.isEnemy_closeby(ship):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.RETREAT_SEARCH_PERIMETER - 1)
-        section_ally = Section(self.data.myMatrix.locations.safe, ship.position, MyConstants.RETREAT_SEARCH_PERIMETER - 1)
+        section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.retreat.search_perimeter - 1)
+        section_ally = Section(self.data.myMatrix.locations.safe, ship.position, MyConstants.retreat.search_perimeter - 1)
         section = section_enemy.matrix + section_ally.matrix
         matrix_path = pad_around(section)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.RETREAT_SEARCH_PERIMETER)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.retreat.search_perimeter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)

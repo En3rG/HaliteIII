@@ -42,7 +42,7 @@ def move_kicked_ship(Moves, ship, all_directions=False):
             snipe_ratio = -snipe_ship.ratio
 
             ## DETERMINE WHETHER TO SNIPE OR EXPLORE
-            if snipe_ratio > explore_ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+            if snipe_ratio > explore_ratio * MyConstants.snipe.ratio_to_snipe:
                 directions = Moves.get_directions_target(ship, snipe_destination)
             else:
                 directions = Moves.get_directions_target(ship, explore_destination)

@@ -22,7 +22,7 @@ class Snipe(Moves, Explores, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        allowSnipe = (constants.MAX_TURNS * MyConstants.SNIPE_TURNS_LOWER_LIMIT <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.SNIPE_TURNS_UPPER_LIMIT)
+        allowSnipe = (constants.MAX_TURNS * MyConstants.snipe.allowed_turns_lower_limit <= self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.snipe.allowed_turns_upper_limit)
                        # and len(data.game.players) == 2
 
         if allowSnipe:
@@ -47,7 +47,7 @@ class Snipe(Moves, Explores, Harvests):
                 ## USING ASTAR
                 #snipe_direction = self.get_Astar_direction(ship, explore_destination, directions)
 
-                if -target.ratio > -explore_target.ratio * MyConstants.EXPLORE_RATIO_TO_SNIPE:
+                if -target.ratio > -explore_target.ratio * MyConstants.snipe.ratio_to_snipe:
                     destination = snipe_destination
                     direction = snipe_direction
 
@@ -70,10 +70,10 @@ class Snipe(Moves, Explores, Harvests):
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.EXPLORE_SEARCH_PERIMETER - 1)
+                          MyConstants.explore.search_perimter - 1)
         matrix_path = pad_around(section.matrix)
         section = Section(self.data.myMatrix.halite.amount, ship.position,
-                          MyConstants.EXPLORE_SEARCH_PERIMETER)
+                          MyConstants.explore.search_perimter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)

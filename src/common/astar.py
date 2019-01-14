@@ -19,8 +19,8 @@ def get_goal_in_section(matrix_path, center_section, start, goal, directions):
     :param directions: DIRECTIONS TOWARDS THE GOAL
     :return: POSITION OF THE GOAL IN THE SECTION
     """
-    r = min(MyConstants.DEPOSIT_SEARCH_PERIMETER, abs(start.y - goal.y))
-    c = min(MyConstants.DEPOSIT_SEARCH_PERIMETER, abs(start.x - goal.x))
+    r = min(MyConstants.deposit.search_perimeter, abs(start.y - goal.y))
+    c = min(MyConstants.deposit.search_perimeter, abs(start.x - goal.x))
 
     if Direction.North in directions:
         y = center_section.y - r

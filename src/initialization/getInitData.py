@@ -40,7 +40,7 @@ class GetInitData(Data):
         # self.populate_top_halite()
         self.get_mean_median_halite()
 
-        self.populate_cell_averages(MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+        self.populate_cell_averages(MyConstants.build.average_manhattan_distance)
 
         self.populate_dock_placement()
 
@@ -69,7 +69,7 @@ class GetInitData(Data):
         self.populate_shipyards_unavailable()
 
         ## GET INDEXES OF TOP N AVERAGES
-        for _ in range(MyConstants.TOP_N):
+        for _ in range(MyConstants.build.top_n):
             keep_looking = True
             quit = False
 
@@ -86,7 +86,7 @@ class GetInitData(Data):
                     populate_manhattan(self.unavailable_area,
                                        Matrix_val.UNAVAILABLE,
                                        pos_top_ave,
-                                       MyConstants.MIN_DIST_BTW_DOCKS,
+                                       MyConstants.build.min_dist_btw_docks,
                                        Option.REPLACE)
 
                     ## TOP N IS THE HIGHEST HALITE WITHIN THE HIGHEST AVERAGE
@@ -121,7 +121,7 @@ class GetInitData(Data):
         populate_manhattan(self.unavailable_area,
                            Matrix_val.UNAVAILABLE,
                            self.game.me.shipyard.position,
-                           MyConstants.MIN_DIST_BTW_DOCKS,
+                           MyConstants.build.min_dist_btw_docks,
                            Option.REPLACE)
 
         ## POPULATE AROUND ENEMY SHIPYARD
@@ -130,7 +130,7 @@ class GetInitData(Data):
                 populate_manhattan(self.unavailable_area,
                                    Matrix_val.UNAVAILABLE,
                                    player.shipyard.position,
-                                   MyConstants.MIN_DIST_BTW_ENEMY_DOCKS,
+                                   MyConstants.build.min_dist_btw_enemy_docks,
                                    Option.REPLACE)
 
 
@@ -145,7 +145,7 @@ class GetInitData(Data):
         :param pos_top_ave: POSITION (CENTER) OF THE HIGHEST AVERAGE
         :return: LOCATION AND POSITION OF HIGHEST HALITE IN THIS SECTION
         """
-        section_halite = Section(self.myMatrix.halite.amount, pos_top_ave, MyConstants.AVERAGE_MANHATTAN_DISTANCE)
+        section_halite = Section(self.myMatrix.halite.amount, pos_top_ave, MyConstants.build.average_manhattan_distance)
         value_top_halite, indexes = get_n_max_values(section_halite.matrix)
 
         return self.get_loc_pos_top_halite(indexes, loc_top_ave, section_halite)
@@ -208,7 +208,7 @@ class GetInitData(Data):
         print_matrix("Average: top N", self.myMatrix.cell_average.top_N)
 
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
-        populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        populate_manhattan(matrix, Matrix_val.ZERO, shipyard.position, MyConstants.build.min_dist_btw_docks, Option.REPLACE)
 
         print_matrix("Eliminate close to shipyard: top N", matrix)
 
@@ -216,7 +216,7 @@ class GetInitData(Data):
         for id, player in self.game.players.items():
             if id != self.game.me.id:
                 enemyShipyard_position = player.shipyard.position
-                populate_manhattan(matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+                populate_manhattan(matrix, Matrix_val.ZERO, enemyShipyard_position, MyConstants.build.min_dist_btw_docks, Option.REPLACE)
 
         print_matrix("Eliminate close to enemy shipyard: top N", matrix)
 
@@ -228,11 +228,11 @@ class GetInitData(Data):
         while val > 1:
             ## ELIMINATE TOP N CLOSE TO THIS AREA
             position = Position(coord[1], coord[0])
-            populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+            populate_manhattan(matrix, Matrix_val.ONE, position, MyConstants.build.min_dist_btw_docks, Option.REPLACE)
 
             ## POPULATE DOCK PLACEMENT
             # # self.myMatrix.locations.dock_placement[position.y][position.x] = Matrix_val.ONE
-            # for i in range(0, MyConstants.DOCK_MANHATTAN):
+            # for i in range(0, MyConstants.build.dock_manhattan):
             #     populate_manhattan(self.myMatrix.docks.placement, Matrix_val.ONE, position, i, Option.CUMMULATIVE)
             self.myMatrix.docks.placement[position.y][position.x] = Matrix_val.ONE
 
@@ -262,7 +262,7 @@ class GetInitData(Data):
         distance_coords = {shipyard_coord}
 
         ## ELIMINATE TOP N CLOSE TO SHIPYARD
-        populate_manhattan(value_matrix, Matrix_val.ZERO, shipyard.position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+        populate_manhattan(value_matrix, Matrix_val.ZERO, shipyard.position, MyConstants.build.min_dist_btw_docks, Option.REPLACE)
 
         print_matrix("Eliminate close to shipyard: top N", value_matrix)
 
@@ -289,7 +289,7 @@ class GetInitData(Data):
             order_num += 1
 
             ## ELIMINATE TOP N CLOSE TO THIS AREA
-            populate_manhattan(value_matrix, Matrix_val.ZERO, position, MyConstants.MIN_DIST_BTW_DOCKS, Option.REPLACE)
+            populate_manhattan(value_matrix, Matrix_val.ZERO, position, MyConstants.build.min_dist_btw_docks, Option.REPLACE)
 
             print_matrix("order matrix", self.myMatrix.docks.order)
 

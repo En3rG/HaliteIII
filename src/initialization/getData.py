@@ -41,7 +41,7 @@ class GetData(Data):
 
         self.get_mean_median_halite()
 
-        self.populate_cell_averages2(MyConstants.AVERAGE_CELL_DISTANCE)
+        self.populate_cell_averages2(MyConstants.explore.average_manhattan_distance)
 
         self.update_dock_placement()
 

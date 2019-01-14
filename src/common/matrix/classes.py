@@ -69,7 +69,7 @@ class Locations():
 
         ## ATTACK
         self.engage_enemy = {}
-        for i in range(1, MyConstants.ENGAGE_ENEMY_DISTANCE + 1):                                                       ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
+        for i in range(1, MyConstants.attack.engage_enemy_distance + 1):                                                       ## WHEN i IS 1, MEANS RIGHT NEXT TO ENEMY
             self.engage_enemy[i] = np.zeros((map_height, map_width), dtype=np.int16)
 
         self.engage_influence = np.zeros((map_height, map_width), dtype=np.int16)
@@ -147,10 +147,10 @@ class MyVars():
         self.deposit_harvest_percentile = 0
         self.isBuilding = False
         self.isSaving = False
-        self.support_gain_ratio = MyConstants.SUPPORT_GAIN_RATIO_2P if (len(game.players) == 2) \
-                                    else MyConstants.SUPPORT_GAIN_RATIO_4P                                              ## RATIO OF GAIN BEFORE SUPPORTING
-        self.kamikaze_halite_ratio = MyConstants.KAMIKAZE_HALITE_RATIO_2P if (len(game.players) == 2) \
-                                    else MyConstants.KAMIKAZE_HALITE_RATIO_4P
+        self.support_gain_ratio = MyConstants.attack.support_gain_ratio_2p if (len(game.players) == 2) \
+                                    else MyConstants.attack.support_gain_ratio_4p                                              ## RATIO OF GAIN BEFORE SUPPORTING
+        self.kamikaze_halite_ratio = MyConstants.attack.kamikaze_halite_ratio_2p if (len(game.players) == 2) \
+                                    else MyConstants.attack.kamikaze_halite_ratio_4p
         self.explore_disable_bonus = None
         self.on_killing_spree = False
 

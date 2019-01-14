@@ -30,7 +30,113 @@ class Matrix_val():
     NINETY = 90
 
 
+## ------ PARAMETERS ------
+class Influence():
+    def __init__(self):
+        self.min_num = 2                            ## INFLUENCE NUMBER (# OF ENEMY) TO GET BONUS
+        self.engage_distance = 6                    ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
+
+class Retreat():
+    def __init__(self):
+        self.extra_turns = 5                        ## EXTRA TURNS ADDED TO FURTHEST SHIP WHEN TO START RETREATING
+        self.search_perimeter = 5
+
+class Build():
+    def __init__(self):
+        ## DOCKS
+        self.top_n_halite = 0.04                    ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
+        self.top_n = 20                             ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
+        self.dock_manhattan = 12                    ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
+        self.average_manhattan_distance = 6         ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
+        self.min_dist_btw_enemy_docks = 18
+        self.min_dist_btw_docks = 15                ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
+        self.dock_on_high_halite = 3500
+
+        ## BUILDING
+        self.allowed_turns = 0.70
+        self.stop_when_halite_left = 0.40
+        self.min_num_ships = 10
+        self.min_dock_halite_average = 0.50         ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
+        self.min_halite_amount = 500                ## MINIMUM HALITE AMOUNT TO GO TOWARDS BUILDING
+        self.ships_per_dock_ratio = 10
+        self.ships_percent = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
+        self.ships_per_dock = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
+
+
+class Deposit():
+    def __init__(self):
+        self.search_perimeter = 5
+        self.potentially_enough_cargo = 950         ## MAYBE ENOUGH TO GO HOME
+        self.over_harvest_percent = 0.85              ## ONLY TAKES PERCENTAGE OF HARVEST INTO ACCOUNT, BUT IF ITS OVER 1000 ALREADY, GO HOME
+        self.enemy_check_manhattan = 3
+        self.enemy_check_num = 3
+        self.harvest_above_percentile = 40
+
+class Harvest():
+    def __init__(self):
+        self.ratio_to_explore = 3                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
+        self.harvest_above_percentile = 40
+        self.enable_bonus_turns_above = 0.25        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
+                                                    ## 0 MEANS ALWAYS WILL USE IT
+
+class Attack():
+    def __init__(self):
+        ## ATTACKING
+        self.enemy_backup_distance = 2
+        self.engage_enemy_distance = 3              ## DISTANCE TO ENGAGE WITH ENEMY
+        self.min_ships_before_attacking = 0
+        self.allowed_turns_upper_limit = 0.95
+        self.allowed_turns_lower_limit = 0.00
+
+        ## SUPPORT
+        self.support_gain_ratio_2p = 0.70
+        self.support_gain_ratio_4p = 1.00
+
+        ## KAMIKAZE
+        self.kamikaze_halite_ratio_2p = 0.00
+        self.kamikaze_halite_ratio_4p = 1.00
+        self.kamikaze_halite_max = 1000
+
+class Snipe():
+    def __init__(self):
+        self.ratio_to_snipe = 3
+        self.allowed_turns_upper_limit = 0.95
+        self.allowed_turns_lower_limit = 0.00
+        self.killing_spree_halite_left = 0.50
+        self.killing_spree_halite_ratio = 1.25
+
+class Explore():
+    def __init__(self):
+        self.search_perimeter = 5
+        self.average_manhattan_distance = 3
+        self.enable_bonus_halite_left = 0.00
+        self.enable_bonus_turns_above = 0.75        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+                                                    ## 1 MEANS NEVER WILL USE IT
+        self.score_harvest_ratio = 0.90
+        self.score_average_ratio = 0.10
+
+class Spawn():
+    def __init__(self):
+        self.stop_halite_left = 0.40
+        self.max_allowed_turn = 0.77
+        self.percent_more_ships = 1.10
+
+        ## DECAY (NO LONGER USED)
+        self.depleted_ratio = 0.10                  ## RATIO OF HALITE LEFT WHEN ITS CONSIDERED DEPLETED (SINCE IT NEVER BE 0)
+        self.num_rate_of_decay = 20
+        self.min_turn_percent = 0.35
+        self.max_turn_percent = 0.70
+
 class MyConstants():
+    retreat = Retreat()
+    build = Build()
+    deposit = Deposit()
+    harvest = Harvest()
+    attack = Attack()
+    influence = Influence()
+    snipe = Snipe()
+    explore = Explore()
+    spawn = Spawn()
 
     ## DIRECTIONS
     DIRECTIONS = [Direction.North, Direction.East, Direction.South, Direction.West]
@@ -39,117 +145,6 @@ class MyConstants():
     ## DISTANCES
     DIRECT_NEIGHBOR_DISTANCE = 1
 
-    ## ENEMY
-    INFLUENCED = 2                                  ## INFLUENCE NUMBER (# OF ENEMY) TO GET BONUS
-
-    ## RETREAT
-    RETREAT_EXTRA_TURNS = 5                         ## EXTRA TURNS ADDED TO FURTHEST SHIP WHEN TO START RETREATING
-    RETREAT_SEARCH_PERIMETER = 5
-
-    ## BUILDING / DOCK PLACEMENT
-    TOP_N_HALITE = 0.04                             ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
-    TOP_N = 20                                      ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
-    ALLOW_BUILDING_TURNS = 0.70                     ## USED TO BE:
-                                                    ## V28: 0.70
-    STOP_BUILDING_HALITE_LEFT = 0.40
-    NUM_SHIPS_BEFORE_BUILDING = 10
-    MIN_DOCK_HALITE_AVERAGE = 0.50                      ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
-    HALITE_TOWARDS_BUILDING = 500
-
-    SHIPS_PER_DOCK_RATIO = 10
-    SHIPS_BUILDING_PERCENT = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
-    SHIPS_BUILDING_PER_DOCK = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
-    DOCK_MANHATTAN = 12                             ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
-                                                    ## USED TO BE:
-                                                    ## V28: 2
-    AVERAGE_MANHATTAN_DISTANCE = 6                  ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
-
-                                                    ## USED TO BE:
-                                                    ## V19: 20
-    MIN_DIST_BTW_ENEMY_DOCKS = 18
-    MIN_DIST_BTW_DOCKS = 15                         ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
-                                                    ## USED TO BE:
-                                                    ## V19: 12
-
-    BUILD_ON_HIGH_HALITE = 3500
-
-    ## INFLUENCE
-    ENGAGE_INFLUENCE_DISTANCE = 6                   ## DISTANCE TO ENGAGE WITH ENEMY FOR INFLUENCE
-
-    ## ATTACKING
-    ENEMY_BACKUP_DISTANCE = 2
-    ENGAGE_ENEMY_DISTANCE = 3                       ## DISTANCE TO ENGAGE WITH ENEMY
-    NUM_SHIPS_BEFORE_ATTACKING = 0
-    ATTACK_TURNS_UPPER_LIMIT = 0.95
-    ATTACK_TURNS_LOWER_LIMIT = 0.00
-                                                    ## USED TO BE:
-                                                    ## V28: 0.80
-
-    KAMIKAZE_HALITE_RATIO_2P = 0.00
-    KAMIKAZE_HALITE_RATIO_4P = 1.00
-    KAMIKAZE_HALITE_MAX = 1000
-
-    ## SUPPORT
-    SUPPORT_GAIN_RATIO_2P = 0.70
-    SUPPORT_GAIN_RATIO_4P = 1.00
-
-    ## DEPOSIT
-    DEPOSIT_SEARCH_PERIMETER = 5
-    POTENTIALLY_ENOUGH_CARGO = 950                  ## MAYBE ENOUGH TO GO HOME
-    DEPOSIT_HARVEST_CHECK_PERCENT = 0.85            ## ONLY TAKES PERCENTAGE OF HARVEST INTO ACCOUNT, BUT IF ITS OVER 1000 ALREADY, GO HOME
-    ENEMY_CHECK_MANHATTAN = 3
-    ENEMY_CHECK_NUM = 3
-
-    DEPOSIT_HARVEST_ABOVE_PERCENTILE = 40
-
-
-    ## EXPLORE
-    EXPLORE_SEARCH_PERIMETER = 5
-    AVERAGE_CELL_DISTANCE = 3
-    HARVEST_RATIO = 0.90
-    AVERAGE_RATIO = 0.10
-
-    ## SNIPE
-    EXPLORE_RATIO_TO_SNIPE = 3
-    SNIPE_TURNS_UPPER_LIMIT = 0.95
-    SNIPE_TURNS_LOWER_LIMIT = 0.00
-
-    KILLING_SPREE_HALITE = 0.50
-    KILLING_SPREE_RATIO = 1.25
-
-
-    ## HARVEST
-    ## THE HIGHER THE NUMBER, THE MORE TUNNELING EFFECT IT'LL HAVE
-    ## AND WILL HARVEST SMALLER AREAS LATER
-    HARVEST_RATIO_TO_EXPLORE = 3
-    HARVEST_ABOVE_PERCENTILE = 40                   ## USED TO BE:
-                                                    ## V28: 35
-
-
-    EXPLORE_ENABLE_BONUS_HALITE_LEFT = 0.00
-    EXPLORE_ENABLE_BONUS_TURNS_ABOVE = 0.75    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
-                                                    ## 1 MEANS NEVER WILL USE IT
-    HARVEST_ENABLE_BONUS_TURNS_ABOVE = 0.25    ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
-                                                    ## 0 MEANS ALWAYS WILL USE IT
-
-    ## SPAWNING
-    STOP_SPAWNING_HALITE_LEFT = 0.40                ## USED TO BE:
-                                                    ## V28: 0.40
-    ALLOW_SPAWNING_2P_32_TURNS = 0.70
-    ALLOW_SPAWNING_2P_40_TURNS = 0.70
-    ALLOW_SPAWNING_2P_48_TURNS = 0.75
-    ALLOW_SPAWNING_2P_56_TURNS = 0.75
-    ALLOW_SPAWNING_2P_64_TURNS = 0.75
-    ALLOW_SPAWNING_4P_32_TURNS = 0.40
-    ALLOW_SPAWNING_4P_40_TURNS = 0.45
-    ALLOW_SPAWNING_4P_48_TURNS = 0.50
-    ALLOW_SPAWNING_4P_56_TURNS = 0.55
-    ALLOW_SPAWNING_4P_64_TURNS = 0.60
-
-    DEPLETED_RATIO = 0.10                          ## RATIO OF HALITE LEFT WHEN ITS CONSIDERED DEPLETED (SINCE IT NEVER BE 0)
-    NUM_RATE_OF_DECAY = 20
-    MIN_TURN_PERCENT = 0.35
-    MAX_TURN_PERCENT = 0.70
 
     ## NO LONGER USED
     # DONT_HARVEST_PERCENT = .12  ## PERCENTAGE OF AVERAGE HALITE TO NOT HARVEST
@@ -177,7 +172,16 @@ class MyConstants():
     #
     # ATTACK_ENEMY_HALITE_RATIO = 0.5  ## ONLY ATTACK ENEMY IF OUR SHIP HALITE HAS LESS THAN THE RATIO
     #
-
+    # ALLOW_SPAWNING_2P_32_TURNS = 0.70
+    # ALLOW_SPAWNING_2P_40_TURNS = 0.70
+    # ALLOW_SPAWNING_2P_48_TURNS = 0.75
+    # ALLOW_SPAWNING_2P_56_TURNS = 0.75
+    # ALLOW_SPAWNING_2P_64_TURNS = 0.75
+    # ALLOW_SPAWNING_4P_32_TURNS = 0.40
+    # ALLOW_SPAWNING_4P_40_TURNS = 0.45
+    # ALLOW_SPAWNING_4P_48_TURNS = 0.50
+    # ALLOW_SPAWNING_4P_56_TURNS = 0.55
+    # ALLOW_SPAWNING_4P_64_TURNS = 0.60
 
 
 

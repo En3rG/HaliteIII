@@ -38,9 +38,9 @@ class Deposits():
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+                          MyConstants.deposit.search_perimeter - 1)
         matrix_path = pad_around(section.matrix)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.deposit.search_perimeter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, dock_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=True)
@@ -63,7 +63,7 @@ class Deposits():
         """
         CHECK IF AN ENEMY IS WITHIN THE PERIMETER (SECTION)
         """
-        section = Section(self.data.myMatrix.locations.enemyShips, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        section = Section(self.data.myMatrix.locations.enemyShips, ship.position, MyConstants.deposit.search_perimeter)
         perimeter = section.matrix
         r, c = np.where(perimeter == Matrix_val.ONE)
 

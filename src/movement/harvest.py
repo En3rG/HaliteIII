@@ -35,7 +35,7 @@ class Harvest(Moves, Harvests, Explores):
         self.heap_explore = []
         self.ships_kicked_temp = OrderedSet()
 
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.EXPLORE_ENABLE_BONUS_TURNS_ABOVE:
+        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
         else:
             self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
@@ -69,7 +69,7 @@ class Harvest(Moves, Harvests, Explores):
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = target.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
-                if canHarvest and -target.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+                if canHarvest and -target.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
 
@@ -99,7 +99,7 @@ class Harvest(Moves, Harvests, Explores):
     #             harvest_destination = self.get_destination(ship, harvest_direction)
     #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
     #
-    #             if canHarvest and -s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+    #             if canHarvest and -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
     #                 destination = harvest_destination
     #                 direction = harvest_direction
     #

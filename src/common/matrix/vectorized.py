@@ -26,7 +26,7 @@ def bonusArea(harvest, influence):
     :param influence:
     :return:
     """
-    if influence >= MyConstants.INFLUENCED:
+    if influence >= MyConstants.influence.min_num:
         return harvest * 2
     else:
         return 0

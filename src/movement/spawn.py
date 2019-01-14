@@ -48,30 +48,28 @@ def spawn_ships(data):
     #         max_turn_percent = MyConstants.ALLOW_SPAWNING_4P_64_TURNS
     #
     # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-    #                          and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
+    #                          and data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left
 
 
     ## NEW WAY USING DEPLETION TIME
     # depletion_time = get_time_of_depletion(data)
     #
-    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * MyConstants.MIN_TURN_PERCENT or \
-    #              (data.game.turn_number <= constants.MAX_TURNS * MyConstants.MAX_TURN_PERCENT
+    # allowSpawn = data.game.turn_number <= constants.MAX_TURNS * MyConstants.spawn.min_turn_percent or \
+    #              (data.game.turn_number <= constants.MAX_TURNS * MyConstants.spawn.max_turn_percent
     #               and depletion_time > constants.MAX_TURNS
-    #               and data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT)
+    #               and data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left)
 
 
     ## NEWER WAY (KEEP BUILDING IF BELOW THE ENEMY)
-    max_turn_percent = 0.77
-    percent_more_ships = 1.10
     numMyShips = data.myDicts.players_info[data.game.me.id].num_ships
     numEnemyShips, enemyID = min([ (v.num_ships, k) for k, v in data.myDicts.players_info.items() if k != data.game.me.id ])          ## LOWEST ENEMY SHIPS NUMBER
     ## KEEP MAKING SHIPS AS LONG AS ITS BELOW THE THRESHOLD TURNS
     ## AND WE HAVE MORE MONEY THAN LOWEST ENEMY
     ## AND WE HAVE LESS SHIPS THAN THE LOWEST ENEMY
-    logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * percent_more_ships))
-    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * max_turn_percent \
-                  and ( data.myVars.ratio_left_halite > MyConstants.STOP_SPAWNING_HALITE_LEFT
-                  or numMyShips < numEnemyShips * percent_more_ships )
+    logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * MyConstants.spawn.percent_more_ships))
+    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * MyConstants.spawn.max_allowed_turn \
+                  and ( data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left
+                  or numMyShips < numEnemyShips * MyConstants.spawn.percent_more_ships )
 
 
 
@@ -100,7 +98,7 @@ def get_time_of_depletion(data):
     where N/Nt is the percent left
     """
     ## LIMIT NUMBER OF RATIO LEFT HALITE
-    if len(data.myLists.ratio_left_halite) < MyConstants.NUM_RATE_OF_DECAY:
+    if len(data.myLists.ratio_left_halite) < MyConstants.spawn.num_rate_of_decay:
         data.myLists.ratio_left_halite.append(data.myVars.ratio_left_halite)
     else:
         data.myLists.ratio_left_halite.pop(0)  ## TAKE FIRST ELEMENT OFF
@@ -108,17 +106,17 @@ def get_time_of_depletion(data):
 
     ## CURRENT RATE OF DECAY
     change = data.myLists.ratio_left_halite[-1] - data.myLists.ratio_left_halite[0]
-    rate_of_decay = np.log(1.00 - change) / MyConstants.NUM_RATE_OF_DECAY
+    rate_of_decay = np.log(1.00 - change) / MyConstants.spawn.num_rate_of_decay
 
     logging.debug("data.myLists.ratio_left_halite {}".format(data.myLists.ratio_left_halite))
 
 
     ## DETERMINE DEPLETION TIME USING AVERAGE RATE OF DECAY
     if rate_of_decay != 0:
-        depletion_time = np.log(MyConstants.DEPLETED_RATIO) / -rate_of_decay
+        depletion_time = np.log(MyConstants.spawn.depleted_ratio) / -rate_of_decay
     else:
         depletion_time = 100000
 
-    logging.debug("depletion_time {} to depleted_ratio {}".format(depletion_time, MyConstants.DEPLETED_RATIO))
+    logging.debug("depletion_time {} to depleted_ratio {}".format(depletion_time, MyConstants.spawn.depleted_ratio))
 
     return depletion_time

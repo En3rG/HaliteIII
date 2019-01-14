@@ -74,7 +74,7 @@ class Influence(Moves, Explores, Harvests):
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
                 logging.debug("s.ratio {} harvest ratio {}".format(s.ratio, harvest_ratio))
-                if canHarvest and -s.ratio < harvest_ratio * MyConstants.HARVEST_RATIO_TO_EXPLORE:
+                if canHarvest and -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
                 else:
@@ -96,9 +96,9 @@ class Influence(Moves, Explores, Harvests):
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.DEPOSIT_SEARCH_PERIMETER - 1)
+                          MyConstants.deposit.search_perimeter - 1)
         matrix_path = pad_around(section.matrix)
-        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.DEPOSIT_SEARCH_PERIMETER)
+        section = Section(self.data.myMatrix.halite.amount, ship.position, MyConstants.deposit.search_perimeter)
         matrix_cost = section.matrix
         goal_position = get_goal_in_section(matrix_path, section.center, ship.position, target_position, directions)
         path = a_star(matrix_path, matrix_cost, section.center, goal_position, lowest_cost=False)
