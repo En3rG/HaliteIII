@@ -70,10 +70,20 @@ def averageMatrix(*args):
     """
     GET THE AVERAGE OF THE MATRIX PROVIDED
     """
-    #return sum(args)/len(args)
-    return np.average(args)
+    return sum(args)/len(args)      ## THIS SEEMS 4x FASTER THAN USING np.average
+    #return np.average(args)
 
 myAverageMatrix = np.vectorize(averageMatrix)
+
+
+def sumMatrix(*args):
+    """
+    GET THE SUM OF THE MATRIX PROVIDED
+    """
+    return sum(args)
+
+
+mySumMatrix = np.vectorize(sumMatrix)
 
 
 ## NO LONGER USED

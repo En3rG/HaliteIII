@@ -3,7 +3,7 @@ from hlt.positionals import Position
 from src.common.values import MyConstants, Matrix_val, Inequality
 from src.common.print import print_matrix
 from hlt.positionals import Position
-from src.common.matrix.vectorized import myAverageMatrix
+from src.common.matrix.vectorized import myAverageMatrix, mySumMatrix
 from src.common.matrix.classes import Option
 import logging
 
@@ -321,7 +321,26 @@ def get_average_manhattan_matrix(matrix, dist):
             a = shift_matrix(y_, x_, matrix)
             matrices.append(a)
 
-    return myAverageMatrix(*matrices)  ## CAN ONLY HANDLE UP TO 32 OPERANDS, FOR 6 DISTANCE, IT HAS 85 DIFFERENT MATRICES, WONT WORK
+    length_matrix = len(matrices)
+
+    if length_matrix > 32:
+        def chunks(a, n):
+            """
+            SEPARATE MATRIX (a) INTO SECTIONS
+            """
+            for i in range(0, len(a), n):
+                yield a[i:i+n]
+
+        chunk_matrices = []
+
+        for chunk in list(chunks(matrices, 31)):
+            ## GET SUM OF EACH SECTIONS
+            chunk_matrices.append(mySumMatrix(*chunk))
+
+        total_sum = mySumMatrix(*chunk_matrices)
+        return total_sum / length_matrix
+    else:
+        return myAverageMatrix(*matrices)       ## CAN ONLY HANDLE UP TO 32 OPERANDS, FOR 6 DISTANCE, IT HAS 85 DIFFERENT MATRICES, WONT WORK
 
 
 def get_index_highest_val(matrix):

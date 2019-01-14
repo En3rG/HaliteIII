@@ -295,16 +295,17 @@ class Data(abc.ABC):
         """
         POPULATE AVERAGES OF EACH CELL BASED ON DISTANCE
         USED FOR DETERMINING DOCK PLACEMENT
-        """
-        ## THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
-        for r in range(self.game.game_map.height):
-            for c in range(self.game.game_map.width):
-                loc = Position(c, r) ## Position(x, y)
-                self.myMatrix.cell_average.halite[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
-                                                                                   loc,
-                                                                                   distance)
 
-    def populate_cell_averages2(self, distance):
+        THE AVERAGE MANHATTAN OF EACH MAP CELL, BASED ON AVERAGE MANHATTAN DISTANCE
+        """
+        ## OLD WAY (10x SLOWER THAN BELOW)
+        # for r in range(self.game.game_map.height):
+        #     for c in range(self.game.game_map.width):
+        #         loc = Position(c, r) ## Position(x, y)
+        #         self.myMatrix.cell_average.halite[r][c] = get_average_manhattan(self.myMatrix.halite.amount,
+        #                                                                            loc,
+        #                                                                            distance)
+
         """
         MUCH FASTER WAY OF GENERATING THE ENTIRE MAP AVERAGES
         BUT IS ONLY LIMITED TO 32 ARRAYS (THUS MAX DISTANCE OF 3)
@@ -313,7 +314,6 @@ class Data(abc.ABC):
         self.myMatrix.cell_average.halite = get_average_manhattan_matrix(self.myMatrix.halite.amount, distance)
 
         self.myMatrix.cell_average.enemyCargo = get_average_manhattan_matrix(self.myMatrix.halite.enemyCargo, distance)
-
 
 
     def populate_top_halite(self):
