@@ -46,7 +46,7 @@ class Data(abc.ABC):
             self.myVars.ratio_left_halite = self.myVars.total_halite / self.starting_halite
 
             self.myVars.explore_disable_bonus = self.myVars.ratio_left_halite > MyConstants.explore.enable_bonus_halite_left \
-                                                or self.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above
+                                                and self.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above
 
 
     def populate_myShipyard_docks(self):

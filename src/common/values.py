@@ -109,8 +109,8 @@ class Explore():
     def __init__(self):
         self.search_perimeter = 5
         self.average_manhattan_distance = 3
-        self.enable_bonus_halite_left = 0.50
-        self.enable_bonus_turns_above = 0.50        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
+        self.enable_bonus_halite_left = 0.25
+        self.enable_bonus_turns_above = 0.75        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR EXPLORING
                                                     ## 1 MEANS NEVER WILL USE IT
         self.score_harvest_ratio = 0.90
         self.score_average_ratio = 0.10
