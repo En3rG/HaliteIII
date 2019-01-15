@@ -63,7 +63,7 @@ while True:
     ## RETREAT SHIPS
     A = Retreat(data, prev_data)
 
-    ## STUCK SHIPS
+    ## STUCK SHIPS OR BUILD DOCK
     B = Stuck(data, prev_data)
 
     ## START SHIPS
