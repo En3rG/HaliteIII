@@ -53,6 +53,8 @@ class Build():
         self.dock_anywhere_halite = 3500
         self.dock_far_halite = 1500
         self.considered_far_distance = 10
+        self.far_enemy_perimeter = 3
+
 
         ## BUILDING
         self.allowed_turns = 0.70

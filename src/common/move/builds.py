@@ -4,7 +4,7 @@ from src.common.halite_statistics import BuildType
 from src.common.values import MyConstants, Matrix_val, MoveMode, Inequality
 from src.common.matrix.functions import populate_manhattan, get_coord_closest
 from src.common.points import BuildPoints, BuildShip
-from src.common.matrix.functions import get_coord_closest, pad_around, Section
+from src.common.matrix.functions import get_coord_closest, pad_around, Section, count_manhattan
 from src.common.astar import a_star, get_goal_in_section
 from src.common.orderedSet import OrderedSet
 from src.common.matrix.classes import Option
@@ -38,20 +38,13 @@ class Builds(abc.ABC):
             ship = self.data.game.me._ships.get(ship_id)
             cell_halite_amount = self.data.myMatrix.halite.amount[ship.position.y][ship.position.x]
 
-            farEnough = True
-
             if check_close_docks:
-                curr_cell = (ship.position.y, ship.position.x)
-                coord, distance, val = get_coord_closest(Matrix_val.ONE,
-                                                         self.data.myMatrix.locations.myDocks,
-                                                         self.data.init_data.myMatrix.distances.cell[curr_cell],
-                                                         Inequality.EQUAL)
-
-                if distance <= MyConstants.build.considered_far_distance:
-                    farEnough = False
+                passCriteria = self.get_criteria(ship)
+            else:
+                passCriteria = True
 
             if ship.halite_amount + self.data.game.me.halite_amount + cell_halite_amount >= 4000 \
-                    and farEnough:
+                    and passCriteria:
                 ## HAVE ENOUGH HALITE TO BUILD DOCK
                 halite_used = 0 if ship.halite_amount + cell_halite_amount >= 4000 else (4000 - ship.halite_amount - cell_halite_amount)
                 self.data.game.me.halite_amount -= halite_used
@@ -66,6 +59,32 @@ class Builds(abc.ABC):
                 self.data.myDicts.ships_building_dock[dock_coord].add(ship.id)
                 self.mark_unsafe(ship, ship.position)
                 self.data.mySets.ships_to_move.remove(ship.id)
+
+
+    def get_criteria(self, ship):
+        curr_cell = (ship.position.y, ship.position.x)
+        coord, distance, val = get_coord_closest(Matrix_val.ONE,
+                                                 self.data.myMatrix.locations.myDocks,
+                                                 self.data.init_data.myMatrix.distances.cell[curr_cell],
+                                                 Inequality.EQUAL)
+
+        ally_count = count_manhattan(self.data.myMatrix.locations.myShips,
+                                      Matrix_val.ONE,
+                                      ship.position,
+                                      MyConstants.build.far_enemy_perimeter)
+
+        enemy_count = count_manhattan(self.data.myMatrix.locations.enemyShips,
+                                      Matrix_val.ONE,
+                                      ship.position,
+                                      MyConstants.build.far_enemy_perimeter)
+
+        if distance >= MyConstants.build.considered_far_distance \
+                and enemy_count > ally_count:
+            passCriteria = True
+        else:
+            passCriteria = False
+
+        return passCriteria
 
 
     def building_now(self):
