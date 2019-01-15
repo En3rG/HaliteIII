@@ -85,10 +85,10 @@ while True:
     P = Attack(data, prev_data)
 
     ## INFLUENCE SHIPS
-    K = Influence(data, prev_data)
+    #K = Influence(data, prev_data)
 
     ## TARGET ENEMY SHIP
-    O = Snipe(data, prev_data)
+    #O = Snipe(data, prev_data)
 
     ## EXPLORE SHIPS
     I = Explore(data, prev_data)
