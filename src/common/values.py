@@ -70,7 +70,7 @@ class Build():
 class Deposit():
     def __init__(self):
         self.search_perimeter = 5
-        self.potentially_enough_cargo = 1000         ## MAYBE ENOUGH TO GO HOME
+        self.potentially_enough_cargo = 950         ## MAYBE ENOUGH TO GO HOME
         self.over_harvest_percent = 0.85              ## ONLY TAKES PERCENTAGE OF HARVEST INTO ACCOUNT, BUT IF ITS OVER 1000 ALREADY, GO HOME
         self.enemy_check_manhattan = 3
         self.enemy_check_num = 3
@@ -80,7 +80,7 @@ class Harvest():
     def __init__(self):
         self.ratio_to_explore = 3                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
         self.harvest_above_percentile = 40
-        self.enable_bonus_turns_above = 1.00        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
+        self.enable_bonus_turns_above = 0.00        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT
 
 class Attack():
@@ -122,7 +122,7 @@ class Explore():
 class Spawn():
     def __init__(self):
         self.stop_halite_left = 0.40
-        self.max_allowed_turn = 0.70
+        self.max_allowed_turn = 0.75
         self.percent_more_ships = 1.10
 
         ## DECAY (NO LONGER USED)
