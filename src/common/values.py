@@ -80,7 +80,7 @@ class Harvest():
     def __init__(self):
         self.ratio_to_explore = 3                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
         self.harvest_above_percentile = 40
-        self.enable_bonus_turns_above = 0.00        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
+        self.enable_bonus_turns_above = 0.25        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT
 
 class Attack():
@@ -103,9 +103,9 @@ class Attack():
 
 class Snipe():
     def __init__(self):
-        self.ratio_to_snipe = 3
+        self.ratio_to_snipe = 5
         self.allowed_turns_upper_limit = 0.95
-        self.allowed_turns_lower_limit = 0.00
+        self.allowed_turns_lower_limit = 0.70
         self.killing_spree_halite_left = 0.50
         self.killing_spree_halite_ratio = 1.25
 
