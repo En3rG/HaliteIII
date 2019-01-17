@@ -153,6 +153,8 @@ class MyVars():
                                     else MyConstants.attack.kamikaze_halite_ratio_4p
         self.explore_disable_bonus = None
         self.on_killing_spree = False
+        self.max_allowed_turn = MyConstants.spawn.max_allowed_turn_2p if (len(game.players) == 2) \
+                                    else MyConstants.spawn.max_allowed_turn_4p
 
 
 class MyDicts():

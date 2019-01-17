@@ -67,10 +67,9 @@ def spawn_ships(data):
     ## AND WE HAVE MORE MONEY THAN LOWEST ENEMY
     ## AND WE HAVE LESS SHIPS THAN THE LOWEST ENEMY
     logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * MyConstants.spawn.percent_more_ships))
-    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * MyConstants.spawn.max_allowed_turn \
+    allowSpawn = data.game.turn_number <= constants.MAX_TURNS * data.myVars.max_allowed_turn \
                   and ( data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left
-                  or numMyShips < numEnemyShips * MyConstants.spawn.percent_more_ships )
-
+                  or (numMyShips < numEnemyShips * MyConstants.spawn.percent_more_ships and len(data.game.players) == 2) )
 
 
     shipyard = data.game.game_map[data.game.me.shipyard]
