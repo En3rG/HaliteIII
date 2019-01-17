@@ -46,10 +46,10 @@ class Build():
         ## DOCKS
         self.top_n_halite = 0.04                    ## TOP N HALITE (PERCENTAGE OF MAX CELLS IN MAP)
         self.top_n = 20                             ## TOP N BASED ON AVERAGE MANHATTAN.  USED FOR DOCK PLACEMENT
-        self.dock_manhattan = 12                    ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
+        self.dock_manhattan = 14                    ## MANHATTAN DISTANCE OF WHEN DOCK BUILD IS EXECUTED
         self.average_manhattan_distance = 6         ## DISTANCE USED WHEN GETTING MANHATTAN AVERAGE
-        self.min_dist_btw_enemy_docks = 18
-        self.min_dist_btw_docks = 15                ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
+        self.min_dist_btw_enemy_docks = 15
+        self.min_dist_btw_docks = 12                ## MINIMUM DISTANCE BETWEEN DOCKS/SHIPYARD
         self.dock_anywhere_halite = 3500
         self.dock_far_halite = 1500
         self.considered_far_distance = 10
@@ -59,7 +59,7 @@ class Build():
         ## BUILDING
         self.allowed_turns = 0.70
         self.stop_when_halite_left = 0.40
-        self.min_num_ships = 10
+        self.min_num_ships = 17
         self.min_dock_halite_average = 0.50         ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
         self.min_halite_amount = 500                ## MINIMUM HALITE AMOUNT TO GO TOWARDS BUILDING
         self.ships_per_dock_ratio = 10
