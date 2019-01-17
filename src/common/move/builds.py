@@ -60,6 +60,9 @@ class Builds(abc.ABC):
                 self.mark_unsafe(ship, ship.position)
                 self.data.mySets.ships_to_move.remove(ship.id)
 
+                ## PRECAUTION THAT NO DOCK WILL BE BUILD THERE IN THE FUTURE
+                self.data.init_data.myMatrix.docks.placement[ship.position.y][ship.position.x] = Matrix_val.ZERO
+
 
     def get_criteria(self, ship):
         curr_cell = (ship.position.y, ship.position.x)
