@@ -69,9 +69,8 @@ def spawn_ships(data):
     logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * MyConstants.spawn.min_percent_more_ships))
     allowSpawn = data.game.turn_number <= constants.MAX_TURNS * data.myVars.max_allowed_turn \
                   and ( data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left
-                  or ( len(data.game.players) == 2) and
-                        ( numMyShips < numEnemyShips * MyConstants.spawn.min_percent_more_ships
-                          or numMyShips < numEnemyShips * MyConstants.spawn.max_percent_more_ships ) )
+                  or ( len(data.game.players) == 2) and numMyShips < numEnemyShips * MyConstants.spawn.percent_more_ships )
+
 
 
     shipyard = data.game.game_map[data.game.me.shipyard]

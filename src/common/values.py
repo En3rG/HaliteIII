@@ -124,8 +124,7 @@ class Spawn():
         self.stop_halite_left = 0.40
         self.max_allowed_turn_2p = 0.75
         self.max_allowed_turn_4p = 0.68
-        self.min_percent_more_ships = 1.10
-        self.max_percent_more_ships = 1.35
+        self.percent_more_ships = 1.10
 
         ## DECAY (NO LONGER USED)
         self.depleted_ratio = 0.10                  ## RATIO OF HALITE LEFT WHEN ITS CONSIDERED DEPLETED (SINCE IT NEVER BE 0)
