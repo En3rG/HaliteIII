@@ -97,13 +97,13 @@ class Explore(Moves, Explores, Harvests):
 
     def get_Astar_direction(self, ship, target_position, directions):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
-        # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.explore.search_perimeter - 1)
-        # section_ally = Section(self.data.myMatrix.locations.safe, ship.position, MyConstants.explore.search_perimeter - 1)
-        # section = section_enemy.matrix + section_ally.matrix
-        # matrix_path = pad_around(section)
-        section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-                          MyConstants.explore.search_perimter - 1)
-        matrix_path = pad_around(section.matrix)
+        section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position, MyConstants.explore.search_perimeter - 1)
+        section_ally = Section(self.data.myMatrix.locations.safe, ship.position, MyConstants.explore.search_perimeter - 1)
+        section = section_enemy.matrix + section_ally.matrix
+        matrix_path = pad_around(section)
+        # section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
+        #                   MyConstants.explore.search_perimter - 1)
+        # matrix_path = pad_around(section.matrix)
         section = Section(self.data.myMatrix.halite.amount, ship.position,
                           MyConstants.explore.search_perimeter)
         matrix_cost = section.matrix

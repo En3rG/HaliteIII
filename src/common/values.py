@@ -79,7 +79,7 @@ class Deposit():
 class Harvest():
     def __init__(self):
         self.ratio_to_explore_2p = 3                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
-        self.ratio_to_explore_4p = 4
+        self.ratio_to_explore_4p = 3
         self.harvest_above_percentile = 40
         self.enable_bonus_turns_above = 0.00        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT
@@ -100,7 +100,7 @@ class Attack():
         ## KAMIKAZE
         self.kamikaze_halite_ratio_2p = 0.00
         self.kamikaze_halite_ratio_4p = 1.25
-        self.kamikaze_halite_max = 1000
+        self.kamikaze_halite_max = 900
 
 class Snipe():
     def __init__(self):

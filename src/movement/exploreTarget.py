@@ -116,6 +116,12 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
 
                 # elif ship.halite_amount >= MyConstants.deposit.potentially_enough_cargo and self.hasTooManyEnemy(ship):
                 #     self.populate_heap_return(ship)
+
+                elif ship.halite_amount > MyConstants.attack.kamikaze_halite_max \
+                        and self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][ship.position.y][ship.position.x] == Matrix_val.ONE:
+                    self.populate_heap_return(ship)
+
+
                 else:
                     self.data.myDicts.explore_ship.setdefault(s.ship_id, None)
                     self.data.myDicts.explore_ship[s.ship_id] = s
