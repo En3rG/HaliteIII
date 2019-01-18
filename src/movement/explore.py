@@ -77,8 +77,8 @@ class Explore(Moves, Explores, Harvests):
                 harvest_destination = self.get_destination(ship, harvest_direction)
                 harvest_ratio = target.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
-                if canHarvest and -target.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
-                #if -target.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+                if canHarvest and -target.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
+                #if -target.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
                 else:
@@ -172,8 +172,8 @@ class Explore(Moves, Explores, Harvests):
     #             harvest_destination = self.get_destination(ship, harvest_direction)
     #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
     #
-    #             #if canHarvest and -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
-    #             if -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+    #             #if canHarvest and -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
+    #             if -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
     #                 destination = harvest_destination
     #                 direction = harvest_direction
     #             else:

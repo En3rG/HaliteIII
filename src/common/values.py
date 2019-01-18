@@ -78,7 +78,8 @@ class Deposit():
 
 class Harvest():
     def __init__(self):
-        self.ratio_to_explore = 4                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
+        self.ratio_to_explore_2p = 3                   ## IF EXPLORE RATIO IS THIS MUCH GREATER THAN HARVEST RATIO, DONT HARVEST
+        self.ratio_to_explore_4p = 4
         self.harvest_above_percentile = 40
         self.enable_bonus_turns_above = 0.00        ## WHEN TO SWITCH WITH HARVEST+BONUS FOR HARVEST LATER
                                                     ## 0 MEANS ALWAYS WILL USE IT

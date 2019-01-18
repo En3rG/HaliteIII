@@ -74,7 +74,7 @@ class Influence(Moves, Explores, Harvests):
                 harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
                 logging.debug("s.ratio {} harvest ratio {}".format(s.ratio, harvest_ratio))
-                if canHarvest and -s.ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+                if canHarvest and -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
                 else:

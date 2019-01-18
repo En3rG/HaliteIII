@@ -218,10 +218,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
             self.populate_kamikaze(ship, potential_support_IDs, explore_destination, enemy_position)
 
 
-        if max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore \
+        if max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore \
                 and len(potential_support_IDs) > num_enemy_ships:
                 #and (len(self.data.game.players) == 2):
-        #if max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
+        #if max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
@@ -247,7 +247,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 if support_id in self.data.mySets.ships_to_move \
                         and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
-                        #and max_ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore \
+                        #and max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore \
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest

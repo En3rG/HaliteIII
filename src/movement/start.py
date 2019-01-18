@@ -93,7 +93,7 @@ class Start(Moves, Harvests, Explores):
             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
             ## CHECK WHETHER IT'LL HARVEST OR EXPLORE
-            if s.ratio > harvest_ratio * MyConstants.harvest.ratio_to_explore and explore_direction != Direction.Still:
+            if s.ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore and explore_direction != Direction.Still:
                 destination = explore_destination
                 direction = explore_direction
             else:

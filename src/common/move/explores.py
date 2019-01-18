@@ -34,7 +34,7 @@ class Explores(abc.ABC):
     #     harvest_destination = self.get_destination(ship, harvest_direction)
     #     harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
     #
-    #     if canHarvest and max_ratio < harvest_ratio * MyConstants.harvest.ratio_to_explore:
+    #     if canHarvest and max_ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
     #         destination = harvest_destination
     #         direction = harvest_direction
     #     else:

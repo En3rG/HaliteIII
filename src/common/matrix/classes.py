@@ -155,6 +155,8 @@ class MyVars():
         self.on_killing_spree = False
         self.max_allowed_turn = MyConstants.spawn.max_allowed_turn_2p if (len(game.players) == 2) \
                                     else MyConstants.spawn.max_allowed_turn_4p
+        self.harvest_ratio_to_explore = MyConstants.harvest.ratio_to_explore_2p if (len(game.players) == 2) \
+            else MyConstants.harvest.ratio_to_explore_4p
 
 
 class MyDicts():
