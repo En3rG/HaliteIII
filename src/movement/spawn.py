@@ -66,7 +66,7 @@ def spawn_ships(data):
     ## KEEP MAKING SHIPS AS LONG AS ITS BELOW THE THRESHOLD TURNS
     ## AND WE HAVE MORE MONEY THAN LOWEST ENEMY
     ## AND WE HAVE LESS SHIPS THAN THE LOWEST ENEMY
-    logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * MyConstants.spawn.min_percent_more_ships))
+    logging.debug("allowSpawn nummyships {} numenemyships {} ratio {}".format(numMyShips, numEnemyShips, numMyShips <= numEnemyShips * MyConstants.spawn.percent_more_ships))
     allowSpawn = data.game.turn_number <= constants.MAX_TURNS * data.myVars.max_allowed_turn \
                   and ( data.myVars.ratio_left_halite > MyConstants.spawn.stop_halite_left
                   or ( len(data.game.players) == 2) and numMyShips < numEnemyShips * MyConstants.spawn.percent_more_ships )
