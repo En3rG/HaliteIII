@@ -31,29 +31,11 @@ class Explore(Moves, Explores, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
-        self.heap_set = set()  ## USED TO NOT HAVE DUPLICATE SHIP IDs IN THE HEAP DIST
-        self.heap_explore = []
-        self.top_halite = copy.deepcopy(self.data.myMatrix.halite.top_amount)
-
-        self.taken_destinations = set()
-        if self.data.game.turn_number <= constants.MAX_TURNS * MyConstants.explore.enable_bonus_turns_above:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest)
-            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest
-        else:
-            self.harvest_matrix = copy.deepcopy(self.data.myMatrix.halite.harvest_with_bonus)
-            #self.harvest_matrix = self.data.myMatrix.halite.updated_harvest_with_bonus                           ## WORST THAN JUST DOING HARVEST
-
-        self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
-        self.taken_matrix.fill(1)                                                                                       ## ZERO WILL BE FOR TAKEN CELL
-        r, c = np.where(self.data.myMatrix.locations.safe == Matrix_val.UNSAFE)
-        self.taken_matrix[r, c] = Matrix_val.ZERO
-
         self.move_ships()
 
     ## NOT RECALCULATING EXPLORE TARGETS
     def move_ships(self):
         print_heading("Moving exploring ships......")
-
 
         for target in self.data.myLists.explore_target:
             ship_id = target.ship_id
@@ -90,7 +72,7 @@ class Explore(Moves, Explores, Harvests):
                     ## IF STILL AND AT A DOCK (MOVE!!)
                     move_kicked_ship(self, ship, all_directions=True)  ## NOT REALLY KICKED
                 else:
-                    self.mark_taken_udpate_top_halite(destination)
+                    #self.mark_taken_udpate_top_halite(destination)
                     self.move_mark_unsafe(ship, direction)
 
 
