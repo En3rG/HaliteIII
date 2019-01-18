@@ -34,6 +34,8 @@ class Attack(Moves, Attacks, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
 
+        # self.halite_matrix = self.data.myMatrix.halite.updated_amount
+        # self.average_matrix = self.data.myMatrix.cell_average.halite
         self.harvest_matrix = self.get_harvest_matrix()
 
         self.taken_matrix = np.zeros((self.data.game.game_map.height, self.data.game.game_map.width), dtype=np.int16)
@@ -103,7 +105,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 destination = self.get_destination(first_ship, direction)
 
                 ## OLD WAY (MARK TAKEN)
-                self.mark_taken_udpate_top_halite(destination)
+                #self.mark_taken_udpate_top_halite(destination)
                 ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
                 #self.update_harvest_matrix(s.ship_id, destination)
 
@@ -120,9 +122,9 @@ class Attack(Moves, Attacks, Harvests, Explores):
                         destination = self.get_destination(support_ship, direction)
 
                         ## OLD WAY (MARK TAKEN)
-                        self.mark_taken_udpate_top_halite(destination)
+                        #self.mark_taken_udpate_top_halite(destination)
                         ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
-                        #self.update_harvest_matrix(s.ship_id, destination)
+                        #self.update_harvest_matrix(support_id, destination)
 
                         self.move_mark_unsafe(support_ship, direction)
 
@@ -166,9 +168,9 @@ class Attack(Moves, Attacks, Harvests, Explores):
                             destination = self.get_destination(support_ship, direction)
 
                             ## OLD WAY (MARK TAKEN)
-                            self.mark_taken_udpate_top_halite(destination)
+                            #self.mark_taken_udpate_top_halite(destination)
                             ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
-                            #self.update_harvest_matrix(s.ship_id, destination)
+                            #self.update_harvest_matrix(support_id, destination)
 
                             self.move_mark_unsafe(support_ship, direction)
 
