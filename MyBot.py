@@ -5,7 +5,6 @@ from src.initialization.getInitData import GetInitData
 from src.initialization.getData import GetData
 from src.movement.stuck import Stuck
 from src.movement.deposit import Deposit
-from src.movement.influence import Influence
 from src.movement.explore import Explore
 from src.movement.harvest import Harvest
 from src.movement.spawn import spawn_ships
@@ -13,7 +12,6 @@ from src.movement.retreat import Retreat
 from src.movement.exploreTarget import ExploreTarget
 from src.movement.enemyTarget import EnemyTarget
 from src.movement.attack import Attack
-from src.movement.snipe import Snipe
 from src.movement.build import Build
 from src.movement.start import Start
 from src.common.halite_statistics import Halite_stats
@@ -83,12 +81,6 @@ while True:
 
     ## ATTACK SHIPS
     P = Attack(data, prev_data)
-
-    ## INFLUENCE SHIPS
-    #K = Influence(data, prev_data)
-
-    ## TARGET ENEMY SHIP
-    #O = Snipe(data, prev_data)
 
     ## EXPLORE SHIPS
     I = Explore(data, prev_data)

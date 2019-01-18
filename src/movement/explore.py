@@ -78,7 +78,6 @@ class Explore(Moves, Explores, Harvests):
                 harvest_ratio = target.matrix_ratio[harvest_destination.y][harvest_destination.x]
 
                 if canHarvest and -target.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
-                #if -target.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
                     destination = harvest_destination
                     direction = harvest_direction
                 else:
@@ -124,78 +123,6 @@ class Explore(Moves, Explores, Harvests):
                                             avoid_enemy=True, avoid_potential_enemy=False)
 
         return direction
-
-
-
-
-
-    ## OLD WAY
-    # def move_ships(self):
-    #     print_heading("Moving exploring ships......")
-    #
-    #     ## MOVE REST OF THE SHIPS TO EXPLORE USING HEAP FIRST
-    #     ships = (self.data.mySets.ships_all & self.data.mySets.ships_to_move)                                           ## SAVING SINCE ships_to_move WILL BE UPDATED DURING ITERATION
-    #     for ship_id in ships:
-    #         ## DOUBLE CHECK SHIP IS STILL IN SHIPS TO MOVE
-    #         if ship_id in self.data.mySets.ships_to_move:
-    #             self.populate_heap(ship_id)
-    #
-    #
-    #     while self.heap_explore:
-    #         ## MOVE KICKED SHIPS FIRST (IF ANY)
-    #         while self.data.mySets.ships_kicked:
-    #             ship_kicked = self.data.mySets.ships_kicked.pop()
-    #             if ship_kicked in self.data.mySets.ships_to_move:
-    #                 logging.debug("Moving kicked ship ({}) for explore".format(ship_kicked))
-    #                 #self.exploreNow(ship_kicked) ## WILL TAKE HIGHEST RATIO, EVEN WHEN VERY FAR
-    #                 self.populate_heap(ship_kicked)
-    #
-    #         s = heapq.heappop(self.heap_explore)                                                                        ## MOVE CLOSEST SHIPS FIRST, TO PREVENT COLLISIONS
-    #         logging.debug(s)                                                                                            ## EXPLORE SHIP OBJECT
-    #
-    #         ship = self.data.game.me._ships.get(s.ship_id)
-    #         explore_destination = self.isDestination_untaken(s)
-    #
-    #         if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
-    #             canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
-    #             if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(s.ship_id,
-    #                                                                                         MyConstants.DIRECTIONS,
-    #                                                                                         kicked=False,
-    #                                                                                         moveNow=False)
-    #
-    #             directions = self.get_directions_target(ship, explore_destination)
-    #             ## OLD WAY
-    #             explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-    #             ## USING ASTAR
-    #             #explore_direction = self.get_Astar_direction(ship, explore_destination, directions)
-    #
-    #             harvest_destination = self.get_destination(ship, harvest_direction)
-    #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
-    #
-    #             #if canHarvest and -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
-    #             if -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
-    #                 destination = harvest_destination
-    #                 direction = harvest_direction
-    #             else:
-    #                 destination = explore_destination
-    #                 direction = explore_direction
-    #
-    #             logging.debug("explore_destination {} -s.ratio {} harvest_destination {} harvest_ratio {}".format(explore_destination, -s.ratio, harvest_destination, harvest_ratio))
-    #             # self.mark_unsafe(ship, explore_destination)
-    #             self.mark_taken_udpate_top_halite(destination)
-    #             self.move_mark_unsafe(ship, direction)
-    #
-    #
-    # def populate_heap(self, ship_id):
-    #     ## FOR CLOSEST TOP HARVEST PER TURN
-    #     if ship_id not in self.heap_set:
-    #         self.heap_set.add(ship_id)
-    #
-    #         ship = self.data.game.me._ships.get(ship_id)
-    #         matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-    #         s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
-    #         heapq.heappush(self.heap_explore, s)
-
 
 
 

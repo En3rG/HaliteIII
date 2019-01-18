@@ -306,11 +306,7 @@ class Data(abc.ABC):
         #                                                                            loc,
         #                                                                            distance)
 
-        """
-        MUCH FASTER WAY OF GENERATING THE ENTIRE MAP AVERAGES
-        BUT IS ONLY LIMITED TO 32 ARRAYS (THUS MAX DISTANCE OF 3)
-        6 DISTANCES REQUIRES 85 MATRICES, WILL ERROR OUT
-        """
+        ## MUCH FASTER WAY OF GENERATING THE ENTIRE MAP AVERAGES
         self.myMatrix.cell_average.halite = get_average_manhattan_matrix(self.myMatrix.halite.amount, distance)
 
         self.myMatrix.cell_average.enemyCargo = get_average_manhattan_matrix(self.myMatrix.halite.enemyCargo, distance)

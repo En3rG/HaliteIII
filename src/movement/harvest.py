@@ -77,45 +77,6 @@ class Harvest(Moves, Harvests, Explores):
                     self.move_mark_unsafe(ship, direction)
 
 
-    ## OLD WAY
-    # def move_ships(self):
-    #     print_heading("Moving harvesting (now) ships......")
-    #     ## MOVE SHIPS (THAT WILL HARVEST NOW)
-    #     for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
-    #         self.populate_heap(ship_id)
-    #
-    #     while self.heap_explore:
-    #         s = heapq.heappop(self.heap_explore)
-    #         logging.debug(s)
-    #
-    #         ship = self.data.game.me._ships.get(s.ship_id)
-    #         explore_destination = self.isDestination_untaken(s)
-    #         if s.ship_id in self.data.mySets.ships_to_move and explore_destination:
-    #             canHarvest, harvest_direction = self.check_harvestNow(s.ship_id, moveNow=False)
-    #
-    #             directions = self.get_directions_target(ship, explore_destination)
-    #             explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE)
-    #
-    #             harvest_destination = self.get_destination(ship, harvest_direction)
-    #             harvest_ratio = s.matrix_ratio[harvest_destination.y][harvest_destination.x]
-    #
-    #             if canHarvest and -s.ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
-    #                 destination = harvest_destination
-    #                 direction = harvest_direction
-    #
-    #                 # self.mark_unsafe(ship, explore_destination)
-    #                 self.mark_taken_udpate_top_halite(destination)
-    #                 self.move_mark_unsafe(ship, direction)
-    #
-    # def populate_heap(self, ship_id):
-    #     if ship_id not in self.heap_set:
-    #         self.heap_set.add(ship_id)
-    #
-    #         ship = self.data.game.me._ships.get(ship_id)
-    #         matrix_highest_ratio, max_ratio, destination = self.get_matrix_ratio(ship)
-    #         s = ExploreShip(max_ratio, ship.halite_amount, ship_id, destination, matrix_highest_ratio)
-    #         heapq.heappush(self.heap_explore, s)
-
 
 
 

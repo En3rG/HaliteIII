@@ -14,7 +14,7 @@ class GetData(Data):
         self.init_data = init_data
         self.command_queue = []
         self.starting_halite = init_data.myVars.total_halite
-        self.count_ships_died()                                                                                 ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
+        self.count_ships_died()                                                                                         ## RECORD DROPPED HALITE, BASED ON SHIPS THAT DIED
 
         logging.debug("All ships [{} total]: {}".format(len(self.mySets.ships_all), self.mySets.ships_all))
 
