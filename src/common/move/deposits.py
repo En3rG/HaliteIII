@@ -21,7 +21,10 @@ class Deposits(abc.ABC):
 
         if harvest:
             current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
-            if current_harvest >= self.data.myVars.deposit_harvest_percentile and ship.halite_amount + current_harvest < 1000:
+            potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
+            if current_harvest >= self.data.myVars.deposit_harvest_percentile \
+                    and ship.halite_amount + current_harvest < 1000 \
+                    and potential_enemy_collision == Matrix_val.ZERO:
                 direction = Direction.Still
 
         self.move_mark_unsafe(ship, direction)
