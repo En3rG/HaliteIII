@@ -100,7 +100,7 @@ class Attack():
         ## KAMIKAZE
         self.kamikaze_halite_ratio_2p = 0.00
         self.kamikaze_halite_ratio_4p = 1.25
-        self.kamikaze_halite_max = 900
+        self.kamikaze_halite_max = 825
 
 class Snipe():
     def __init__(self):
