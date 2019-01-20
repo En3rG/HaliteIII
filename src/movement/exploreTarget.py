@@ -118,7 +118,7 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                 #     self.populate_heap_return(ship)
 
                 elif ship.halite_amount > MyConstants.attack.kamikaze_halite_max \
-                        and self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][ship.position.y][ship.position.x] == Matrix_val.ONE:
+                        and self.data.myMatrix.locations.engage_enemy[MyConstants.attack.kamikaze_retreat_distance][ship.position.y][ship.position.x] == Matrix_val.ONE:
                     self.populate_heap_return(ship)
 
 
