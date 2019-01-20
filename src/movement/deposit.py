@@ -40,7 +40,7 @@ class Deposit(Moves, Deposits):
 
             if ship.id in self.data.mySets.ships_to_move:
                 self.data.mySets.ships_to_move.remove(ship.id)
-                self.depositNow(ship, s.dock_position, s.directions, harvest=True)
+                self.depositNow(ship, s.dock_position, s.directions, harvest_home=True)
             #self.depositNow(ship, s.dock_position, s.directions)
 
 

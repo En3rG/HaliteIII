@@ -75,6 +75,7 @@ class Deposit():
         self.enemy_check_manhattan = 3
         self.enemy_check_num = 3
         self.harvest_above_percentile = 40
+        self.harvest_min = 75
 
 class Harvest():
     def __init__(self):

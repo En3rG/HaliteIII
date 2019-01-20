@@ -11,7 +11,7 @@ import abc
 import numpy as np
 
 class Deposits(abc.ABC):
-    def depositNow(self, ship, dock_position, directions, harvest=False):
+    def depositNow(self, ship, dock_position, directions, harvest_home=False):
         """
         SHIP IS RETURNING/DEPOSITING.  PERFORM NECESSARY STEPS
         """
@@ -21,10 +21,11 @@ class Deposits(abc.ABC):
 
         current_harvest = self.data.myMatrix.halite.harvest_with_bonus[ship.position.y][ship.position.x]
         potential_enemy_collision = self.data.myMatrix.locations.potential_enemy_collisions[ship.position.y][ship.position.x]
-        if harvest \
+
+        if harvest_home \
             and current_harvest >= self.data.myVars.deposit_harvest_percentile \
-            and ship.halite_amount + current_harvest < 1000:
-            # and potential_enemy_collision == Matrix_val.ZERO:
+            and ship.halite_amount + current_harvest < 1000 \
+            and (potential_enemy_collision == Matrix_val.ZERO or current_harvest >= MyConstants.deposit.harvest_min):
             direction = Direction.Still
 
         self.move_mark_unsafe(ship, direction)
@@ -36,9 +37,9 @@ class Deposits(abc.ABC):
         # if self.isEnemy_closeby(ship):
         ## PATH IS 1 LESS, SINCE WILL BE PADDED
         # section_enemy = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
-        #                         MyConstants.RETREAT_SEARCH_PERIMETER - 1)
+        #                         MyConstants.deposit.search_perimeter - 1)
         # section_ally = Section(self.data.myMatrix.locations.safe, ship.position,
-        #                        MyConstants.RETREAT_SEARCH_PERIMETER - 1)
+        #                        MyConstants.deposit.search_perimeter - 1)
         # section = section_enemy.matrix + section_ally.matrix
         # matrix_path = pad_around(section)
         section = Section(self.data.myMatrix.locations.potential_enemy_collisions, ship.position,
