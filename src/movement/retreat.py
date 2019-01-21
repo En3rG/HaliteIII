@@ -9,15 +9,6 @@ from src.common.matrix.functions import get_coord_closest
 from hlt.positionals import Position
 import heapq
 
-
-"""
-TO DO!!!!!!!!!!!
-
-IMPROVE MOVEMENT WHEN THERE ARE TONS OF SHIPS TRYING TO GO TO THE DOCK
-
-
-"""
-
 class Retreat(Moves, Retreats):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)

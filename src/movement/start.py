@@ -12,12 +12,6 @@ import numpy as np
 import heapq
 import logging
 
-"""
-TO DO!!!!!!!!!!!
-
-
-"""
-
 class Start(Moves, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)

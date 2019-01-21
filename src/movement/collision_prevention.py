@@ -95,7 +95,7 @@ def get_move_points_collision(Moves, ship, directions, all_directions):
     else:
         DIRECTIONS = MyConstants.DIRECTIONS
 
-    for direction in DIRECTIONS:                                                                            ## HAS NO STILL (KICKED, NEED TO MOVE)
+    for direction in DIRECTIONS:                                                                                        ## HAS NO STILL (KICKED, NEED TO MOVE)
         destination = Moves.get_destination(ship, direction)
 
         safe = Moves.data.myMatrix.locations.safe[destination.y][destination.x]

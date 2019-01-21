@@ -7,21 +7,6 @@ from src.common.orderedSet import OrderedSet
 import numpy as np
 import logging
 
-
-"""
-TO DO!!!!!111
-
-BEST TO HAVE DOCKS CLOSE TO ENEMY AND GAIN ALOT OF INFLUENCE
-
-DONT BUILD DOCK WHEN AREA HAS BEEN HARVESTED
-
-
-ADD BUILD DOCK WHEN CLOSE ENOUGH TO DOCK PLACEMENT AND FULL, BUILD RATHER THAN GO HOME
-
-
-
-"""
-
 class Build(Moves, Builds):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)

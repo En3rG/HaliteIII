@@ -5,9 +5,6 @@ import logging
 from src.common.print import print_heading
 import numpy as np
 
-
-
-
 def spawn_ships(data):
     """
     CHECK IF ITS SAFE TO SPAWN SHIPS

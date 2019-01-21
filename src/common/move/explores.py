@@ -13,41 +13,6 @@ from src.common.print import print_matrix
 from collections import deque
 
 class Explores(abc.ABC):
-    # def exploreNow(self, ship_id):
-    #     """
-    #     SHIP IS EXPLORING, PERFORM NECESSARY STEPS
-    #     """
-    #     ship = self.data.game.me._ships.get(ship_id)
-    #
-    #     canHarvest, harvest_direction = self.check_harvestNow(ship_id, moveNow=False)
-    #     if not(canHarvest): canHarvest, harvest_direction = self.check_harvestLater(ship_id, MyConstants.DIRECTIONS,
-    #                                                                                 kicked=False, moveNow=False)
-    #
-    #     ## GET DIRECTION TO CLOSEST TOP HARVEST PER TURN
-    #     matrix_highest_ratio, max_ratio, explore_destination = self.get_matrix_ratio(ship)
-    #
-    #
-    #     directions = self.get_directions_target(ship, explore_destination)
-    #     explore_direction = self.best_direction(ship, directions, mode=MoveMode.EXPLORE,
-    #                                             avoid_enemy=True, avoid_potential_enemy=True)
-    #
-    #     harvest_destination = self.get_destination(ship, harvest_direction)
-    #     harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
-    #
-    #     if canHarvest and max_ratio < harvest_ratio * self.data.myVars.harvest_ratio_to_explore:
-    #         destination = harvest_destination
-    #         direction = harvest_direction
-    #     else:
-    #         destination = explore_destination
-    #         ## OLD WAY
-    #         direction = explore_direction
-    #         ## A STAR WAY (SAME AS NOT DOING A STAR, WHY??)
-    #         # direction = self.get_Astar_direction(ship, explore_destination, directions)
-    #
-    #     # self.mark_unsafe(ship, explore_destination)
-    #     self.mark_taken_udpate_top_halite(destination)
-    #     self.move_mark_unsafe(ship, direction)
-
     def isDestination_untaken(self, s):
         ## RECALCULATING TOP HALITE
         ## MUCH FASTER SORTING (PREVIOUS VERSION)
@@ -82,14 +47,6 @@ class Explores(abc.ABC):
 
         ## FOR HIGHEST HARVEST PER TURN RATIO
         self.taken_matrix[destination.y][destination.x] = Matrix_val.ZERO
-        ## BY ONLY TAKING OUT ONE CELL, CAUSES A TRAFFIC JAM
-        ## WHEN A BIG BULK OF TOP RATIO IS ALL TOGETHER (SAY 30 CELLS)
-        ## THEN 30 SHIPS WILL BE SENT TO HERE (CAUSING BIG TRAFFIC JAM)
-        # populate_manhattan(self.taken_matrix,
-        #                    Matrix_val.ZERO,
-        #                    destination,
-        #                    MyConstants.DIRECT_NEIGHBOR_DISTANCE,
-        #                    cummulative=False)
 
 
     def update_harvest_matrix(self, ship_id, destination):
@@ -99,13 +56,6 @@ class Explores(abc.ABC):
         ship = self.data.game.me._ships.get(ship_id)
         maximum_capacity = 1000 - ship.halite_amount
 
-        ## OLD WAY
-        # maximum_harvest = maximum_capacity if self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0 else (maximum_capacity * 0.333)      ## ONLY TAKING 1/3 (CUZ OF BONUS)
-        # self.harvest_matrix[destination.y][destination.x] -= maximum_harvest
-
-        ## NEW WAY
-        # if self.data.myMatrix.locations.sunken_ships[destination.y][destination.x] == Matrix_val.ONE:                   ## NO LONGER TRUE IN 2 TURNS (SHIP ONLY SHIP 1 TURN)
-        #     maximum_harvest = (maximum_capacity * 0.20)
         if self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][destination.y][destination.x] == MyConstants.attack.engage_enemy_distance:
             maximum_harvest = (maximum_capacity * 0.25)
         elif self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0:
@@ -113,12 +63,12 @@ class Explores(abc.ABC):
         else:
             maximum_harvest = (maximum_capacity * 0.333)
 
-        self.halite_matrix[destination.y][destination.x] -= maximum_harvest                                             ## UPDATE HALITE VALUE
+        self.halite_matrix[destination.y][destination.x] -= maximum_harvest
 
-        #self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25     ## UPDATE HARVEST VALUE
+        #self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25
 
         self.harvest_matrix[destination.y][destination.x] = (self.halite_matrix[destination.y][destination.x] * 0.25) * MyConstants.explore.score_harvest_ratio \
-                                                            + self.average_matrix[destination.y][destination.x] * MyConstants.explore.score_average_ratio  ## UPDATE HARVEST VALUE
+                                                            + self.average_matrix[destination.y][destination.x] * MyConstants.explore.score_average_ratio
 
         if self.data.myVars.explore_disable_bonus == False and self.data.myMatrix.halite.bonus[destination.y][destination.x] != 0:
             self.harvest_matrix[destination.y][destination.x] = self.harvest_matrix[destination.y][destination.x] * 3

@@ -118,11 +118,6 @@ class Matrix():
         self.cell_average = CellAverage(map_height, map_width)
         self.docks = Docks(map_height, map_width)
 
-        ## NO LONGER USED
-        # self.sectioned = Sectioned(map_height, map_width)
-        # self.depletion = Depletion(map_height, map_width)
-
-
 class MySets():
     def __init__(self, game):
         self.ships_all = OrderedSet(sorted(game.me._ships.keys()))                                                      ## ALL SHIPS

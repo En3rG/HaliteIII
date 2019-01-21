@@ -12,18 +12,6 @@ import logging
 import copy
 import numpy as np
 
-"""
-TO DO!!!!!!!!
-
-
-ADD COLLISION PREVENTION
-
-
-IF BEST IS TO STAY AND HARVEST IS 0, MUST DO SOMETHING ELSE
-
-
-"""
-
 class Harvest(Moves, Harvests, Explores):
     """
     HARVEST

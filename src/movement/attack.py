@@ -15,21 +15,6 @@ import logging
 import copy
 import heapq
 
-"""
-TO DO!!!!!!!!!!!!
-
-BLOCK ENEMY DOCKS
-
-ONLY ATTACK WHEN THERES SUPPORT
-DONT ATTACK WHEN HAVE HIGH CARGO
-
-
-TRY TO NOT INFLUENCE ENEMY IF POSSIBLE
-
-
-"""
-
-
 class Attack(Moves, Attacks, Harvests, Explores):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)
@@ -67,7 +52,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
         if allowAttack:
             considered_prev_i = OrderedSet()                                                                            ## USED TO NOT CONSIDER PREVIOUS i
 
-            for i in range(1, MyConstants.attack.engage_enemy_distance):                                                       ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
+            for i in range(1, MyConstants.attack.engage_enemy_distance):                                                ## DONT NEED TO MOVE FURTHEST ONES (WILL BE MOVED AS SUPPORT)
                 matrixIDs = self.data.myMatrix.locations.engage_enemy[i] * self.data.myMatrix.locations.myShipsID
                 r, c = np.where(matrixIDs > Matrix_val.ZERO)
                 ships_engaging = OrderedSet(self.data.myMatrix.locations.myShipsID[r, c]) - considered_prev_i

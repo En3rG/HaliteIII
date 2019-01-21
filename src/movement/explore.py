@@ -16,17 +16,6 @@ import heapq
 import copy
 import numpy as np
 
-
-
-"""
-TO DO!!!!!!!!!!!
-
-SHOULD NOT HARVEST WHEN THERE IS A MUCH BIGGER HALITE CLOSE BY
-WHEN EXPLORE TARGET RATIO IS MORE THAN 3X THAN RATIO OF CURRENT HARVEST, DO NOT HARVEST NOW/LATER
-
-
-"""
-
 class Explore(Moves, Explores, Harvests):
     def __init__(self, data, prev_data):
         Moves.__init__(self, data, prev_data)

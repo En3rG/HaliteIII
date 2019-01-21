@@ -24,17 +24,3 @@ class Stuck(Moves, Builds):
             if self.data.myMatrix.locations.stuck[ship.position.y][ship.position.x] == Matrix_val.ONE:
                 logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
                 self.move_mark_unsafe(ship, Direction.Still)
-
-
-        ## USING NP.WHERE
-        ## PROBLEM IS AFTER RETREATING, STILL TRIES TO MOVE STUCK SHIP, WHICH WAS HANDLED IN RETREAT
-        # r, c = np.where(self.data.myMatrix.locations.stuck == Matrix_val.ONE)
-        # ship_ids = self.data.myMatrix.locations.myShipsID[r, c]
-        #
-        # for ship_id in ship_ids:
-        #     ship = self.data.game.me._ships.get(ship_id)
-        #
-        #     logging.debug("Ship id: {} has not enough halite to move".format(ship.id))
-        #     direction = Direction.Still
-        #
-        #     self.move_mark_unsafe(ship, direction)
