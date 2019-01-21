@@ -235,7 +235,7 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
                 if support_id in self.data.mySets.ships_to_move \
                         and support_distance <= ship_distance + 1 \
-                        and max_ratio > harvest_ratio * MyConstants.attack.harvest_ratio_to_support:
+                        and harvest_ratio < max_ratio * MyConstants.attack.support_harvest_ratio:
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest
