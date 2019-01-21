@@ -97,6 +97,7 @@ class Attack():
         ## SUPPORT
         self.support_gain_ratio_2p = 0.70
         self.support_gain_ratio_4p = 1.00
+        self.harvest_ratio_to_support = 2           ## WILL SUPPORT IF RATIO IS GREATER, OTHERWISE WILL JUST HARVEST
 
         ## KAMIKAZE
         self.kamikaze_halite_ratio_2p = 0.00

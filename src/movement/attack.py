@@ -217,12 +217,12 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False,
                                                                       avoid_enemy=True, avoid_potential_enemy=True)
-                # if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
-                #                                                                              MyConstants.DIRECTIONS,
-                #                                                                              kicked=False,
-                #                                                                              moveNow=False,
-                #                                                                              avoid_enemy=True,
-					# 																		 avoid_potential_enemy=True)
+                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
+                                                                                             MyConstants.DIRECTIONS,
+                                                                                             kicked=False,
+                                                                                             moveNow=False,
+                                                                                             avoid_enemy=True,
+																							 avoid_potential_enemy=True)
 
                 matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(support_ship)
 
@@ -232,9 +232,10 @@ class Attack(Moves, Attacks, Harvests, Explores):
                 harvest_destination = self.get_destination(support_ship, harvest_direction)
                 harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
+                ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
                 if support_id in self.data.mySets.ships_to_move \
-                        and support_distance <= ship_distance + 1:  ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
-                        #and max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore \
+                        and support_distance <= ship_distance + 1 \
+                        and max_ratio > harvest_ratio * MyConstants.attack.harvest_ratio_to_support:
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest
