@@ -217,12 +217,12 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 canHarvest, harvest_direction = self.check_harvestNow(support_id, moveNow=False,
                                                                       avoid_enemy=True, avoid_potential_enemy=True)
-                if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
-                                                                                             MyConstants.DIRECTIONS,
-                                                                                             kicked=False,
-                                                                                             moveNow=False,
-                                                                                             avoid_enemy=True,
-																							 avoid_potential_enemy=True)
+                # if not (canHarvest): canHarvest, harvest_direction = self.check_harvestLater(support_id,
+                #                                                                              MyConstants.DIRECTIONS,
+                #                                                                              kicked=False,
+                #                                                                              moveNow=False,
+                #                                                                              avoid_enemy=True,
+					# 																		 avoid_potential_enemy=True)
 
                 matrix_highest_ratio, max_ratio, explore_destination, harvest_value = self.get_matrix_ratio(support_ship)
 
@@ -234,8 +234,8 @@ class Attack(Moves, Attacks, Harvests, Explores):
 
                 ## HAVE TO BE JUST 1 DISTANCE AWAY OR CLOSER
                 if support_id in self.data.mySets.ships_to_move \
-                        and support_distance <= ship_distance + 1 \
-                        and harvest_ratio < max_ratio * MyConstants.attack.support_harvest_ratio:
+                        and support_distance <= ship_distance + 1:
+                        #and harvest_ratio < max_ratio * MyConstants.attack.support_harvest_ratio:
 
                     potental_harvest = (my_halite + enemy_halite) * 0.25                                                ## POTENTIAL HARVEST
                     total_halite = support_ship.halite_amount + potental_harvest
