@@ -75,7 +75,7 @@ class Deposit():
         self.enemy_check_manhattan = 3
         self.enemy_check_num = 3
         self.harvest_above_percentile = 40
-        self.harvest_min = 0
+        self.harvest_min = 75
 
 class Harvest():
     def __init__(self):
@@ -102,7 +102,7 @@ class Attack():
         self.kamikaze_halite_ratio_2p = 0.00
         self.kamikaze_halite_ratio_4p = 1.25
         self.kamikaze_halite_max = 800
-        self.kamikaze_retreat_distance = 2
+        self.kamikaze_retreat_distance = 3
 
 class Snipe():
     def __init__(self):
