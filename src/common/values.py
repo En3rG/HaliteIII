@@ -96,12 +96,12 @@ class Attack():
 
         ## SUPPORT
         self.support_gain_ratio_2p = 0.70
-        self.support_gain_ratio_4p = 1.00
+        self.support_gain_ratio_4p = 1.50
         self.support_harvest_ratio = 2              ## WILL SUPPORT, UNLESS HARVEST RATIO IS MET
 
         ## KAMIKAZE
         self.kamikaze_halite_ratio_2p = 0.00
-        self.kamikaze_halite_ratio_4p = 1.25
+        self.kamikaze_halite_ratio_4p = 1.50
         self.kamikaze_halite_max = 800
         self.kamikaze_retreat_distance = 3
 
