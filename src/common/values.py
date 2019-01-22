@@ -59,10 +59,10 @@ class Build():
         ## BUILDING
         self.allowed_turns = 0.70
         self.stop_when_halite_left = 0.40
-        self.min_num_ships = 20
+        self.min_num_ships = 10
         self.min_dock_halite_average = 0.50         ## WILL NO LONGER BUILD IF BELOW THIS PERCENTAGE, FROM ORIGINAL AVERAGE
         self.min_halite_amount = 500                ## MINIMUM HALITE AMOUNT TO GO TOWARDS BUILDING
-        self.ships_per_dock_ratio = 10
+        self.ships_per_dock_ratio = 15
         self.ships_percent = 0.15                   ## PERCENTAGE OF SHIPS ALLOWED TO BUILD (BASED ON TOTAL NUMBER OF SHIPS)
         self.ships_per_dock = 1                     ## NUMBER OF SHIPS CONSIDERED TO BUILD PER DOCK
 
