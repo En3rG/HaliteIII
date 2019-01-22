@@ -78,6 +78,26 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
     def move_ships(self):
         print_heading("Populate Explore targets and depositing ships......")
 
+        self.update_harvest_matrix_moved_ships()
+
+        self.populate_all_heap()
+
+        self.gather_target_ships()
+
+        self.gather_deposit_ships()
+
+
+    def update_harvest_matrix_moved_ships(self):
+        ## UPDATE MATRIX BASED ON MOVED SHIPS (STUCK, BULDING, ETC)
+        for ship_id in (self.data.mySets.ships_all - self.data.mySets.ships_to_move):
+            self.populate_heap(ship_id)
+
+        while self.heap_explore:
+            s = heapq.heappop(self.heap_explore)
+            ship = self.data.game.me._ships.get(s.ship_id)
+            self.update_harvest_matrix(s.ship_id, ship.position)
+
+    def populate_all_heap(self):
         for ship_id in (self.data.mySets.ships_all & self.data.mySets.ships_to_move):
             ship = self.data.game.me._ships.get(ship_id)
 
@@ -86,19 +106,22 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                 self.populate_heap_return(ship)
 
             ## GATHER SHIPS THAT WERE RETURNING BEFORE
-            elif ship_id in self.prev_data.ships_returning and (ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:
+            elif ship_id in self.prev_data.ships_returning and (
+            ship.position.y, ship.position.x) not in self.data.mySets.dock_coords:
                 self.populate_heap_return(ship)
 
             ## GATHER THE REST FOR FURTHER ANALYSIS
             else:
                 self.populate_heap(ship_id)
 
+
+    def gather_target_ships(self):
         ## GATHER TARGET / DEPOSITING
         while self.heap_explore:
             s = heapq.heappop(self.heap_explore)
 
             ## OLD WAY (MARK TAKEN)
-            #explore_destination = self.isDestination_untaken(s)
+            # explore_destination = self.isDestination_untaken(s)
             ## NEW WAY
             explore_destination = self.isDestination_updated(s)
 
@@ -111,14 +134,16 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
 
                 if ship.halite_amount >= MyConstants.deposit.potentially_enough_cargo \
                         and (ship.halite_amount + (current_harvest * MyConstants.deposit.over_harvest_percent) >= 1000 \
-                              or ship.halite_amount + (target_harvest * MyConstants.deposit.over_harvest_percent) >= 1000):
+                                     or ship.halite_amount + (
+                                target_harvest * MyConstants.deposit.over_harvest_percent) >= 1000):
                     self.populate_heap_return(ship)
 
                 # elif ship.halite_amount >= MyConstants.deposit.potentially_enough_cargo and self.hasTooManyEnemy(ship):
                 #     self.populate_heap_return(ship)
 
                 elif ship.halite_amount > MyConstants.attack.kamikaze_halite_max \
-                        and self.data.myMatrix.locations.engage_enemy[MyConstants.attack.kamikaze_retreat_distance][ship.position.y][ship.position.x] == Matrix_val.ONE:
+                        and self.data.myMatrix.locations.engage_enemy[MyConstants.attack.kamikaze_retreat_distance][
+                            ship.position.y][ship.position.x] == Matrix_val.ONE:
                     self.populate_heap_return(ship)
 
 
@@ -128,11 +153,12 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                     self.data.myLists.explore_target.append(Target(s.ratio, s.ship_id, s.destination, s.matrix_ratio))
 
                     ## OLD WAY (MARK TAKEN)
-                    #self.mark_taken_udpate_top_halite(explore_destination)
+                    # self.mark_taken_udpate_top_halite(explore_destination)
                     ## NEW WAY (DEDUCT HALITE TO BE HARVESTED)
                     self.update_harvest_matrix(s.ship_id, explore_destination)
 
 
+    def gather_deposit_ships(self):
         ## GATHER ALL SHIPS DEPOSITING, TO BE ALL MOVED LATER
         while self.heap_dist:
             s = heapq.heappop(self.heap_dist)
@@ -142,7 +168,7 @@ class ExploreTarget(Moves, Harvests, Deposits, Explores):
                 # self.depositNow(ship, s.dock_position, s.directions)
 
                 ## INSTEAD OF MOVING IT NOW, SAVE THAT DATA AND MOVE THE SHIPS LATER
-                #if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
+                # if s.ship_id in self.data.mySets.ships_to_move: self.data.mySets.ships_to_move.remove(ship.id)
                 self.data.mySets.deposit_ships.add(s.ship_id)
 
                 self.data.myDicts.deposit_ship[s.ship_id] = s
