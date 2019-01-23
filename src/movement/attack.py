@@ -198,17 +198,16 @@ class Attack(Moves, Attacks, Harvests, Explores):
         harvest_destination = self.get_destination(ship, harvest_direction)
         harvest_ratio = matrix_highest_ratio[harvest_destination.y][harvest_destination.x]
 
+        ## POPULATE KAMIKAZE
         if ((len(self.data.game.players) == 2) and (i == 1 or i == 2)) \
                 or i == 2:
             ## FOR 2 PLAYERS, CHECK i = 1 or 2
             ## FOR 4 PLAYERS, JUST CHECK i = 2
             self.populate_kamikaze(ship, potential_support_IDs, explore_destination, enemy_position)
 
-
+        ## POPULATE SUPPORT
         if max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore \
                 and len(potential_support_IDs) > num_enemy_ships:
-                #and (len(self.data.game.players) == 2):
-        #if max_ratio > harvest_ratio * self.data.myVars.harvest_ratio_to_explore and len(potential_support_IDs) > num_enemy_ships and my_halite <= 500:
             ## ATTACKING (NOT HARVESTING)
             support_ships = OrderedSet()
             for support_id in sorted(potential_support_IDs):
