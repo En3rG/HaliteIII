@@ -56,7 +56,7 @@ class Explores(abc.ABC):
         ship = self.data.game.me._ships.get(ship_id)
         maximum_capacity = 1000 - ship.halite_amount
 
-        if self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][destination.y][destination.x] == MyConstants.attack.engage_enemy_distance:
+        if self.data.myMatrix.locations.engage_enemy[MyConstants.attack.engage_enemy_distance][destination.y][destination.x] ==  Matrix_val.ONE:
             maximum_harvest = (maximum_capacity * 0.25)
         elif self.data.myMatrix.halite.bonus[destination.y][destination.x] == 0:
             maximum_harvest = maximum_capacity
@@ -64,8 +64,6 @@ class Explores(abc.ABC):
             maximum_harvest = (maximum_capacity * 0.333)
 
         self.halite_matrix[destination.y][destination.x] -= maximum_harvest
-
-        #self.harvest_matrix[destination.y][destination.x] = self.halite_matrix[destination.y][destination.x] * 0.25
 
         self.harvest_matrix[destination.y][destination.x] = (self.halite_matrix[destination.y][destination.x] * 0.25) * MyConstants.explore.score_harvest_ratio \
                                                             + self.average_matrix[destination.y][destination.x] * MyConstants.explore.score_average_ratio
