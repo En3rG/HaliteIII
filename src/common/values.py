@@ -123,6 +123,9 @@ class Explore():
         self.score_harvest_ratio = 0.90
         self.score_average_ratio = 0.10
 
+        self.percent_deduction_bonus = 0.333
+        self.percent_deduction_engage_enemy = 0.25
+
 class Spawn():
     def __init__(self):
         self.stop_halite_left = 0.40
