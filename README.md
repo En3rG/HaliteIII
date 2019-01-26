@@ -53,7 +53,7 @@ Here I determine the target of each ships.  I also take into account the ships m
 
 ## Deposit
 
-Here ships determined to be depositing from explore target will be moved.  It also include ships that were returning/depositing from the previous turn.  There is a parameter on when we can start returning to base, for my final submission this was set to 950.  If its target cell has a harvest amount thats too much (go over 1000) it will just go towards home.  Depositing ships may harvest while going home, if the cell it steps on has enough halite, based on what value we set the parameter to.  I believe this is the only place where I used A* in determining the path.  Using it with the other movement didnt seem to have that much of an effect, from my testing at least.
+Here ships determined to be depositing from explore target will be moved.  It also include ships that were returning/depositing from the previous turn.  There is a parameter on when we can start returning to base, for my final submission this was set to 950.  If its target cell has a harvest amount thats too much (go over 1000) it will just go towards home.  Depositing ships may harvest while going home, if the cell it steps on has enough halite, based on what value we set the parameter to.  If a ship is close to the enemy and has at least 800 cargo, it will also be commanded to deposit.  I believe the deposit move is the only place where I used A* in determining the path.  Using it with the other movement didnt seem to have that much of an effect, from my testing at least.
 
 ## Harvest
 
